@@ -1,0 +1,9 @@
+<div class="loginElement">
+  <br>
+  <div class="privacyMargin">
+    <input matInput [(ngModel)]="email" type="email" placeholder="Email">
+    <input matInput [(ngModel)]="password" type="password" placeholder="Password">
+  </div>
+  <button (click)="signIn(email, password)">Sign in</button>
+  <button (click)="register(email, password)">Sign up</button>
+</div>

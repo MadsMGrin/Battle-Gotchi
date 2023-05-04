@@ -1,0 +1,41 @@
+.loginElement{
+  background-color: #1F1F1F;
+  margin: 0 auto;
+  padding: 20px 50px 20px 50px;
+  width: 50%;
+  text-align: center;
+  border-radius: 5px;
+  color: aliceblue;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.privacyMargin{
+  margin-top: 20px;
+}
+
+input{
+  background-color: #292929;
+  border: none;
+  border-radius: 5px;
+  color: aliceblue;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+}
+
+button{
+  background-color: #333333;
+  border: none;
+  border-radius: 5px;
+  color: aliceblue;
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+button:hover{
+  background-color: #555555;
+}
