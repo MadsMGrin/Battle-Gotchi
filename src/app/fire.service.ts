@@ -4,6 +4,7 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 
 import * as config from '../../firebaseconfig.js'
+import {gotchi} from "../entities/gotchi";
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,28 @@ export class FireService {
     this.auth = firebase.auth();
   }
 
+  async createGotchi(){
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw new Error('No user is currently logged in');
+    }
+    const gotchiDTO: gotchi = {
+      user: user.uid,
+      hunger: 50,
+      sleep: 50,
+      cleanliness: 50,
+      health: 50,
+      strength: 0,
+      dexterity: 0,
+      stamina: 0,
+    }
+    await this.firestore.collection('gotchi').add(gotchiDTO);
+  }
+
+  async getGotchi(){
+    await firebase.firestore().collection('gotchi').where('uid', '==', firebase.auth().currentUser?.uid).get();
+  }
+
   async register(email: string, password: string){
     await this.auth.createUserWithEmailAndPassword(email, password);
   }
@@ -31,5 +54,4 @@ export class FireService {
   async signOut() {
     await this.auth.signOut();
   }
-
 }

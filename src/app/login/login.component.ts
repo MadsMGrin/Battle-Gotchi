@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   }
 
   async register(email: string, password: string){
-    await this.fireService.register(email, password);
+    await this.fireService.register(email, password).then(res => this.fireService.createGotchi())
   }
 
   async signIn(email: string, password: string){
