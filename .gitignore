@@ -42,3 +42,17 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+/firebase.json
+/.firebaserc
+/database.rules.json
+/firestore.rules
+/firestore.indexes.json
+/remoteconfig.template.json
+/storage.rules
+/database-debug.log
+/ui-debug.log
+/functions/
+/firestore-debug.log
+/firebase-debug.log
+/pubsub-debug.log
+/frontend/

@@ -11,4 +11,8 @@ export class AppComponent{
 
   constructor(public fireService: FireService) {
   }
+
+  checkAuth(): boolean{
+    return this.fireService.auth.currentUser==undefined;
+  }
 }

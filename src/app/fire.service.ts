@@ -13,12 +13,14 @@ export class FireService {
 
   firebaseApplication;
   firestore: firebase.firestore.Firestore;
+
   auth: firebase.auth.Auth;
 
   constructor() {
-    this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
+    this.firebaseApplication = firebase.initializeApp(config.firebaseconfig);
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
+    this.firestore.useEmulator("localhost", 8080);
   }
 
   async createGotchi(){
