@@ -9,6 +9,7 @@ import {gotchi} from "../../entities/gotchi";
 })
 export class HomeComponent implements OnInit {
   gotchiData: any;
+  itemData: any;
 
 
   constructor(public fireService: FireService) {
@@ -25,4 +26,12 @@ export class HomeComponent implements OnInit {
     await this.fireService.signOut();
   }
 
+  async itemsOverview() {
+    this.itemData = await this.fireService.getAllUsersItems();
+
+  }
+
+  async createItem() {
+    await this.fireService.createItem();
+  }
 }

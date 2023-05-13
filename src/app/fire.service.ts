@@ -5,6 +5,7 @@ import 'firebase/compat/auth';
 
 import * as config from '../../firebaseconfig.js'
 import {gotchi} from "../entities/gotchi";
+import {item} from "../entities/item";
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +22,7 @@ export class FireService {
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
     this.firestore.useEmulator("localhost", 8080);
+    this.auth.useEmulator("http://localhost:9099");
   }
 
   async createGotchi(){
@@ -55,5 +57,55 @@ export class FireService {
 
   async signOut() {
     await this.auth.signOut();
+  }
+
+  async createItem(){
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw new Error('No user is currently logged in');
+    }
+    const itemDTO: item = {
+      user: user.uid,
+      itemName: "Black Sword",
+      itemType: "weapon",
+      itemImg: "URL of img",
+      armor: 0,
+      additionalSTR: 30,
+      additionalDEX: 10,
+      additionalSTM: 20,
+    }
+    await this.firestore.collection('item').add(itemDTO);
+  }
+
+  async getAllUsersItems(): Promise<item>{
+    var itemDTO = new item()
+
+    await this.firestore.collection("item").where("user", "==", firebase.auth().currentUser?.uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if(doc.exists){
+            console.log(doc.data())
+            itemDTO = {
+              itemName: doc.data()['itemName'],
+              itemType:doc.data()['itemType'],
+              itemImg:doc.data()['itemImg'],
+              armor:doc.data()['armor'],
+              additionalSTR:doc.data()['additionalSTR'],
+              additionalDEX:doc.data()['additionalDEX'],
+              additionalSTM:doc.data()['additionalSTM'],
+            }
+            return itemDTO;
+
+          }
+          else {console.log("You have no item");
+            return itemDTO;
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    return itemDTO;
   }
 }
