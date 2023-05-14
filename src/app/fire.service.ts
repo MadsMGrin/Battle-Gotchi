@@ -4,13 +4,12 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 
 import * as config from '../../firebaseconfig.js'
-import {gotchi} from "../entities/gotchi";
+import { gotchi } from "../entities/gotchi";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FireService {
-
   firebaseApplication;
   firestore: firebase.firestore.Firestore;
   auth: firebase.auth.Auth;
@@ -23,42 +22,22 @@ export class FireService {
     this.auth.onAuthStateChanged((user) => {
       if (user) {
         // mark user as online on sign in
-        this.firestore.collection('users').doc(user.uid).update({status: 'online'});
+        this.firestore.collection('users').doc(user.uid).update({ status: 'online' });
       } else {
-       // mark user aas offline on signout, not sure if this will bug out if user disconnects or loses connection to Wi-Fi?
+        // mark user as offline on sign out
         if (this.auth.currentUser) {
-          this.firestore.collection('users').doc(this.auth.currentUser.uid).update({status: 'offline'});
+          this.firestore.collection('users').doc(this.auth.currentUser.uid).update({ status: 'offline' });
         }
       }
     });
   }
 
-  async createGotchi(){
-    const user = firebase.auth().currentUser;
-    if (!user) {
-      throw new Error('No user is currently logged in');
-    }
-    const gotchiDTO: gotchi = {
-      user: user.uid,
-      hunger: 50,
-      sleep: 50,
-      cleanliness: 50,
-      health: 50,
-      strength: 0,
-      dexterity: 0,
-      stamina: 0,
-    }
-    await this.firestore.collection('gotchi').add(gotchiDTO);
-  }
-
-  async getGotchi(){
-    const snapshot = await this.firestore.collection('gotchi').where('uid', '==', this.auth.currentUser?.uid).get();
+  async getGotchi() {
+    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
     return snapshot.docs.map(doc => doc.data());
   }
 
-
-
-  async register(email: string, password: string, username: string) {
+  async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
     const db = firebase.firestore();
 
     // Check if the username already exists in the collection
@@ -70,25 +49,39 @@ export class FireService {
 
     const credential = await this.auth.createUserWithEmailAndPassword(email, password);
     if (credential.user) {
-      const userDocRef = db.collection('users').doc(credential.user.uid);
+      const userId = credential.user.uid;
 
-      // Create user document
-      await userDocRef.set({
+      // Create user document with the user ID
+      await db.collection('users').doc(userId).set({
         username: username,
         email: email,
         status: 'online',
       });
 
-      // Create a separate document with the username as the ID
-      await db.collection('usernames').doc(username).set({
-        uid: credential.user.uid
+      // Create a new document with the user ID as the ID
+      await db.collection('gotchi').doc(userId).set({
+        user: userId,
+        hunger: 50,
+        sleep: 50,
+        cleanliness: 50,
+        health: 50,
+        strength: 0,
+        dexterity: 0,
+        stamina: 0,
       });
+
+      // Create a new document with the username as the ID
+      await db.collection('usernames').doc(username).set({
+        uid: userId
+      });
+
+      return credential; // Return the credential object
+    } else {
+      throw new Error('Failed to create user');
     }
   }
 
-
-
-  async signIn(email: string, password: string){
+  async signIn(email: string, password: string) {
     await this.auth.signInWithEmailAndPassword(email, password);
   }
 
@@ -96,10 +89,8 @@ export class FireService {
     await this.auth.signOut();
   }
 
-  async getOnlineUsers(){
-    // get a snapshot of all online users
+  async getOnlineUsers() {
     const snapshot = await this.firestore.collection('users').where('status', '==', 'online').get();
-    // returns them as array of users.
     return snapshot.docs.map(doc => doc.data());
   }
 }

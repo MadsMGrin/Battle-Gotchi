@@ -18,9 +18,15 @@ export class HomeComponent implements OnInit {
     this.gotchiData = await this.fireService.getGotchi();
   }
 
-  async getGotchi(){
-    this.gotchiData = await this.fireService.getGotchi();
+  async getGotchi() {
+    try {
+      this.gotchiData = await this.fireService.getGotchi();
+
+    } catch (error) {
+      console.error('Error retrieving gotchi:', error);
+    }
   }
+
 
   async signOut() {
     await this.fireService.signOut();
