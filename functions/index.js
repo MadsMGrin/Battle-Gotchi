@@ -1,7 +1,16 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+const app = require('express')();
+const cors = require('cors');
 
+admin.initializeApp({
+  projectId: 'battlegotchi-63c2e',
+  databaseURL: 'http://localhost:8080',
+});
+
+app.use(cors());
+
+// used to delete any duplicate username document that maybe created
 exports.enforceUniqueUsername = functions.firestore
   .document('usernames/{username}')
   .onCreate(async (snap, context) => {
@@ -21,3 +30,23 @@ exports.enforceUniqueUsername = functions.firestore
       throw new functions.https.HttpsError('already-exists', 'This username already exists');
     }
   });
+
+// Get all online users
+app.get('/online-users', async (req, res) => {
+  try {
+    const snapshot = await admin.firestore().collection('users').where('status', '==', 'online').get();
+    const onlineUsers = snapshot.docs.map(doc => doc.data());
+    res.json(onlineUsers);
+  } catch (error) {
+    console.error('Error retrieving online users:', error);
+    res.status(500).json({ error: 'Failed to retrieve online users' });
+  }
+});
+
+// Start the server
+const port = 5000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+exports.api = functions.https.onRequest(app);

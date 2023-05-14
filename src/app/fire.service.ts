@@ -89,8 +89,4 @@ export class FireService {
     await this.auth.signOut();
   }
 
-  async getOnlineUsers() {
-    const snapshot = await this.firestore.collection('users').where('status', '==', 'online').get();
-    return snapshot.docs.map(doc => doc.data());
-  }
 }
