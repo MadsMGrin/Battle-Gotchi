@@ -36,12 +36,14 @@ app.get('/online-users', async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection('users').where('status', '==', 'online').get();
     const onlineUsers = snapshot.docs.map(doc => doc.data());
+    console.log('Online Users:', onlineUsers);
     res.json(onlineUsers);
   } catch (error) {
     console.error('Error retrieving online users:', error);
     res.status(500).json({ error: 'Failed to retrieve online users' });
   }
 });
+
 
 // Start the server
 const port = 5000;
