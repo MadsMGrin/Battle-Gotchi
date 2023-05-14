@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import {FormsModule} from "@angular/forms";
 import { HomeComponent } from './home/home.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { HomeComponent } from './home/home.component';
   ],
     imports: [
         BrowserModule,
-        FormsModule
+        FormsModule,
+        BrowserAnimationsModule,
+      MatSnackBarModule
     ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,8 @@
 <p>home page works!</p>
 <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 
-<p>{{gotchiData}}</p>
+<p>{{gotchiData | json}}</p>
+
+<div *ngFor="let gotchi of gotchiData">
+  <p>{{gotchi.hunger}}</p>
+</div>
