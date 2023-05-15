@@ -110,21 +110,45 @@ export class FireService {
 
   async getQuest(){
 
-    var questDTO = new quest();
+    const mockQuests = [
+      {
+        name: "Nap time!",
+        description: "Sleep 5 times within a week",
+        progress: 0,
+        duration: 604800,
+        completion: false,
+        reward: "something",
+      },
+      {
+        name: "Feeding time!",
+        description: "Feed 5 times within a week",
+        progress: 0,
+        duration: 604800,
+        completion: false,
+        reward: "something",
+      },
+      {
+        name: "Shower time!",
+        description: "Shower 5 times within a week",
+        progress: 0,
+        duration: 604800,
+        completion: false,
+        reward: "something",
+      },
+    ]
 
     const randomQuestNumber = Math.floor(Math.random() * mockQuests.length)
 
-    await this.firestore.collection("quests").where("user", "==", firebase.auth().currentUser?.uid)
-      .get()
-      .then(snapshot => {
+    const snapshot = await this.firestore.collection("quests").where("user", "==", firebase.auth().currentUser?.uid)
+      .get();
+
         if (snapshot.empty) {
           const quest = mockQuests[randomQuestNumber];
-          this.firestore.collection("quests").doc().set(quest)
+          await this.firestore.collection("quests").doc().set(quest)
+          console.log(quest);
           return quest;
         } else {
           return snapshot.docs[0].data();
         }
-      });
-    return quest;
+      }
   }
-}

@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
    this.getGotchi();
+   this.getQuest();
   }
 
   async getGotchi() {
@@ -38,8 +39,7 @@ export class HomeComponent implements OnInit {
       this.quest = await this.fireService.getQuest();
 
     } catch (error) {
-      console.error('Error retrieving gotchi:', error);
+      console.error('Error retrieving quest:', error);
     }
   }
-
 }

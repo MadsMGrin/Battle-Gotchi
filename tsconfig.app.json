@@ -8,7 +8,6 @@
   "files": [
     "src/main.ts",
     "src/polyfills.ts",
-    "src/entities/mockQuests.ts"
   ],
   "include": [
     "src/**/*.d.ts"
