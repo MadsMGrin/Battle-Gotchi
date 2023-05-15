@@ -10,7 +10,7 @@ admin.initializeApp({
 });
 
 app.use(cors());
-
+exports.api = functions.https.onRequest(app);
 // used to delete any duplicate username document that maybe created
 exports.enforceUniqueUsername = functions.firestore
   .document('usernames/{username}')
@@ -33,11 +33,11 @@ exports.enforceUniqueUsername = functions.firestore
   });
 
 // Get all online users
-app.get('/online-users', async (req, res) => {
+app.get('/onlineusers', async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection('users').where('status', '==', 'online').get();
     const onlineUsers = snapshot.docs.map(doc => doc.data());
-    console.log('Online Users:', onlineUsers);
+    functions.logger.log(onlineUsers);
     res.json(onlineUsers);
   } catch (error) {
     console.error('Error retrieving online users:', error);
@@ -46,11 +46,4 @@ app.get('/online-users', async (req, res) => {
 });
 
 
-// Start the server
-const port = 5000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
-exports.api = functions.https.onRequest(app);
 
