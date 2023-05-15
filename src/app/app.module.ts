@@ -9,11 +9,13 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { GotchiMaintainanceComponent } from './gotchi-maintainance/gotchi-maintainance.component';
 import { TestComponent } from './test/test.component';
 import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
+import {appRoutingModule} from "./app.router";
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+
     HomeComponent,
     GotchiMaintainanceComponent,
     TestComponent,
@@ -21,6 +23,7 @@ import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
   ],
     imports: [
         BrowserModule,
+      appRoutingModule,
         FormsModule,
         BrowserAnimationsModule,
       MatSnackBarModule
