@@ -14,6 +14,7 @@ export class FireService {
   firestore: firebase.firestore.Firestore;
   auth: firebase.auth.Auth;
   baseurl: string = "http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/";
+
   constructor() {
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
     this.firestore = firebase.firestore();
@@ -89,6 +90,51 @@ export class FireService {
 
   async signOut() {
     await this.auth.signOut();
+  }
+
+  async getOnlineUsers() {
+    try {
+      const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
+      const onlineUsers = response.data.filter(user => user.uid !== this.auth.currentUser?.uid)
+        .map(user => ({ username: user.username, uid: user.uid }));
+      return onlineUsers;
+    } catch (error) {
+      console.error('Error retrieving online users:', error);
+      throw new Error('Failed to retrieve online users');
+    }
+  }
+
+
+  // method used for sending battle request to another user.
+  async sendBattleRequest(receiverId: string): Promise<void> {
+    console.log('Current user:', this.auth.currentUser, 'UID:', this.auth.currentUser?.uid, 'Receiver ID:', receiverId);
+
+    const senderId = this.auth.currentUser?.uid;
+
+    if (!receiverId || !senderId) {
+      throw new Error('User IDs not provided');
+    }
+    const senderReferfance = this.firestore.collection('users').doc(senderId);
+    const senderDoc = await senderReferfance.get();
+    const cooldownTimestamp = senderDoc.data()?.['cooldownTimestamp'] || 0;
+    const currentTimestamp = firebase.firestore.Timestamp.now().toMillis();
+
+    if (currentTimestamp < cooldownTimestamp) {
+      throw new Error('Stop Spamming people');
+    }
+
+    const battleRequest = {
+      senderId: senderId,
+      receiverId: receiverId,
+      status: 'pending'
+    };
+
+    await this.firestore.collection('battleRequests').add(battleRequest);
+
+    // cooldown is set to 1min for now,
+    const cooldownPeriod = 60000;
+    const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
+    await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
 }

@@ -36,7 +36,11 @@ exports.enforceUniqueUsername = functions.firestore
 app.get('/onlineusers', async (req, res) => {
   try {
     const snapshot = await admin.firestore().collection('users').where('status', '==', 'online').get();
-    const onlineUsers = snapshot.docs.map(doc => doc.data());
+    const onlineUsers = snapshot.docs.map(doc => {
+      const data = doc.data();
+      // need to return the id as we need it to send battle request.
+      return { username: data.username, uid: doc.id }
+    });
     functions.logger.log(onlineUsers);
     res.json(onlineUsers);
   } catch (error) {
@@ -46,3 +50,19 @@ app.get('/onlineusers', async (req, res) => {
 });
 
 
+// method used for sending battleNotifcation to another user
+exports.sendBattleNotification = functions.firestore
+  .document('battleRequests/{requestId}')
+  .onCreate(async (snap, context) => {
+    const battleRequest = snap.data();
+    // creating
+    await admin.firestore().collection('notifications').add({
+      receiverId: battleRequest.receiverId,
+      senderId: battleRequest.senderId,
+      type: 'battleRequest',
+      status: 'unread',
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    console.log('Notification sent successfully');
+  });
