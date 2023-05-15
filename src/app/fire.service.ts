@@ -34,9 +34,37 @@ export class FireService {
     });
   }
 
-  async getGotchi() {
-    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
-    return snapshot.docs.map(doc => doc.data());
+  async getGotchi(): Promise<gotchi>{
+
+    var gotchiDTO = new gotchi()
+
+    await this.firestore.collection("gotchi").where("user", "==", firebase.auth().currentUser?.uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if(doc.exists){
+            console.log(doc.data())
+            gotchiDTO = {
+              hunger: doc.data()['hunger'],
+              sleep: doc.data()['sleep'],
+              cleanliness: doc.data()['cleanliness'],
+              health: doc.data()['health'],
+              strength: doc.data()['strength'],
+              dexterity: doc.data()['dexterity'],
+              stamina: doc.data()['stamina'],
+            }
+            return gotchiDTO;
+
+          }
+          else {console.log("Your gotchi does not exist");
+            return gotchiDTO;
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    return gotchiDTO;
   }
 
   async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {

@@ -3,14 +3,14 @@
 
 <div class="gotch_display">
   <p class="title">Your gotchi:</p>
-  <div *ngFor="let gotchi of gotchiData">
-    <p class="info">Hunger: {{ gotchi.hunger }}</p>
-    <p class="info">Sleep: {{ gotchi.sleep }}</p>
-    <p class="info">Cleanliness: {{ gotchi.cleanliness }}</p>
-    <p class="info">Health: {{ gotchi.health }}</p>
-    <p class="info">Strength: {{ gotchi.strength }}</p>
-    <p class="info">Dexterity: {{ gotchi.dexterity }}</p>
-    <p class="info">Stamina: {{ gotchi.stamina }}</p>
+  <div *ngIf="gotchiData">
+    <p class="info">Hunger: {{ gotchiData.hunger }}</p>
+    <p class="info">Sleep: {{ gotchiData.sleep }}</p>
+    <p class="info">Cleanliness: {{ gotchiData.cleanliness }}</p>
+    <p class="info">Health: {{ gotchiData.health }}</p>
+    <p class="info">Strength: {{ gotchiData.strength }}</p>
+    <p class="info">Dexterity: {{ gotchiData.dexterity }}</p>
+    <p class="info">Stamina: {{ gotchiData.stamina }}</p>
   </div>
 </div>
 

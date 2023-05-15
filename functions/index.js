@@ -1,8 +1,7 @@
-
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const app = require('express')();
-const cors = require('cors');
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const app = require("express")();
+const cors = require("cors");
 
 admin.initializeApp({
   projectId: 'battlegotchi-63c2e',
@@ -44,6 +43,21 @@ app.get('/onlineusers', async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve online users' });
   }
 });
+
+exports.onUserRegister = functions.auth
+  .user()
+  .onCreate((user, context) => {
+    admin.firestore().collection("gotchi").add({
+      user: user.uid,
+      hunger: 50,
+      sleep: 50,
+      cleanliness: 50,
+      health: 50,
+      strength: 0,
+      dexterity: 0,
+      stamina: 0,
+    })
+  })
 
 
 

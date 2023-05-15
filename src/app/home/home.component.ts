@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.gotchiData = await this.fireService.getGotchi();
+   this.getGotchi();
   }
 
   async getGotchi() {
