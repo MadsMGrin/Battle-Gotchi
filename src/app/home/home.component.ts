@@ -10,15 +10,16 @@ import {Router} from "@angular/router";
 })
 export class HomeComponent implements OnInit {
   gotchiData: any;
+  onlineUsers: any[] = [];
 
 
 
 
-  constructor(public fireService: FireService, private router: Router) {
-  }
+  constructor(public fireService: FireService, private router: Router) {}
 
   async ngOnInit() {
     this.gotchiData = await this.fireService.getGotchi();
+    await this.getOnlineUsers();
   }
 
   async getGotchi() {
@@ -32,6 +33,23 @@ export class HomeComponent implements OnInit {
 
   async signOut() {
     await this.fireService.signOut();
+  }
+  async getOnlineUsers() {
+    try {
+      this.onlineUsers = await this.fireService.getOnlineUsers();
+      console.log(this.onlineUsers)
+    } catch (error) {
+      console.error('Error retrieving online users:', error);
+    }
+  }
+
+  async requestBattle(userId: string) {
+    try {
+      await this.fireService.sendBattleRequest(userId);
+      alert('Battle request sent!');
+    } catch (error) {
+      console.error('Error sending battle request:', error);
+    }
   }
 
   async itemsOverview() {
