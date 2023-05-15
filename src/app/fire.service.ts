@@ -91,7 +91,7 @@ export class FireService {
   async signOut() {
     await this.auth.signOut();
   }
-
+// method used to get online players, with centralapi call and displaying them front end
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
@@ -136,5 +136,19 @@ export class FireService {
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
+
+  // method used getting battle notifcation
+  async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error retrieving battle notifications:', error);
+      throw new Error('Failed to retrieve battle notifications');
+    }
+  }
+
+
+
 
 }
