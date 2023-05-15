@@ -7,6 +7,8 @@ import {FormsModule} from "@angular/forms";
 import { HomeComponent } from './home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MatCardModule} from "@angular/material/card";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
         BrowserModule,
         FormsModule,
         BrowserAnimationsModule,
-      MatSnackBarModule
+        MatSnackBarModule,
+        MatCardModule,
+        MatButtonModule
     ],
   providers: [],
   bootstrap: [AppComponent]

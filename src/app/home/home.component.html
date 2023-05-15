@@ -1,25 +1,26 @@
-<button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
+<button mat-raised-button (click)="signOut()">SIGN OUT</button>
+<br>
+<ng-container class="gotchi-display">
+<mat-card-title class="title">Gotchi: 'nickname'</mat-card-title>
+<mat-card-content *ngIf="gotchiData">
+  <p>Hunger: {{ gotchiData.hunger }}</p>
+  <p>Sleep: {{ gotchiData.sleep }}</p>
+  <p>Cleanliness: {{ gotchiData.cleanliness }}</p>
+  <p>Health: {{ gotchiData.health }}</p>
+  <p>Strength: {{ gotchiData.strength }}</p>
+  <p>Dexterity: {{ gotchiData.dexterity }}</p>
+  <p>Stamina: {{ gotchiData.stamina }}</p>
+</mat-card-content>
+</ng-container>
 
-<div class="gotch_display">
-  <p class="title">Your gotchi:</p>
-  <div *ngIf="gotchiData">
-    <p class="info">Hunger: {{ gotchiData.hunger }}</p>
-    <p class="info">Sleep: {{ gotchiData.sleep }}</p>
-    <p class="info">Cleanliness: {{ gotchiData.cleanliness }}</p>
-    <p class="info">Health: {{ gotchiData.health }}</p>
-    <p class="info">Strength: {{ gotchiData.strength }}</p>
-    <p class="info">Dexterity: {{ gotchiData.dexterity }}</p>
-    <p class="info">Stamina: {{ gotchiData.stamina }}</p>
-  </div>
-
-  <p class="title">Your current quest:</p>
-  <div *ngIf="quest">
-    <p class ="info">name: {{quest.name}}</p>
-    <p class ="info">description: {{quest.description}}</p>
-    <p class ="info">progress: {{quest.progress}}</p>
-    <p class ="info">duration: {{quest.duration}}</p>
-    <p class ="info">completion: {{quest.completion}}</p>
-    <p class ="info">reward: {{quest.reward}}</p>
-  </div>
-</div>
-
+<ng-container class="quest-display">
+<mat-card-header>Your current quest:</mat-card-header>
+<mat-card-content *ngIf="quest">
+  <p>name: {{quest.name}}</p>
+  <p>description: {{quest.description}}</p>
+  <p>progress: {{quest.progress}}</p>
+  <p>duration: {{quest.duration}}</p>
+  <p>completion: {{quest.completion}}</p>
+  <p>reward: {{quest.reward}}</p>
+</mat-card-content>
+</ng-container>
