@@ -11,7 +11,7 @@ export class HomeComponent implements OnInit {
   gotchiData: any;
 
 
-  constructor(public fireService: FireService) {
+  constructor(private fireService: FireService) {
   }
 
   async ngOnInit() {

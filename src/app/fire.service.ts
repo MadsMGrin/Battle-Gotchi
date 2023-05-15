@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
-
+import axios from 'axios'
 import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
 
@@ -13,7 +13,7 @@ export class FireService {
   firebaseApplication;
   firestore: firebase.firestore.Firestore;
   auth: firebase.auth.Auth;
-
+  baseurl: string = "http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/";
   constructor() {
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
     this.firestore = firebase.firestore();
