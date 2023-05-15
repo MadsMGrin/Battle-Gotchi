@@ -19,8 +19,8 @@ export class FireService {
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
-    this.firestore.useEmulator("localhost",8080)
-    this.auth.useEmulator("http://localhost:9099")
+    this.firestore.useEmulator("localhost",8080);
+    this.auth.useEmulator("http://localhost:9099");
     // Handle auth state changes
     this.auth.onAuthStateChanged((user) => {
       if (user) {
@@ -59,18 +59,6 @@ export class FireService {
         username: username,
         email: email,
         status: 'online',
-      });
-
-      // Create a new document with the user ID as the ID
-      await db.collection('gotchi').doc(userId).set({
-        user: userId,
-        hunger: 50,
-        sleep: 50,
-        cleanliness: 50,
-        health: 50,
-        strength: 0,
-        dexterity: 0,
-        stamina: 0,
       });
 
       // Create a new document with the username as the ID
