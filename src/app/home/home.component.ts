@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
 import {gotchi} from "../../entities/gotchi";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -11,7 +12,9 @@ export class HomeComponent implements OnInit {
   gotchiData: any;
 
 
-  constructor(private fireService: FireService) {
+
+
+  constructor(public fireService: FireService, private router: Router) {
   }
 
   async ngOnInit() {
@@ -31,4 +34,7 @@ export class HomeComponent implements OnInit {
     await this.fireService.signOut();
   }
 
+  async itemsOverview() {
+await this.router.navigateByUrl("itemview");
+  }
 }
