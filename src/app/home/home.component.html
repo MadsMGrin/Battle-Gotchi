@@ -14,3 +14,11 @@
   </div>
 </div>
 
+<div class="online_users">
+  <p class="title">Online Users:</p>
+  <ul>
+    <li *ngFor="let user of onlineUsers" (click)="requestBattle(user.uid)">{{ user.username }}</li>
+  </ul>
+</div>
+
+
