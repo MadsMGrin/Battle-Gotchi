@@ -7,7 +7,7 @@ firebaseconfig.js
 /tmp
 /out-tsc
 /bazel-out
-
+/dist
 # Node
 /node_modules
 npm-debug.log
@@ -54,3 +54,6 @@ Thumbs.db
 /database-debug.log
 /database.rules.json
 /.firebaserc
+
+/node_modules/
+
