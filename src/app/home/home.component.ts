@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   async ngOnInit() {
    this.getGotchi();
    this.getQuest();
+   this.startQuestCountDown();
   }
 
   async getGotchi() {
@@ -37,9 +38,19 @@ export class HomeComponent implements OnInit {
   async getQuest() {
     try {
       this.quest = await this.fireService.getQuest();
-
     } catch (error) {
       console.error('Error retrieving quest:', error);
     }
+  }
+
+  private startQuestCountDown() {
+    setInterval(() => {
+      if(this.quest && this.quest.duration) {
+        this.quest.duration -= 1;
+        if(this.quest.duration <= 0) {
+          this.quest.completion = true;
+        }
+      }
+    }, 1000);
   }
 }

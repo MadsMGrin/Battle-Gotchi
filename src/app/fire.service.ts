@@ -35,6 +35,7 @@ export class FireService {
     });
   }
 
+
   async getGotchi(): Promise<gotchi>{
 
     var gotchiDTO = new gotchi()
@@ -118,6 +119,7 @@ export class FireService {
         duration: 604800,
         completion: false,
         reward: "something",
+        startDateTime: new Date(),
       },
       {
         name: "Feeding time!",
@@ -126,6 +128,7 @@ export class FireService {
         duration: 604800,
         completion: false,
         reward: "something",
+        startDateTime: new Date(),
       },
       {
         name: "Shower time!",
@@ -134,6 +137,7 @@ export class FireService {
         duration: 604800,
         completion: false,
         reward: "something",
+        startDateTime: new Date(),
       },
     ]
 
@@ -148,7 +152,19 @@ export class FireService {
           console.log(quest);
           return quest;
         } else {
-          return snapshot.docs[0].data();
+          const questData = snapshot.docs[0].data();
+          const quest: quest = {
+            name: questData['name'],
+            description: questData['description'],
+            progress: questData['progress'],
+            duration: questData['duration'],
+            completion: questData['completion'],
+            reward: questData['reward'],
+          };
+          return quest;
         }
       }
+
+
+
   }

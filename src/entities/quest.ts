@@ -5,4 +5,5 @@ export class quest {
   duration?: number;
   completion?: boolean;
   reward?: any;
+  startDateTime?: Date;
 }
