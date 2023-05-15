@@ -1,8 +1,11 @@
-
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const app = require('express')();
 const cors = require('cors');
+const {onSchedule} = require("firebase-functions/v2/scheduler");
+const {every} = require("rxjs");
+const {PromisePool} = require("promise-pool-executor")
+
 
 admin.initializeApp({
   projectId: 'battlegotchi-63c2e',
@@ -45,12 +48,48 @@ app.get('/online-users', async (req, res) => {
   }
 });
 
+app.post("/healthIncrease", async (req, res) => {
+  const { gotchiID } = req.body;
+  logger.log(gotchiID);
+  await admin.firestore().collection("gotchi")
+    .where("user", "==", gotchiID)
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const docRef = admin.firestore().collection("gotchi").doc(doc.id);
+        docRef.update({ health: admin.firestore.FieldValue.increment(+15) });
+        logger.log(gotchiID);
+      });
+    });
 
-// Start the server
-const port = 5000;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  res.status(200).send("Health increased successfully");
 });
+
+exports.statemodification = onSchedule("every day at 19:00", async (event) => {
+  const gotchis = await getAllGotchis();
+
+  const promisePool = new PromisePool(
+    () =>
+      adjustGotchiValues(gotchis), 10
+  );
+  logger.log("gotchi cleanup finished");
+  await promisePool.start();
+})
+
+exports.onUserRegister = functions.auth
+  .user()
+  .onCreate((user, context) => {
+    admin.firestore().collection("gotchi").add({
+      user: user.uid,
+      hunger: 50,
+      sleep: 50,
+      cleanliness: 50,
+      health: 50,
+      strength: 0,
+      dexterity: 0,
+      stamina: 0,
+    })
+  })
 
 exports.api = functions.https.onRequest(app);
 
