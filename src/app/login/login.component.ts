@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../fire.service";
+import { FireService } from "../fire.service";
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -9,18 +11,63 @@ import {FireService} from "../fire.service";
 export class LoginComponent implements OnInit {
   email: string = "";
   password: string = "";
+  username: string = "";
+  isSignUp: boolean = false;
 
-  constructor(public fireService: FireService) { }
+  constructor(
+    public fireService: FireService,
+    private _snackBar: MatSnackBar,
+    private router: Router
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  async register(email: string, password: string, username: string) {
+    try {
+      await this.fireService.register(email, password, username);
+      const user = this.fireService.auth.currentUser;
+      if (user) {
+        this.router.navigate(['/dashboard']);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        this._snackBar.open('Error registering user: ' + error.message, 'Close', { duration: 2000 });
+      } else {
+        console.error('Error registering user:', error);
+      }
+    }
   }
 
-  async register(email: string, password: string){
-    await this.fireService.register(email, password).then(res => this.fireService.createGotchi())
+  async signIn(email: string, password: string) {
+    if (email.trim() === '' || password.trim() === '') {
+      this._snackBar.open('Please enter your email and password', 'Close', { duration: 2000 });
+      return;
+    }
+
+    try {
+      await this.fireService.signIn(email, password);
+      const user = this.fireService.auth.currentUser;
+      if (user) {
+        this.router.navigate(['/dashboard']); // Replace '/dashboard' with the actual route of the screen
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        this._snackBar.open('Error signing in: ' + error.message, 'Close', { duration: 2000 });
+      } else {
+        console.error('Error signing in:', error);
+      }
+    }
   }
 
-  async signIn(email: string, password: string){
-    await this.fireService.signIn(email, password);
+  toggleSignUp() {
+    if (this.isSignUp) {
+      // Switch to sign-in mode
+      this.isSignUp = false;
+      this.username = "";
+    }
+    // Switch to sign-up mode
+    else {
+      this.isSignUp = true;
+    }
   }
-
 }
