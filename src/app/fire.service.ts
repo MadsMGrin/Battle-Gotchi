@@ -69,6 +69,33 @@ export class FireService {
     return gotchiDTO;
   }
 
+  async getQuest(category: string): Promise<quest[]> {
+    const quests: quest[] = [];
+
+    const querySnapshot = await this.firestore.collection("quests")
+      .where("category", "==", category)
+      .get();
+    querySnapshot.forEach((doc) => {
+      if (doc.exists) {
+        const questDTO: quest = {
+          name: doc.data()['name'],
+          description: doc.data()['description'],
+          progress: doc.data()['progress'],
+          duration: doc.data()['duration'],
+          completion: doc.data()['completion'],
+          category: doc.data()['category'],
+          reward: doc.data()['reward']
+        };
+        quests.push(questDTO);
+      } else {
+        console.log("Your quest does not exist");
+      }
+    });
+    console.log(quests)
+    return quests;
+  }
+
+
   async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
     const db = firebase.firestore();
 
@@ -109,62 +136,6 @@ export class FireService {
     await this.auth.signOut();
   }
 
-  async getQuest(){
-
-    const mockQuests = [
-      {
-        name: "Nap time!",
-        description: "Sleep 5 times within a week",
-        progress: 0,
-        duration: 604800,
-        completion: false,
-        reward: "something",
-        startDateTime: new Date(),
-      },
-      {
-        name: "Feeding time!",
-        description: "Feed 5 times within a week",
-        progress: 0,
-        duration: 604800,
-        completion: false,
-        reward: "something",
-        startDateTime: new Date(),
-      },
-      {
-        name: "Shower time!",
-        description: "Shower 5 times within a week",
-        progress: 0,
-        duration: 604800,
-        completion: false,
-        reward: "something",
-        startDateTime: new Date(),
-      },
-    ]
-
-    const randomQuestNumber = Math.floor(Math.random() * mockQuests.length)
-
-    const snapshot = await this.firestore.collection("quests").where("user", "==", firebase.auth().currentUser?.uid)
-      .get();
-
-        if (snapshot.empty) {
-          const quest = mockQuests[randomQuestNumber];
-          await this.firestore.collection("quests").doc().set(quest)
-          console.log(quest);
-          return quest;
-        } else {
-          const questData = snapshot.docs[0].data();
-          const quest: quest = {
-            name: questData['name'],
-            description: questData['description'],
-            progress: questData['progress'],
-            duration: questData['duration'],
-            completion: questData['completion'],
-            reward: questData['reward'],
-          };
-          return quest;
-        }
-      }
 
 
-
-  }
+}

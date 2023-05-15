@@ -10,22 +10,25 @@ import {quest} from "../../entities/quest";
 })
 export class HomeComponent implements OnInit {
   gotchiData: any;
-  quest: any;
+  dailyQuests: any;
+  weeklyQuests: any;
+  monthlyQuests: any;
 
 
   constructor(public fireService: FireService) {
   }
 
   async ngOnInit() {
-   this.getGotchi();
-   this.getQuest();
-   this.startQuestCountDown();
+   await this.getGotchi();
+   await this.getDailyQuest();
+   await this.getWeeklyQuest();
+   await this.getMonthlyQuest();
   }
+
 
   async getGotchi() {
     try {
       this.gotchiData = await this.fireService.getGotchi();
-
     } catch (error) {
       console.error('Error retrieving gotchi:', error);
     }
@@ -35,22 +38,28 @@ export class HomeComponent implements OnInit {
     await this.fireService.signOut();
   }
 
-  async getQuest() {
+  async getDailyQuest() {
     try {
-      this.quest = await this.fireService.getQuest();
+      this.dailyQuests = await this.fireService.getQuest("daily");
     } catch (error) {
-      console.error('Error retrieving quest:', error);
+      console.error('Error retrieving daily quest:', error);
     }
   }
 
-  private startQuestCountDown() {
-    setInterval(() => {
-      if(this.quest && this.quest.duration) {
-        this.quest.duration -= 1;
-        if(this.quest.duration <= 0) {
-          this.quest.completion = true;
-        }
-      }
-    }, 1000);
+  async getWeeklyQuest() {
+    try {
+      this.weeklyQuests = await this.fireService.getQuest("weekly");
+    } catch (error) {
+      console.error('Error retrieving weekly quest:', error);
+    }
   }
+
+  async getMonthlyQuest() {
+    try {
+      this.monthlyQuests = await this.fireService.getQuest("monthly");
+    } catch (error) {
+      console.error('Error retrieving monthly quest:', error);
+    }
+  }
+
 }

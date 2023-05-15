@@ -14,13 +14,32 @@
 </ng-container>
 
 <ng-container class="quest-display">
-<mat-card-header>Your current quest:</mat-card-header>
-<mat-card-content *ngIf="quest">
-  <p>name: {{quest.name}}</p>
-  <p>description: {{quest.description}}</p>
-  <p>progress: {{quest.progress}}</p>
-  <p>duration: {{quest.duration}}</p>
-  <p>completion: {{quest.completion}}</p>
-  <p>reward: {{quest.reward}}</p>
+<mat-card-header>Your current quests:</mat-card-header>
+<mat-card-content *ngFor="let d of dailyQuests">
+  <p>name: {{d.name}}</p>
+  <p>description: {{d.description}}</p>
+  <p>progress: {{d.progress}}</p>
+  <p>duration: {{d.duration}}</p>
+  <p>completion: {{d.completion}}</p>
+  <p>category: {{d.category}}</p>
+  <p>reward: {{d.reward}}</p>
 </mat-card-content>
+  <mat-card-content *ngFor="let w of weeklyQuests">
+    <p>name: {{w.name}}</p>
+    <p>description: {{w.description}}</p>
+    <p>progress: {{w.progress}}</p>
+    <p>duration: {{w.duration}}</p>
+    <p>completion: {{w.completion}}</p>
+    <p>category: {{w.category}}</p>
+    <p>reward: {{w.reward}}</p>
+  </mat-card-content>
+  <mat-card-content *ngFor="let m of monthlyQuests">
+    <p>name: {{m.name}}</p>
+    <p>description: {{m.description}}</p>
+    <p>progress: {{m.progress}}</p>
+    <p>duration: {{m.duration}}</p>
+    <p>completion: {{m.completion}}</p>
+    <p>category: {{m.category}}</p>
+    <p>reward: {{m.reward}}</p>
+  </mat-card-content>
 </ng-container>
