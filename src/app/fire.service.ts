@@ -5,6 +5,7 @@ import 'firebase/compat/auth';
 
 import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
+import {quest} from "../entities/quest";
 
 @Injectable({
   providedIn: 'root'
@@ -88,18 +89,6 @@ export class FireService {
         status: 'online',
       });
 
-      // Create a new document with the user ID as the ID
-      await db.collection('gotchi').doc(userId).set({
-        user: userId,
-        hunger: 50,
-        sleep: 50,
-        cleanliness: 50,
-        health: 50,
-        strength: 0,
-        dexterity: 0,
-        stamina: 0,
-      });
-
       // Create a new document with the username as the ID
       await db.collection('usernames').doc(username).set({
         uid: userId
@@ -119,4 +108,23 @@ export class FireService {
     await this.auth.signOut();
   }
 
+  async getQuest(){
+
+    var questDTO = new quest();
+
+    const randomQuestNumber = Math.floor(Math.random() * mockQuests.length)
+
+    await this.firestore.collection("quests").where("user", "==", firebase.auth().currentUser?.uid)
+      .get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          const quest = mockQuests[randomQuestNumber];
+          this.firestore.collection("quests").doc().set(quest)
+          return quest;
+        } else {
+          return snapshot.docs[0].data();
+        }
+      });
+    return quest;
+  }
 }
