@@ -10,6 +10,9 @@ import { GotchiMaintainanceComponent } from './gotchi-maintainance/gotchi-mainta
 import { TestComponent } from './test/test.component';
 import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
 import { appRoutingModule } from "./app.router";
+import {AngularFireModule} from "@angular/fire/compat";
+import {AngularFireAuthModule} from "@angular/fire/compat/auth";
+import {firebaseConfig} from "../../firebaseconfig";
 
 @NgModule({
   declarations: [
@@ -21,6 +24,8 @@ import { appRoutingModule } from "./app.router";
     ItemoverviewComponent,
   ],
     imports: [
+      AngularFireModule.initializeApp(firebaseConfig),
+      AngularFireAuthModule,
         BrowserModule,
         appRoutingModule,
         FormsModule,
