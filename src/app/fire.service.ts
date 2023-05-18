@@ -125,4 +125,14 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
+  async sendReq(reqString: string){
+    const reqId = this.auth.currentUser?.uid;
+
+    const response = await axios.post(this.baseurl + reqString, {reqId: reqId});
+
+    if(response.status === 450){
+      throw new Error("You've done you allotted amounts of this action today already")
+    }
+  }
+
 }

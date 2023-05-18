@@ -1,0 +1,30 @@
+.container {
+  display: grid;
+  grid-template-rows: repeat(6, 100px);
+  grid-template-columns: 100px 1fr 2fr 1fr 100px;
+  align-items: baseline;
+  justify-items: baseline;
+  grid-gap: 3em;
+}
+
+.item-1{ // row-str, column-str, row-end, column-end
+  grid-area: 2 / 3 / 3 / 4;
+  justify-self: center;
+  align-self: center;
+}
+
+.item-2{
+  grid-area: 3 / 3 / 4 / 4;
+  justify-self: center;
+  align-self: center;
+}
+.item-3{
+  grid-area: 4 / 3 / 5 / 4;
+  justify-self: center;
+  align-self: center;
+}
+.item-4{
+  grid-area: 5 / 3 / 6 / 4;
+  justify-self: center;
+  align-self: center;
+}

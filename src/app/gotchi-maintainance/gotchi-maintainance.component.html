@@ -1,15 +1,41 @@
-<div>
-  <p>User name here**</p>
-  <br>
-  <p>Health</p>
-  <p>{{gotchiData.health}}</p>
-  <br>
-  <p>Sleep</p>
-  <p>Sleep here**</p>
-  <br>
-  <p>Hunger</p>
-  <p>Hunger here**</p>
-  <br>
-  <p>Cleanliness</p>
-  <p>Cleanliness here**</p>
+<div class="container">
+ <div class="item item-1">
+   <p style="text-align: center">User name here**</p>
+   <br>
+   <p>Health</p>
+   <p>{{gotchiData.health}}</p>
+ </div>
+  <div class="item item-2">
+    <p>Sleep</p>
+    <button (click)="sleep()">Take a nap</button>
+    <ng-container *ngIf="gotchiData.timesSleptToday; else noNaps">
+      <p>Naps left today: {{ gotchiData.timesSleptToday }}</p>
+    </ng-container>
+    <ng-template #noNaps>
+      <p>Naps left today: 2</p>
+    </ng-template>
+  </div>
+  <div class="item item-3">
+    <p>Hunger</p>
+    <button (click)="eat()">Eat some food</button>
+    <ng-container *ngIf="gotchiData.timesEatenToday; else noFood">
+      <p>How many times you can eat today remaining: {{ gotchiData.timesEatenToday }}</p>
+    </ng-container>
+    <ng-template #noFood>
+      <p>How many times you can eat today remaining: 2</p>
+    </ng-template>
+  </div>
+  <div class="item item-4">
+    <p>Cleanliness</p>
+    <button (click)="shower()">Take a shower</button>
+    <ng-container *ngIf="gotchiData.timesShoweredToday; else noShowers">
+      <p>Showers left today: {{ gotchiData.timesShoweredToday }}</p>
+    </ng-container>
+    <ng-template #noShowers>
+      <p>Showers left today: 2</p>
+    </ng-template>
+  </div>
+  <div class="item item-5">
+
+  </div>
 </div>
