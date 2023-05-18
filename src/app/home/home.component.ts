@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
     try {
       this.dailyQuests = await this.fireService.getQuest("daily");
     } catch (error) {
-      console.error('Error retrieving daily quest:', error);
+      console.error('Error retrieving daily quests:', error);
     }
   }
 
@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
     try {
       this.weeklyQuests = await this.fireService.getQuest("weekly");
     } catch (error) {
-      console.error('Error retrieving weekly quest:', error);
+      console.error('Error retrieving weekly quests:', error);
     }
   }
 
@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit {
     try {
       this.monthlyQuests = await this.fireService.getQuest("monthly");
     } catch (error) {
-      console.error('Error retrieving monthly quest:', error);
+      console.error('Error retrieving monthly quests:', error);
     }
   }
 
