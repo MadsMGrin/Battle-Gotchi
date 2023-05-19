@@ -11,13 +11,11 @@ import {Router} from "@angular/router";
 export class GotchiMaintainanceComponent implements OnInit {
 
   gotchiData: any;
-  user: any;
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
     this.gotchiData = this.getGotchi();
-    this.user = this.fireservice.auth.currentUser;
   }
 
   async getGotchi() {
