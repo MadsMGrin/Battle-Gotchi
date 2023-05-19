@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
+import {gotchi} from "../../entities/gotchi";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-home',
@@ -10,14 +12,17 @@ export class HomeComponent implements OnInit {
   gotchiData: any;
   userData: any;
   makeQuest: boolean = false;
+  onlineUsers: any[] = [];
 
 
-  constructor(public fireService: FireService) {
-  }
+
+
+  constructor(public fireService: FireService, private router: Router) {}
 
   async ngOnInit() {
    await this.getGotchi();
    await this.getUserQuests();
+   await this.getOnlineUsers();
   }
 
 
@@ -41,6 +46,14 @@ export class HomeComponent implements OnInit {
   async signOut() {
     await this.fireService.signOut();
   }
+  async getOnlineUsers() {
+    try {
+      this.onlineUsers = await this.fireService.getOnlineUsers();
+      console.log(this.onlineUsers)
+    } catch (error) {
+      console.error('Error retrieving online users:', error);
+    }
+  }
 
   toggleQuestComponent() {
     if (this.makeQuest) {
@@ -52,5 +65,20 @@ export class HomeComponent implements OnInit {
       this.makeQuest = true;
     }
   }
+  async requestBattle(userId: string) {
+    try {
+      await this.fireService.sendBattleRequest(userId);
+      alert('Battle request sent!');
+    } catch (error) {
+      console.error('Error sending battle request:', error);
+    }
+  }
 
+  async itemsOverview() {
+    await this.router.navigateByUrl("itemview");
+  }
+
+  async gotToMaintainance(){
+    await this.router.navigateByUrl("gotchiMain");
+  }
 }

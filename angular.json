@@ -2,6 +2,11 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
+  "schematics": {
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
+  },
   "projects": {
     "Battle-Gotchi": {
       "projectType": "application",
@@ -99,5 +104,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "4a55747c-abaf-4cb0-9b93-95567353e264"
   }
 }
