@@ -53,6 +53,10 @@ export class HomeComponent implements OnInit {
   }
 
   async itemsOverview() {
-await this.router.navigateByUrl("itemview");
+    await this.router.navigateByUrl("itemview");
+  }
+
+  async gotToMaintainance(){
+    await this.router.navigateByUrl("gotchiMain");
   }
 }
