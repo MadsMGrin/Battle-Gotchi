@@ -8,13 +8,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule} from "@angular/material/snack-bar";
 import { GotchiMaintainanceComponent } from './gotchi-maintainance/gotchi-maintainance.component';
 import { TestComponent } from './test/test.component';
-import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
 import { appRoutingModule } from "./app.router";
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {firebaseConfig} from "../../firebaseconfig";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NgOptimizedImage} from "@angular/common";
+import {ItemoverviewComponent} from "./itemoerview/itemoverview.component";
 
 @NgModule({
   declarations: [

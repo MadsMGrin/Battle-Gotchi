@@ -1,6 +1,6 @@
 export class item {
   user?: any;
-  //isUsed?: boolean = false;
+  inUse?: boolean = false;
 
   itemName?: string;
   itemType?: string;

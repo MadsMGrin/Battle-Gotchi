@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
 import {gotchi} from "../../entities/gotchi";
 import {Router} from "@angular/router";
+import {item} from "../../entities/item";
 
 @Component({
   selector: 'app-home',
@@ -11,6 +12,7 @@ import {Router} from "@angular/router";
 export class HomeComponent implements OnInit {
   gotchiData: any;
   onlineUsers: any[] = [];
+  items: any[] = [];
 
 
 
@@ -34,6 +36,7 @@ export class HomeComponent implements OnInit {
   async signOut() {
     await this.fireService.signOut();
   }
+
   async getOnlineUsers() {
     try {
       this.onlineUsers = await this.fireService.getOnlineUsers();
@@ -58,5 +61,14 @@ export class HomeComponent implements OnInit {
 
   async gotToMaintainance(){
     await this.router.navigateByUrl("gotchiMain");
+
   }
+
+  async createItem() {
+    await this.fireService.createItem();
+  }
+
+
+
+
 }

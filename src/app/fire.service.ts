@@ -5,6 +5,7 @@ import 'firebase/compat/auth';
 import axios from 'axios'
 import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
+import {item} from "../entities/item";
 
 @Injectable({
   providedIn: 'root'
@@ -132,14 +133,117 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
-  async sendReq(reqString: string){
+  async sendReq(reqString: string) {
     const reqId = this.auth.currentUser?.uid;
 
     const response = await axios.post(this.baseurl + reqString, {reqId: reqId});
 
-    if(response.status === 500){
+    if (response.status === 500) {
       throw new Error("You've done you allotted amounts of this action today already")
     }
+
+  }
+
+  async getAllItems() {
+    const snapshot = await this.firestore.collection('item').where('user', '==', this.auth.currentUser?.uid).get();
+    return snapshot.docs.map(doc => doc.data());
+  }
+
+  async createItem(){
+    const user = firebase.auth().currentUser;
+    if (!user) {
+      throw new Error('No user is currently logged in');
+    }
+    const itemDTO: item = {
+      user: user.uid,
+      inUse: false,
+      itemName: "Black Sword",
+      itemType: "weapon",
+      itemImg: "URL of img",
+      armor: 0,
+      additionalSTR: 30,
+      additionalDEX: 10,
+      additionalSTM: 20,
+    }
+    await this.firestore.collection('item').add(itemDTO);
+
+    const itemDTO1: item = {
+      user: user.uid,
+      inUse: false,
+      itemName: "Black Spear",
+      itemType: "weapon",
+      itemImg: "URL of img",
+      armor: 0,
+      additionalSTR: 30,
+      additionalDEX: 10,
+      additionalSTM: 20,
+    }
+    await this.firestore.collection('item').add(itemDTO1);
+
+    const itemDTO2: item = {
+      user: user.uid,
+      inUse: false,
+      itemName: "Black helmet1",
+      itemType: "helmet",
+      itemImg: "URL of img",
+      armor: 0,
+      additionalSTR: 30,
+      additionalDEX: 10,
+      additionalSTM: 20,
+    }
+    await this.firestore.collection('item').add(itemDTO2);
+
+    const itemDTO3: item = {
+      user: user.uid,
+      inUse: false,
+      itemName: "Black helmet2",
+      itemType: "helmet",
+      itemImg: "URL of img",
+      armor: 0,
+      additionalSTR: 30,
+      additionalDEX: 10,
+      additionalSTM: 20,
+    }
+    await this.firestore.collection('item').add(itemDTO3);
+
+  }
+
+  async getEquippedItem(type) {
+    const snapshot = await this.firestore.collection('item')
+      .where('user', '==', this.auth.currentUser?.uid)
+      .where("itemType","==", type)
+      .where("inUse", "==", true)
+      .get();
+    return snapshot.docs.map(doc => doc.data());
+
+  }
+  async unequip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "unequipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to unequip item');
+    }
+
+  }
+
+  async equip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "equipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to equip item');
+    }
+
   }
 
 }
+

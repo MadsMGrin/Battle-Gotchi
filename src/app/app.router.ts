@@ -1,9 +1,9 @@
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
 import { HomeComponent } from './home/home.component';
-import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
 import {GotchiMaintainanceComponent} from "./gotchi-maintainance/gotchi-maintainance.component";
 import {AuthGuard} from "./authGuard";
+import {ItemoverviewComponent} from "./itemoerview/itemoverview.component";
 
 const  routes: Routes = [
   {path: "itemview", component: ItemoverviewComponent, canActivate: [AuthGuard]},

@@ -1,0 +1,7 @@
+<div class="items">
+  <p class="title">Your items:</p>
+  <ul>
+    <li *ngFor="let item of items" >{{ item.itemName }}, {{item.itemType}}, {{item.inUse}} <button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></li>
+  </ul>
+</div>
+<br>
