@@ -6,6 +6,8 @@ import 'firebase/compat/auth';
 import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
 import {quest} from "../entities/quest";
+import {userQuest} from "../entities/userQuest";
+import {FormControl} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,7 @@ export class FireService {
   firebaseApplication;
   firestore: firebase.firestore.Firestore;
   auth: firebase.auth.Auth;
+  questList: quest[] | undefined;
 
   constructor() {
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
@@ -26,6 +29,11 @@ export class FireService {
       if (user) {
         // mark user as online on sign in
         this.firestore.collection('users').doc(user.uid).update({ status: 'online' });
+
+        // Check quest expiration for the user
+        this.checkQuestExpiration(user.uid, 'daily');
+        this.checkQuestExpiration(user.uid, 'weekly');
+        this.checkQuestExpiration(user.uid, 'monthly');
       } else {
         // mark user as offline on sign out
         if (this.auth.currentUser) {
@@ -33,6 +41,31 @@ export class FireService {
         }
       }
     });
+
+  }
+
+  async getUserQuests(): Promise<userQuest> {
+    let userQuestDTO = new userQuest();
+
+    try {
+      const querySnapshot = await this.firestore
+        .collection("users")
+        .doc(firebase.auth().currentUser?.uid)
+        .get();
+
+      if (querySnapshot.exists) {
+        const data = querySnapshot.data();
+        if (data) {
+          userQuestDTO.dailyQuest = data["dailyQuest"];
+          userQuestDTO.weeklyQuest = data["weeklyQuest"];
+          userQuestDTO.monthlyQuest = data["monthlyQuest"];
+        }
+      }
+    } catch (error) {
+      console.log("Error getting documents: ", error);
+    }
+
+    return userQuestDTO;
   }
 
   async getGotchi(): Promise<gotchi>{
@@ -97,6 +130,65 @@ export class FireService {
     } catch (error) {
       console.log("Failed to get quests:", error);
       throw new Error("Failed to get quests");
+    }
+  }
+
+  async checkQuestExpiration(userId: string, questType: string) {
+    const db = firebase.firestore();
+
+    try {
+      // Get the user document
+      const userDoc = await db.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        const questField = `${questType}Quest`;
+
+        // Check if the quest is assigned and not completed
+        // @ts-ignore
+        if (userDoc.data() && userDoc.data()[questField] && !userDoc.data()[questField].completion) {
+          // @ts-ignore
+          const quest = userDoc.data()[questField];
+
+          // Get the current timestamp
+          const currentTimestamp = Math.floor(Date.now() / 1000);
+
+          // Check if the quest has expired
+          if (currentTimestamp > quest.duration) {
+            // Mark the quest as expired
+            await db.collection('users').doc(userId).update({
+              [questField]: {
+                name: '',
+                description: '',
+                progress: 0,
+                duration: 0,
+                completion: false,
+                category: '',
+                reward: ''
+              }
+            });
+
+            // Assign a new random quest
+            const newQuest = await this.getRandomQuest(questType);
+            if (!newQuest) {
+              throw new Error('Failed to get a new quest');
+            }
+
+            await db.collection('users').doc(userId).update({
+              [questField]: {
+                name: newQuest.name,
+                description: newQuest.description,
+                progress: newQuest.progress,
+                duration: newQuest.duration,
+                completion: newQuest.completion,
+                category: newQuest.category,
+                reward: newQuest.reward
+              }
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Failed to check quest expiration:', error);
+      throw new Error('Failed to check quest expiration');
     }
   }
 
@@ -180,4 +272,78 @@ export class FireService {
   async signOut() {
     await this.auth.signOut();
   }
+
+  async mockQuestDataToFirebase() {
+    const db = firebase.firestore();
+
+    try {
+      const dailyQuest: quest = {
+        name: "Daily Quest",
+        description: "Complete a daily task",
+        progress: 0,
+        duration: 120,
+        completion: false,
+        category: "daily",
+        reward: "Daily Reward"
+      };
+
+      const dailyQuest2: quest = {
+        name: "Daily Quest 2",
+        description: "Complete a daily task",
+        progress: 0,
+        duration: 120,
+        completion: false,
+        category: "daily",
+        reward: "Daily Reward"
+      };
+
+      const dailyQuest3: quest = {
+        name: "Daily Quest 2",
+        description: "Complete a daily task",
+        progress: 0,
+        duration: 120,
+        completion: false,
+        category: "daily",
+        reward: "Daily Reward"
+      };
+
+      const weeklyQuest: quest = {
+        name: "Weekly Quest",
+        description: "Complete a weekly task",
+        progress: 0,
+        duration: 604800,
+        completion: false,
+        category: "weekly",
+        reward: "Weekly Reward"
+      };
+
+      const monthlyQuest: quest = {
+        name: "Monthly Quest",
+        description: "Complete a monthly task",
+        progress: 0,
+        duration: 2630000,
+        completion: false,
+        category: "monthly",
+        reward: "Monthly Reward"
+      };
+
+      // Add the daily quest to Firestore with a random ID
+      await db.collection("quests").add(dailyQuest);
+
+      await db.collection("quests").add(dailyQuest2);
+
+      await db.collection("quests").add(dailyQuest3);
+
+      // Add the weekly quest to Firestore with a random ID
+      await db.collection("quests").add(weeklyQuest);
+
+      // Add the monthly quest to Firestore with a random ID
+      await db.collection("quests").add(monthlyQuest);
+
+      console.log("Mock quest data has been sent to Firebase");
+    } catch (error) {
+      console.log("Failed to send mock quest data to Firebase:", error);
+    }
+  }
+
 }

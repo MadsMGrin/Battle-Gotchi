@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
       await this.fireService.register(email, password, username);
       const user = this.fireService.auth.currentUser;
       if (user) {
-        this.router.navigate(['/dashboard']);
+        await this.router.navigate(['/dashboard']);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -48,7 +48,7 @@ export class LoginComponent implements OnInit {
       await this.fireService.signIn(email, password);
       const user = this.fireService.auth.currentUser;
       if (user) {
-        this.router.navigate(['/dashboard']); // Replace '/dashboard' with the actual route of the screen
+        await this.router.navigate(['/dashboard']); // Replace '/dashboard' with the actual route of the screen
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -57,6 +57,10 @@ export class LoginComponent implements OnInit {
         console.error('Error signing in:', error);
       }
     }
+  }
+
+  async mockQuestDataToFirebase(){
+    await this.fireService.mockQuestDataToFirebase();
   }
 
   toggleSignUp() {

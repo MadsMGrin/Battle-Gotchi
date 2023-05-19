@@ -1,45 +1,59 @@
 <button mat-raised-button (click)="signOut()">SIGN OUT</button>
-<br>
-<ng-container class="gotchi-display">
-<mat-card-title class="title">Gotchi: 'nickname'</mat-card-title>
-<mat-card-content *ngIf="gotchiData">
-  <p>Hunger: {{ gotchiData.hunger }}</p>
-  <p>Sleep: {{ gotchiData.sleep }}</p>
-  <p>Cleanliness: {{ gotchiData.cleanliness }}</p>
-  <p>Health: {{ gotchiData.health }}</p>
-  <p>Strength: {{ gotchiData.strength }}</p>
-  <p>Dexterity: {{ gotchiData.dexterity }}</p>
-  <p>Stamina: {{ gotchiData.stamina }}</p>
-</mat-card-content>
-</ng-container>
 
-<ng-container class="quest-display">
-<mat-card-header>Your current quests:</mat-card-header>
-<mat-card-content *ngFor="let d of dailyQuests">
-  <p>name: {{d.name}}</p>
-  <p>description: {{d.description}}</p>
-  <p>progress: {{d.progress}}</p>
-  <p>duration: {{d.duration}}</p>
-  <p>completion: {{d.completion}}</p>
-  <p>category: {{d.category}}</p>
-  <p>reward: {{d.reward}}</p>
+<div *ngIf="!makeQuest">
+<button mat-raised-button (click)="toggleQuestComponent()">Quest component</button>
+</div>
+
+<div *ngIf="makeQuest">
+<button mat-raised-button (click)="toggleQuestComponent()">Close quest component</button>
+  <app-quest></app-quest>
+</div>
+<br>
+<mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your Gotchi:</mat-card-title>
+<mat-card class="gotchi-display"  *ngIf="gotchiData">
+<mat-card-content>
+  Hunger: {{ gotchiData.hunger }}
+  <br>Sleep: {{ gotchiData.sleep }}
+  <br>Cleanliness: {{ gotchiData.cleanliness }}
+  <br>Health: {{ gotchiData.health }}
+  <br>Strength: {{ gotchiData.strength }}
+  <br>Dexterity: {{ gotchiData.dexterity }}
+  <br>Stamina: {{ gotchiData.stamina }}
 </mat-card-content>
-  <mat-card-content *ngFor="let w of weeklyQuests">
-    <p>name: {{w.name}}</p>
-    <p>description: {{w.description}}</p>
-    <p>progress: {{w.progress}}</p>
-    <p>duration: {{w.duration}}</p>
-    <p>completion: {{w.completion}}</p>
-    <p>category: {{w.category}}</p>
-    <p>reward: {{w.reward}}</p>
+</mat-card>
+
+  <mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your current quests:</mat-card-title>
+  <mat-card class="quest-display" *ngIf="userData">
+  <mat-card-header>
+    <mat-card-title>Daily Quest: {{userData.dailyQuest?.name}}</mat-card-title>
+    <mat-card-subtitle>{{userData.dailyQuest?.description}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    Progress : {{userData.dailyQuest?.progress}}
+    <br>Duration : {{userData.dailyQuest?.duration}}
+    <br>Reward : {{userData.dailyQuest?.reward}}
+
+    </mat-card-content>
+  </mat-card>
+<mat-card class="quest-display" *ngIf="userData">
+  <mat-card-header>
+    <mat-card-title>Daily Quest: {{userData.weeklyQuest?.name}}</mat-card-title>
+    <mat-card-subtitle>{{userData.weeklyQuest?.description}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    Progress : {{userData.weeklyQuest?.progress}}
+    <br>Duration : {{userData.weeklyQuest?.duration}}
+    <br>Reward : {{userData.weeklyQuest?.reward}}
   </mat-card-content>
-  <mat-card-content *ngFor="let m of monthlyQuests">
-    <p>name: {{m.name}}</p>
-    <p>description: {{m.description}}</p>
-    <p>progress: {{m.progress}}</p>
-    <p>duration: {{m.duration}}</p>
-    <p>completion: {{m.completion}}</p>
-    <p>category: {{m.category}}</p>
-    <p>reward: {{m.reward}}</p>
+</mat-card>
+  <mat-card class="quest-display" *ngIf="userData">
+  <mat-card-header>
+    <mat-card-title>Daily Quest: {{userData.monthlyQuest?.name}}</mat-card-title>
+    <mat-card-subtitle>{{userData.monthlyQuest?.description}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    Progress : {{userData.monthlyQuest?.progress}}
+    <br>Duration : {{userData.monthlyQuest?.duration}}
+    <br>Reward : {{userData.monthlyQuest?.reward}}
   </mat-card-content>
-</ng-container>
+  </mat-card>

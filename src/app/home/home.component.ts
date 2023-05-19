@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
-import {gotchi} from "../../entities/gotchi";
-import {quest} from "../../entities/quest";
 
 @Component({
   selector: 'app-home',
@@ -10,9 +8,8 @@ import {quest} from "../../entities/quest";
 })
 export class HomeComponent implements OnInit {
   gotchiData: any;
-  dailyQuests: any;
-  weeklyQuests: any;
-  monthlyQuests: any;
+  userData: any;
+  makeQuest: boolean = false;
 
 
   constructor(public fireService: FireService) {
@@ -20,9 +17,7 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
    await this.getGotchi();
-   await this.getDailyQuest();
-   await this.getWeeklyQuest();
-   await this.getMonthlyQuest();
+   await this.getUserQuests();
   }
 
 
@@ -34,31 +29,27 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async getUserQuests(){
+    try {
+      this.userData = await this.fireService.getUserQuests();
+      console.log(this.userData)
+    } catch (error) {
+      console.error('Error retriveing userData:', error)
+    }
+  }
+
   async signOut() {
     await this.fireService.signOut();
   }
 
-  async getDailyQuest() {
-    try {
-      this.dailyQuests = await this.fireService.getQuest("daily");
-    } catch (error) {
-      console.error('Error retrieving daily quests:', error);
+  toggleQuestComponent() {
+    if (this.makeQuest) {
+      // Switch to sign-in mode
+      this.makeQuest = false;
     }
-  }
-
-  async getWeeklyQuest() {
-    try {
-      this.weeklyQuests = await this.fireService.getQuest("weekly");
-    } catch (error) {
-      console.error('Error retrieving weekly quests:', error);
-    }
-  }
-
-  async getMonthlyQuest() {
-    try {
-      this.monthlyQuests = await this.fireService.getQuest("monthly");
-    } catch (error) {
-      console.error('Error retrieving monthly quests:', error);
+    // Switch to sign-up mode
+    else {
+      this.makeQuest = true;
     }
   }
 

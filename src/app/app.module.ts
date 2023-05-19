@@ -9,21 +9,23 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
+import { QuestComponent } from './quest/quest.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     HomeComponent,
+    QuestComponent,
   ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        MatSnackBarModule,
-        MatCardModule,
-        MatButtonModule
-    ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatButtonModule,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
