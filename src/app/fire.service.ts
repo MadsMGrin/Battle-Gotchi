@@ -40,6 +40,13 @@ export class FireService {
     return snapshot.docs.map(doc => doc.data());
   }
 
+  //Couldnt get the gotchi info if i pulled them with the previous method so i made a new one
+  async getGotchiSpecific() {
+    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
+    const doc = snapshot.docs[0];
+    return doc ? doc.data() : null;
+  }
+
   async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
     const db = firebase.firestore();
 
@@ -130,7 +137,7 @@ export class FireService {
 
     const response = await axios.post(this.baseurl + reqString, {reqId: reqId});
 
-    if(response.status === 450){
+    if(response.status === 500){
       throw new Error("You've done you allotted amounts of this action today already")
     }
   }
