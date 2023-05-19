@@ -13,6 +13,8 @@ import { appRoutingModule } from "./app.router";
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {firebaseConfig} from "../../firebaseconfig";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -23,15 +25,17 @@ import {firebaseConfig} from "../../firebaseconfig";
     TestComponent,
     ItemoverviewComponent,
   ],
-    imports: [
-      AngularFireModule.initializeApp(firebaseConfig),
-      AngularFireAuthModule,
-        BrowserModule,
-        appRoutingModule,
-        FormsModule,
-        BrowserAnimationsModule,
-      MatSnackBarModule
-    ],
+  imports: [
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireAuthModule,
+    BrowserModule,
+    appRoutingModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule,
+    MatProgressBarModule,
+    NgOptimizedImage
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

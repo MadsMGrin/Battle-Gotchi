@@ -14,8 +14,123 @@ admin.initializeApp({
   databaseURL: "http://localhost:8080",
 });
 
+const runtimeOpts = {
+  timeoutSeconds: 120,
+};
+
+const wackyFirstNames = [
+  "Wobbleflop",
+  "Quirklesnort",
+  "Bumblewink",
+  "Zippitydoo",
+  "Gobbledygook",
+  "Whifflebottom",
+  "Flapdoodle",
+  "Skizzlefritz",
+  "Quibblequack",
+  "Bipsywhirly",
+  "Snickerdoodle",
+  "Noodlefizz",
+  "Wigglesnatch",
+  "Blibberblot",
+  "Giggledorf",
+  "Puddleflop",
+  "Skibberjib",
+  "Doodlewhack",
+  "Snickerbop",
+  "Quibbleflap",
+  "Wiggletoes",
+  "Bippitybop",
+  "Wobblejinks",
+  "Puddlesnort",
+  "Skibberdoo",
+  "Noodleblip",
+  "Snickerflap",
+  "Quibblewobble",
+  "Blibberjinx",
+  "Wobblewhack",
+  "Bippityboo",
+  "Skizzleflop",
+  "Puddlesnicker",
+  "Gobbledoodle",
+  "Quirklefizz",
+  "Snickerdink",
+  "Zippitywink",
+  "Bipsywhack",
+  "Wigglefritz",
+  "Doodlebop",
+  "Skibberquack",
+  "Noodlejib",
+  "Blibberflap",
+  "Quibblegook",
+  "Snickerwhack",
+  "Wobblegibble",
+  "Gobbledysnort",
+  "Skizzleblip",
+  "Bippitysnicker",
+  "Puddlefizz"
+]
+
+const wackyLastNames = [
+  "Blunderfluff",
+  "Muddlepants",
+  "Wobblebottom",
+  "Noodlewhisk",
+  "Gigglesnort",
+  "Quibblefizzle",
+  "Flibberflap",
+  "Zigzaggle",
+  "Wobblegobble",
+  "Whifflepuff",
+  "Snickerdoodle",
+  "Dingleberry",
+  "Flippityflop",
+  "Bumblefritz",
+  "Squigglewump",
+  "Puddlefuddle",
+  "Snickersnatch",
+  "Zippitydoodle",
+  "Jibberjumble",
+  "Wigglewig",
+  "Bippitybop",
+  "Splishsplash",
+  "Whiskerwhack",
+  "Quibblequack",
+  "Fluffernutter",
+  "Noodlehead",
+  "Snortleflap",
+  "Kookaburra",
+  "Gobblefunk",
+  "Fiddlesticks",
+  "Whackadoodle",
+  "Wobblewhack",
+  "Squibblesnort",
+  "Zigzagglebottom",
+  "Bippityboo",
+  "Jellybean",
+  "Whimsywhack",
+  "Flapdoodle",
+  "Snicklefritz",
+  "Flibberjibber",
+  "Blubberwhip",
+  "Wobblewink",
+  "Snickerdink",
+  "Quirklequack",
+  "Gobbledygook",
+  "Jabberwocky",
+  "Squigglebottom",
+  "Zippitydoo",
+  "Noodlewhip",
+  "Bumblefuddle",
+  "Whiffleblip",
+  "Kerfuffle",
+  "Fluffernutter",
+]
+
+
+
 app.use(cors());
-exports.api = functions.https.onRequest(app);
+exports.api = functions.runWith(runtimeOpts).https.onRequest(app);
 // used to delete any duplicate username document that maybe created
 exports.enforceUniqueUsername = functions.firestore
   .document("usernames/{username}")
@@ -62,6 +177,7 @@ exports.onUserRegister = functions.auth
   .onCreate((user, context) => {
     admin.firestore().collection("gotchi").add({
       user: user.uid,
+      name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
       hunger: 50,
       sleep: 50,
       cleanliness: 50,
@@ -93,34 +209,6 @@ exports.sendBattleNotification = functions.firestore
 
 app.post("/increaseSleep", async (req, res) => {
   const {reqId} = req.body;
-  const currentTimestamp = Timestamp.now().toMillis();
-  await admin.firestore().collection("gotchi")
-    .where("user", "==", reqId)
-    .get()
-    .then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        const docData = doc.data();
-        const docRef = admin.firestore().collection("gotchi").doc(doc.id);
-        if ((docData.sleepTimeout <= currentTimestamp || !docData.sleepTimeout) && docData.timesSleptToday <= 2) {
-          docRef.set({
-              sleepTimeout: Timestamp.now().toMillis() + 2000,
-              timesSleptToday: FieldValue.increment(1),
-              sleep: FieldValue.increment(50),
-              health: FieldValue.increment(15),
-            },
-            {merge: true}
-          )
-          res.status(200).send("Sleep increased successfully");
-        } else (
-          res.status(450).send("request timeout")
-        )
-
-      });
-    });
-});
-
-app.post("/increaseSleep", async (req, res) => {
-  const {reqId} = req.body;
   const db = admin.firestore();
   const querySnapshot = await db.collection("gotchi").where("user", "==", reqId).get();
   const docRef = querySnapshot.docs[0].ref;
@@ -128,7 +216,7 @@ app.post("/increaseSleep", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if ((doc.data().sleepTimeout <= Timestamp.now().toMillis() || !doc.data().sleepTimeout || !doc.exists) && doc.data().timesSleptToday <= 2){
+      if (doc.data().sleepTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesSleptToday >= 3){
         throw new error("Failure")
       }
       const newSleep = doc.data().sleep >= 50 ? 100 : doc.data().sleep + 50;
@@ -143,9 +231,9 @@ app.post("/increaseSleep", async (req, res) => {
       )
     });
   }).then(() => {
-    console.log("Transaction successfully committed!");
+    res.status(201).json({message: "all good"})
   }).catch((error) => {
-    console.log("Transaction failed: ", error);
+    res.status(500).json({error: "failed to resolved maintainance"});
   });
 });
 app.post("/increaseHunger", async (req, res) => {
@@ -157,7 +245,7 @@ app.post("/increaseHunger", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if ((doc.data().foodTimeout <= Timestamp.now().toMillis() || !doc.data().foodTimeout || !doc.exists) && doc.data().timesEatenToday <= 3){
+      if (doc.data().foodTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesEatenToday >= 4){
         throw new error("Failure")
       }
       const newHunger = doc.data().hunger >= 75 ? 100 : doc.data().hunger + 25;
@@ -172,9 +260,9 @@ app.post("/increaseHunger", async (req, res) => {
       )
     });
   }).then(() => {
-    console.log("Transaction successfully committed!");
+    res.status(201).json({message: "all good"})
   }).catch((error) => {
-    console.log("Transaction failed: ", error);
+    res.status(500).json({error: "failed to resolved maintainance"});
   });
 });
 
@@ -188,7 +276,7 @@ app.post("/increaseCleanliness", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if ((doc.data().showerTimeout <= Timestamp.now().toMillis() || !doc.data().showerTimeout || !doc.exists) && doc.data().timesShoweredToday <= 2){
+      if (doc.data().showerTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesShoweredToday >= 3){
         throw new error("Failure")
       }
       const newClean = doc.data().cleanliness >= 25 ? 100 : doc.data().cleanliness + 75;
@@ -204,9 +292,9 @@ app.post("/increaseCleanliness", async (req, res) => {
       )
     });
   }).then(() => {
-    console.log("Transaction successfully committed!");
+    res.status(201).json({message: "all good"})
   }).catch((error) => {
-    console.log("Transaction failed: ", error);
+    res.status(500).json({error: "failed to resolved maintainance"});
   });
 });
 
