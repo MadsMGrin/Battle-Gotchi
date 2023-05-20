@@ -19,8 +19,8 @@ export class FireService {
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
-    this.firestore.useEmulator("localhost",8080)
-    this.auth.useEmulator("http://localhost:9099")
+    this.firestore.useEmulator("localhost",8080);
+    this.auth.useEmulator("http://localhost:9099");
     // Handle auth state changes
     this.auth.onAuthStateChanged((user) => {
       if (user) {
@@ -38,6 +38,13 @@ export class FireService {
   async getGotchi() {
     const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
     return snapshot.docs.map(doc => doc.data());
+  }
+
+  //Couldnt get the gotchi info if i pulled them with the previous method so i made a new one
+  async getGotchiSpecific() {
+    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
+    const doc = snapshot.docs[0];
+    return doc ? doc.data() : null;
   }
 
   async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
@@ -59,18 +66,6 @@ export class FireService {
         username: username,
         email: email,
         status: 'online',
-      });
-
-      // Create a new document with the user ID as the ID
-      await db.collection('gotchi').doc(userId).set({
-        user: userId,
-        hunger: 50,
-        sleep: 50,
-        cleanliness: 50,
-        health: 50,
-        strength: 0,
-        dexterity: 0,
-        stamina: 0,
       });
 
       // Create a new document with the username as the ID
@@ -137,7 +132,7 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
-  // method used getting battle notifcation
+   // method used getting battle notifcation
   async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
     try {
       const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
@@ -149,6 +144,17 @@ export class FireService {
   }
 
 
+
+
+  async sendReq(reqString: string){
+    const reqId = this.auth.currentUser?.uid;
+
+    const response = await axios.post(this.baseurl + reqString, {reqId: reqId});
+
+    if(response.status === 500){
+      throw new Error("You've done you allotted amounts of this action today already")
+    }
+  }
 
 
 }

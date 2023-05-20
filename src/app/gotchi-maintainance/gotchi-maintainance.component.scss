@@ -1,0 +1,122 @@
+.container {
+  display: grid;
+  grid-template-rows:  minmax(20px, 40px) repeat(8, 80px);
+  grid-template-columns: minmax(10px, 50px) 2fr repeat(6, 1fr) 2fr minmax(10px, 50px);
+  grid-gap: 2em;
+}
+
+.backBtn{
+  grid-area: 1 / 1 / 2 / 2;
+  margin-left: 20px;
+}
+.username{
+  grid-area: 1 / 5 / 2 / 7;
+  margin-top: 50px;
+}
+
+.healthInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 4 / 3 / 6;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+
+}
+
+.sleepInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 6 / 3 / 8;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+.hungerInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 5 / 4 / 6 / 6;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+.cleanlinessInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 5 / 6 / 6 / 8;
+  justify-self: center;
+  align-self: center;
+  align-items: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+// statlist
+.gotchiStats{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 2 / 6 / 3;
+  justify-self: right;
+  align-self: center;
+  align-items: center;
+
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+
+.determinateBar {
+  justify-self: center;
+  min-width: 200px;
+  max-width: 200px;
+  border: 2px solid #039be5;
+  padding-bottom: 10px;
+}
+
+.statBorder{
+  background-color: #1F1F1F;
+  border: 2px solid #039be5;
+  min-width: 100px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+.showerAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 3 / 9 / 5;
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.hungerAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 5 / 9 / 7;
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.sleepAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 7 / 9 / 9;
+
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+
+
