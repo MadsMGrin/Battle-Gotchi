@@ -93,73 +93,54 @@ export class FireService {
     }
   }
 
-  async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
+  async register(email, password, username) {
     const db = firebase.firestore();
 
-    // Check if the username already exists in the collection
     const userSnapshot = await db.collection('users').where('username', '==', username).get();
-
     if (!userSnapshot.empty) {
       throw new Error('This username already exists');
     }
 
     const credential = await this.auth.createUserWithEmailAndPassword(email, password);
-    if (credential.user) {
-      const userId = credential.user.uid;
-
-      // Create user document with the user ID
-      const dailyQuest = await this.getRandomQuest('daily');
-      const weeklyQuest = await this.getRandomQuest('weekly');
-      const monthlyQuest = await this.getRandomQuest('monthly');
-
-      if (!dailyQuest || !weeklyQuest || !monthlyQuest) {
-        throw new Error('Failed to get quests');
-      }
-
-      await db.collection('users').doc(userId).set({
-        username: username,
-        email: email,
-        status: 'online',
-        dailyQuest: {
-          name: dailyQuest.name,
-          description: dailyQuest.description,
-          progress: dailyQuest.progress,
-          duration: dailyQuest.duration,
-          completion: dailyQuest.completion,
-          category: dailyQuest.category,
-          reward: dailyQuest.reward,
-        },
-        weeklyQuest: {
-          name: weeklyQuest.name,
-          description: weeklyQuest.description,
-          progress: weeklyQuest.progress,
-          duration: weeklyQuest.duration,
-          completion: weeklyQuest.completion,
-          category: weeklyQuest.category,
-          reward: weeklyQuest.reward,
-        },
-        monthlyQuest: {
-          name: monthlyQuest.name,
-          description: monthlyQuest.description,
-          progress: monthlyQuest.progress,
-          duration: monthlyQuest.duration,
-          completion: monthlyQuest.completion,
-          category: monthlyQuest.category,
-          reward: monthlyQuest.reward,
-        }
-      });
-
-      // Create a new document with the username as the ID
-      await db.collection('usernames').doc(username).set({
-        uid: userId
-      });
-
-      return credential; // Return the credential object
-    } else {
+    if (!credential.user) {
       throw new Error('Failed to create user');
     }
-  }
 
+    const userId = credential.user.uid;
+    const questTypes = ['daily', 'weekly', 'monthly'];
+
+    const quests = await Promise.all(questTypes.map(async (type) => {
+      const quest = await this.getRandomQuest(type);
+      if (!quest) {
+        throw new Error('Failed to get quests');
+      }
+      return {
+        name: quest.name,
+        description: quest.description,
+        progress: quest.progress,
+        duration: quest.duration,
+        completion: quest.completion,
+        category: quest.category,
+        reward: quest.reward,
+      };
+    }));
+
+    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
+
+    await db.collection('users').doc(userId).set({
+      username,
+      email,
+      status: 'online',
+      dailyQuest,
+      weeklyQuest,
+      monthlyQuest
+    });
+
+    await db.collection('usernames').doc(username).set({ uid: userId });
+
+    return credential;
+  }
+  
   async getRandomQuest(category: string): Promise<quest> {
     const quests = await this.getQuest(category);
     const randomIndex = Math.floor(Math.random() * quests.length);
