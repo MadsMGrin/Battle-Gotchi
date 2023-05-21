@@ -189,6 +189,42 @@ exports.onUserRegister = functions.auth
   });
 
 // method used for sending battleNotifcation to another user
+app.get('/battlenotifications/:receiverId', async (req, res) => {
+  try {
+    const receiverId = req.params.receiverId;
+    // Retrieve battle notifications for the receiverId
+    const notificationsSnapshot = await admin
+      .firestore()
+      .collection('notifications')
+      .where('receiverId', '==', receiverId)
+      .orderBy('timestamp', 'desc')
+      .get();
+
+    const notifications = [];
+    for (const doc of notificationsSnapshot.docs) {
+      const notification = doc.data();
+      // Retrieve sender information
+      const senderSnapshot = await admin
+        .firestore()
+        .collection('users')
+        .doc(notification.senderId)
+        .get();
+
+      const sender = senderSnapshot.data();
+      notifications.push({
+        sender: sender,
+        message: notification.message,
+        timestamp: notification.timestamp,
+      });
+    }
+    res.json(notifications);
+  } catch (error) {
+    console.error('Error retrieving battle notifications:', error);
+    res.status(500).json({ error: 'Failed to retrieve battle notifications' });
+  }
+});
+
+// method used for sending battleNotifcation to another user
 exports.sendBattleNotification = functions.firestore
   .document('battleRequests/{requestId}')
   .onCreate(async (snap, context) => {
@@ -199,7 +235,8 @@ exports.sendBattleNotification = functions.firestore
       senderId: battleRequest.senderId,
       type: 'battleRequest',
       status: 'unread',
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      message: 'I wish to thee, thus thou dare accept?',
+      timestamp: Firestore.FieldValue.serverTimestamp()
     });
 
     console.log('Notification sent successfully');
