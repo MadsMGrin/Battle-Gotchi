@@ -7,7 +7,6 @@ import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
 import {quest} from "../entities/quest";
 import {userQuest} from "../entities/userQuest";
-import {FormControl} from "@angular/forms";
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +28,6 @@ export class FireService {
       if (user) {
         // mark user as online on sign in
         this.firestore.collection('users').doc(user.uid).update({ status: 'online' });
-
-        // Check quest expiration for the user
-        this.checkQuestExpiration(user.uid, 'daily');
-        this.checkQuestExpiration(user.uid, 'weekly');
-        this.checkQuestExpiration(user.uid, 'monthly');
       } else {
         // mark user as offline on sign out
         if (this.auth.currentUser) {
@@ -41,7 +35,6 @@ export class FireService {
         }
       }
     });
-
   }
 
   async getUserQuests(): Promise<userQuest> {
@@ -68,39 +61,6 @@ export class FireService {
     return userQuestDTO;
   }
 
-  async getGotchi(): Promise<gotchi>{
-
-    var gotchiDTO = new gotchi()
-
-    await this.firestore.collection("gotchi").where("user", "==", firebase.auth().currentUser?.uid)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          if(doc.exists){
-            console.log(doc.data())
-            gotchiDTO = {
-              hunger: doc.data()['hunger'],
-              sleep: doc.data()['sleep'],
-              cleanliness: doc.data()['cleanliness'],
-              health: doc.data()['health'],
-              strength: doc.data()['strength'],
-              dexterity: doc.data()['dexterity'],
-              stamina: doc.data()['stamina'],
-            }
-            return gotchiDTO;
-
-          }
-          else {console.log("Your gotchi does not exist");
-            return gotchiDTO;
-          }
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-    return gotchiDTO;
-  }
-
   async getQuest(category: string): Promise<quest[]> {
     const quests: quest[] = [];
 
@@ -125,70 +85,11 @@ export class FireService {
           console.log("Your quest does not exist");
         }
       });
-      console.log(quests)
+      console.log(quests);
       return quests;
     } catch (error) {
       console.log("Failed to get quests:", error);
       throw new Error("Failed to get quests");
-    }
-  }
-
-  async checkQuestExpiration(userId: string, questType: string) {
-    const db = firebase.firestore();
-
-    try {
-      // Get the user document
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (userDoc.exists) {
-        const questField = `${questType}Quest`;
-
-        // Check if the quest is assigned and not completed
-        // @ts-ignore
-        if (userDoc.data() && userDoc.data()[questField] && !userDoc.data()[questField].completion) {
-          // @ts-ignore
-          const quest = userDoc.data()[questField];
-
-          // Get the current timestamp
-          const currentTimestamp = Math.floor(Date.now() / 1000);
-
-          // Check if the quest has expired
-          if (currentTimestamp > quest.duration) {
-            // Mark the quest as expired
-            await db.collection('users').doc(userId).update({
-              [questField]: {
-                name: '',
-                description: '',
-                progress: 0,
-                duration: 0,
-                completion: false,
-                category: '',
-                reward: ''
-              }
-            });
-
-            // Assign a new random quest
-            const newQuest = await this.getRandomQuest(questType);
-            if (!newQuest) {
-              throw new Error('Failed to get a new quest');
-            }
-
-            await db.collection('users').doc(userId).update({
-              [questField]: {
-                name: newQuest.name,
-                description: newQuest.description,
-                progress: newQuest.progress,
-                duration: newQuest.duration,
-                completion: newQuest.completion,
-                category: newQuest.category,
-                reward: newQuest.reward
-              }
-            });
-          }
-        }
-      }
-    } catch (error) {
-      console.log('Failed to check quest expiration:', error);
-      throw new Error('Failed to check quest expiration');
     }
   }
 
@@ -226,7 +127,7 @@ export class FireService {
           duration: dailyQuest.duration,
           completion: dailyQuest.completion,
           category: dailyQuest.category,
-          reward: dailyQuest.reward
+          reward: dailyQuest.reward,
         },
         weeklyQuest: {
           name: weeklyQuest.name,
@@ -235,7 +136,7 @@ export class FireService {
           duration: weeklyQuest.duration,
           completion: weeklyQuest.completion,
           category: weeklyQuest.category,
-          reward: weeklyQuest.reward
+          reward: weeklyQuest.reward,
         },
         monthlyQuest: {
           name: monthlyQuest.name,
@@ -244,7 +145,7 @@ export class FireService {
           duration: monthlyQuest.duration,
           completion: monthlyQuest.completion,
           category: monthlyQuest.category,
-          reward: monthlyQuest.reward
+          reward: monthlyQuest.reward,
         }
       });
 
@@ -259,18 +160,10 @@ export class FireService {
     }
   }
 
-  private async getRandomQuest(category: string): Promise<quest> {
+  async getRandomQuest(category: string): Promise<quest> {
     const quests = await this.getQuest(category);
     const randomIndex = Math.floor(Math.random() * quests.length);
     return quests[randomIndex];
-  }
-
-  async signIn(email: string, password: string) {
-    await this.auth.signInWithEmailAndPassword(email, password);
-  }
-
-  async signOut() {
-    await this.auth.signOut();
   }
 
   async mockQuestDataToFirebase() {
@@ -281,30 +174,30 @@ export class FireService {
         name: "Daily Quest",
         description: "Complete a daily task",
         progress: 0,
-        duration: 120,
+        duration: 60,
         completion: false,
         category: "daily",
-        reward: "Daily Reward"
+        reward: "Daily Reward",
       };
 
       const dailyQuest2: quest = {
         name: "Daily Quest 2",
         description: "Complete a daily task",
         progress: 0,
-        duration: 120,
+        duration: 60,
         completion: false,
         category: "daily",
-        reward: "Daily Reward"
+        reward: "Daily Reward",
       };
 
       const dailyQuest3: quest = {
-        name: "Daily Quest 2",
+        name: "Daily Quest 3",
         description: "Complete a daily task",
         progress: 0,
-        duration: 120,
+        duration: 60,
         completion: false,
         category: "daily",
-        reward: "Daily Reward"
+        reward: "Daily Reward",
       };
 
       const weeklyQuest: quest = {
@@ -314,18 +207,19 @@ export class FireService {
         duration: 604800,
         completion: false,
         category: "weekly",
-        reward: "Weekly Reward"
+        reward: "Weekly Reward",
       };
 
       const monthlyQuest: quest = {
         name: "Monthly Quest",
         description: "Complete a monthly task",
         progress: 0,
-        duration: 2630000,
+        duration: 2628000,
         completion: false,
         category: "monthly",
-        reward: "Monthly Reward"
+        reward: "Monthly Reward",
       };
+
 
       // Add the daily quest to Firestore with a random ID
       await db.collection("quests").add(dailyQuest);
@@ -345,6 +239,48 @@ export class FireService {
       console.log("Failed to send mock quest data to Firebase:", error);
     }
   }
+
+  async getGotchi(): Promise<gotchi>{
+
+    var gotchiDTO = new gotchi()
+
+    await this.firestore.collection("gotchi").where("user", "==", firebase.auth().currentUser?.uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          if(doc.exists){
+            console.log(doc.data())
+            gotchiDTO = {
+              hunger: doc.data()['hunger'],
+              sleep: doc.data()['sleep'],
+              cleanliness: doc.data()['cleanliness'],
+              health: doc.data()['health'],
+              strength: doc.data()['strength'],
+              dexterity: doc.data()['dexterity'],
+              stamina: doc.data()['stamina'],
+            }
+            return gotchiDTO;
+
+          }
+          else {console.log("Your gotchi does not exist");
+            return gotchiDTO;
+          }
+        });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+    return gotchiDTO;
+  }
+
+  async signIn(email: string, password: string) {
+    await this.auth.signInWithEmailAndPassword(email, password);
+  }
+
+  async signOut() {
+    await this.auth.signOut();
+  }
+
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
@@ -357,7 +293,6 @@ export class FireService {
     }
   }
 
-  // method used for sending battle request to another user.
   async sendBattleRequest(receiverId: string): Promise<void> {
     console.log('Current user:', this.auth.currentUser, 'UID:', this.auth.currentUser?.uid, 'Receiver ID:', receiverId);
 

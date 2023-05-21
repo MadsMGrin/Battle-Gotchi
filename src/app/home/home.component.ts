@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
-import {gotchi} from "../../entities/gotchi";
 import {Router} from "@angular/router";
+import { quest } from "../../entities/quest";
 
 @Component({
   selector: 'app-home',
@@ -11,11 +11,7 @@ import {Router} from "@angular/router";
 export class HomeComponent implements OnInit {
   gotchiData: any;
   userData: any;
-  makeQuest: boolean = false;
   onlineUsers: any[] = [];
-
-
-
 
   constructor(public fireService: FireService, private router: Router) {}
 
@@ -26,14 +22,6 @@ export class HomeComponent implements OnInit {
   }
 
 
-  async getGotchi() {
-    try {
-      this.gotchiData = await this.fireService.getGotchi();
-    } catch (error) {
-      console.error('Error retrieving gotchi:', error);
-    }
-  }
-
   async getUserQuests(){
     try {
       this.userData = await this.fireService.getUserQuests();
@@ -43,9 +31,20 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  async getGotchi() {
+    try {
+      this.gotchiData = await this.fireService.getGotchi();
+    } catch (error) {
+      console.error('Error retrieving gotchi:', error);
+    }
+  }
+
   async signOut() {
     await this.fireService.signOut();
+    await this.router.navigateByUrl("");
+
   }
+
   async getOnlineUsers() {
     try {
       this.onlineUsers = await this.fireService.getOnlineUsers();
@@ -55,16 +54,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  toggleQuestComponent() {
-    if (this.makeQuest) {
-      // Switch to sign-in mode
-      this.makeQuest = false;
-    }
-    // Switch to sign-up mode
-    else {
-      this.makeQuest = true;
-    }
-  }
   async requestBattle(userId: string) {
     try {
       await this.fireService.sendBattleRequest(userId);
@@ -72,6 +61,10 @@ export class HomeComponent implements OnInit {
     } catch (error) {
       console.error('Error sending battle request:', error);
     }
+  }
+
+  async questComponent() {
+    await this.router.navigateByUrl("quest");
   }
 
   async itemsOverview() {

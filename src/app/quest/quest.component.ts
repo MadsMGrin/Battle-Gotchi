@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FireService} from "../fire.service";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-quest',
@@ -12,7 +13,7 @@ export class QuestComponent implements OnInit {
   dailyQuests: any;
   weeklyQuests: any;
   monthlyQuests: any;
-  constructor(public fireService: FireService) {
+  constructor(public fireService: FireService, private router: Router) {
   }
 
   async ngOnInit() {
@@ -43,6 +44,10 @@ export class QuestComponent implements OnInit {
     } catch (error) {
       console.error('Error retrieving monthly quests:', error);
     }
+  }
+
+  async back() {
+    await this.router.navigateByUrl("home");
   }
 
 }

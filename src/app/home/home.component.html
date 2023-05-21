@@ -1,14 +1,5 @@
 <button mat-raised-button (click)="signOut()">SIGN OUT</button>
 
-<div *ngIf="!makeQuest">
-<button mat-raised-button (click)="toggleQuestComponent()">Quest component</button>
-</div>
-
-<div *ngIf="makeQuest">
-<button mat-raised-button (click)="toggleQuestComponent()">Close quest component</button>
-  <app-quest></app-quest>
-</div>
-
 <br>
 <mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your Gotchi:</mat-card-title>
 <mat-card class="gotchi-display"  *ngIf="gotchiData">
@@ -26,41 +17,41 @@
   <mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your current quests:</mat-card-title>
   <mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
-    <mat-card-title>Daily Quest: {{userData.dailyQuest?.name}}</mat-card-title>
+    <mat-card-title>{{userData.dailyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.dailyQuest?.description}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.dailyQuest?.progress}}
-    <br>Duration : {{userData.dailyQuest?.duration}}
+    <br>Duration : {{userData.dailyQuest?.duration}} seconds
     <br>Reward : {{userData.dailyQuest?.reward}}
-
     </mat-card-content>
   </mat-card>
 <mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
-    <mat-card-title>Daily Quest: {{userData.weeklyQuest?.name}}</mat-card-title>
+    <mat-card-title>{{userData.weeklyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.weeklyQuest?.description}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.weeklyQuest?.progress}}
-    <br>Duration : {{userData.weeklyQuest?.duration}}
+    <br>Duration : {{userData.weeklyQuest?.duration}} seconds
     <br>Reward : {{userData.weeklyQuest?.reward}}
   </mat-card-content>
 </mat-card>
   <mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
-    <mat-card-title>Daily Quest: {{userData.monthlyQuest?.name}}</mat-card-title>
+    <mat-card-title>{{userData.monthlyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.monthlyQuest?.description}}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.monthlyQuest?.progress}}
-    <br>Duration : {{userData.monthlyQuest?.duration}}
+    <br>Duration : {{userData.monthlyQuest?.duration}} seconds
     <br>Reward : {{userData.monthlyQuest?.reward}}
   </mat-card-content>
   </mat-card>
 
 <button mat-raised-button (click)="gotToMaintainance()">Go to maintainance</button>
 <button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Item overview</button>
+<button mat-raised-button (click)="questComponent()">Quest component</button>
 
 <div class="online_users">
   <p class="title">Online Users:</p>

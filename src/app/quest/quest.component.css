@@ -1,0 +1,15 @@
+mat-card {
+  box-shadow: none !important;
+}
+
+.quest-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gotchi-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
