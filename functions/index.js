@@ -453,7 +453,6 @@ app.post('/simulateBattle', async (req, res) => {
       const winnersnap = await db.collection("gotchi").where("user", "==", winner.user).get();
       const winnerref = winnersnap.docs[0].ref;
       t.update(winnerref, winner);
-      console.log("hit service++++++++++++++ index")
       return { winner: winner.user, loser: loser.user, reward: randomReward };
     });
 

@@ -113,8 +113,9 @@ export class FireService {
     const senderReference = this.firestore.collection('users').doc(senderId);
     // Retrieve the sender's document from Firestore
     const senderDoc = await senderReference.get();
-    // Get the cooldown timestamp value from the sender's document, default to 0 if not available
+    // Get the cooldown timestamp value from the sender's document
     const cooldownTimestamp = senderDoc.data()?.['cooldownTimestamp'] || 0;
+    const senderUsername = senderDoc.data()?.['username'];
     // Get the current timestamp
     const currentTimestamp = firebase.firestore.Timestamp.now().toMillis();
 
@@ -124,8 +125,8 @@ export class FireService {
 
     const battleRequest = {
       senderId: senderId,
+      senderUsername: senderUsername,
       receiverId: receiverId,
-      status: 'pending'
     };
 
     const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
@@ -144,11 +145,15 @@ export class FireService {
       await this.firestore
         .collection("battleRequests")
         .where("receiverId", "==", this.auth.currentUser?.uid)
-        .onSnapshot((querySnapshot) => {
-          requestList.length = 0; // Clear the existing list
-          querySnapshot.forEach((doc) => {
-            requestList.push(doc.data());
-          });
+        .onSnapshot(async (querySnapshot) => {
+          requestList.length = 0;
+          for (const doc of querySnapshot.docs) {
+            const request = doc.data();
+            const senderId = request['senderId'];
+            const senderDoc = await this.firestore.collection("users").doc(senderId).get();
+            const senderName = senderDoc.data()?.['username'];
+            requestList.push({ ...request, senderName });
+          }
           console.log(requestList);
         });
 
@@ -157,8 +162,8 @@ export class FireService {
       throw error;
     }
   }
+
   async getDocId(senderId: string){
-    console.log("hereeeeeeeeeeeeeeeeee")
     try {
       console.log(senderId)
       const refdoc = this.firestore.collection("battleRequests").doc(senderId);
@@ -198,7 +203,7 @@ export class FireService {
     }
   }
 
-  // simulate the battle
+  // simulate the battle when user accepts the battle
   async simulateBattle(challengerId: string, opponentId: string) {
     console.log(challengerId)
     console.log(opponentId)
@@ -207,7 +212,6 @@ export class FireService {
       this.baseurl + "simulateBattle",
       { challengerId: challengerId, opponentId: opponentId }
     );
-    console.log("hit service++++++++++++++")
     if(response.status === 500){
       throw new Error("There was an error simulating the battle");
     }

@@ -72,11 +72,9 @@ export class GotchiMaintainanceComponent implements OnInit {
 
 
   // the battle request so the signed in user.
-
   async getMyBattleRequests() {
     try {
       this.battleRequests = await this.fireservice.getMyBattleRequests();
-      console.log(this.battleRequests);
     } catch (error) {
       console.error('Error retrieving battle requests:', error);
     }
