@@ -1,7 +1,7 @@
-<button mat-raised-button (click)="signOut()">Back (to do)</button>
+<button mat-raised-button (click)="back()">Back</button>
 
 <mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your current quests:</mat-card-title>
-  <mat-card class="quest-display" *ngIf="userData">
+<mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
     <mat-card-title>{{userData.dailyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.dailyQuest?.description}}</mat-card-subtitle>
@@ -9,10 +9,12 @@
   <mat-card-content>
     Progress : {{userData.dailyQuest?.progress}}
     <br>End date : {{userData.dailyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
-    <br>Reward : {{userData.dailyQuest?.reward}}
-    </mat-card-content>
-  </mat-card>
-  <mat-card class="quest-display" *ngIf="userData">
+    <br><div title="{{userData.dailyQuest?.reward.itemRarity}} {{userData.dailyQuest?.reward.itemType}}">
+    Reward : {{userData.dailyQuest?.reward.itemName}}
+  </div>
+  </mat-card-content>
+</mat-card>
+<mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
     <mat-card-title>{{userData.weeklyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.weeklyQuest?.description}}</mat-card-subtitle>
@@ -20,10 +22,12 @@
   <mat-card-content>
     Progress : {{userData.weeklyQuest?.progress}}
     <br>End date : {{userData.weeklyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
-    <br>Reward : {{userData.weeklyQuest?.reward}}
+    <br><div title="{{userData.weeklyQuest?.reward.itemRarity}} {{userData.weeklyQuest?.reward.itemType}}">
+    Reward : {{userData.weeklyQuest?.reward.itemName}}
+  </div>
   </mat-card-content>
 </mat-card>
-  <mat-card class="quest-display" *ngIf="userData">
+<mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
     <mat-card-title>{{userData.monthlyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.monthlyQuest?.description}}</mat-card-subtitle>
@@ -31,6 +35,8 @@
   <mat-card-content>
     Progress : {{userData.monthlyQuest?.progress}}
     <br>End date : {{userData.monthlyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
-    <br>Reward : {{userData.monthlyQuest?.reward}}
+    <br><div title="{{userData.monthlyQuest?.reward.itemRarity}} {{userData.monthlyQuest?.reward.itemType}}">
+    Reward : {{userData.monthlyQuest?.reward.itemName}}
+  </div>
   </mat-card-content>
-  </mat-card>
+</mat-card>

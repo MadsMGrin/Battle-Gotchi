@@ -96,6 +96,7 @@ export class FireService {
       throw new Error("Failed to get quests");
     }
   }
+
   async getGotchiSpecific() {
     const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
     const doc = snapshot.docs[0];
@@ -123,6 +124,8 @@ export class FireService {
       if (!quest) {
         throw new Error('Failed to get quests');
       }
+      const rewardPromise = this.randomItem(); // Get the promise from randomItem()
+      const reward = await rewardPromise; // Await the resolution of the promise
       return {
         name: quest.name,
         description: quest.description,
@@ -130,7 +133,7 @@ export class FireService {
         duration: quest.duration,
         completion: quest.completion,
         category: quest.category,
-        reward: quest.reward,
+        reward: reward,
       };
     }));
 
@@ -190,6 +193,8 @@ export class FireService {
     if (!newQuest) {
       throw new Error('Failed to get new quest');
     }
+    const rewardPromise = this.randomItem(); // Get the promise from randomItem()
+    const reward = await rewardPromise; // Await the resolution of the promise
     return {
       name: newQuest.name,
       description: newQuest.description,
@@ -197,8 +202,15 @@ export class FireService {
       duration: newQuest.duration,
       completion: newQuest.completion,
       category: newQuest.category,
-      reward: newQuest.reward,
+      reward: reward, // Assign the resolved reward value
     };
+  }
+
+  async randomItem(): Promise<item> {
+    const itemSnapshot = await firebase.firestore().collection('item').get();
+    const itemDocs = itemSnapshot.docs;
+    const randomItemDoc = itemDocs[Math.floor(Math.random() * itemDocs.length)];
+    return randomItemDoc.data() as item;
   }
 
   dateSetter(days: number, startHour: number, endHour: number): { start: Date, end: Date } {
@@ -206,7 +218,7 @@ export class FireService {
     const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     startDate.setHours(startHour, 0, 0, 0);
     const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days - 1);
-    endDate.setHours(endHour, 50, 0, 999);
+    endDate.setHours(endHour, 59, 59, 999);
     return { start: startDate, end: endDate };
   }
 
@@ -218,30 +230,30 @@ export class FireService {
         name: "Daily Quest",
         description: "Fuck Jen",
         progress: 0,
-        duration: this.dateSetter(1, 0, 14),
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
-        reward: "Daily Reward",
+        reward: null,
       };
 
       const dailyQuest2: quest = {
         name: "Daily Quest 2",
         description: "Fuck Marcus",
         progress: 0,
-        duration: this.dateSetter(1, 0, 14),
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
-        reward: "Daily Reward",
+        reward: null,
       };
 
       const dailyQuest3: quest = {
         name: "Daily Quest 3",
         description: "Fuck Filip",
         progress: 0,
-        duration: this.dateSetter(1, 0, 14),
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
-        reward: "Daily Reward",
+        reward: null,
       };
 
       const weeklyQuest: quest = {
@@ -251,7 +263,7 @@ export class FireService {
         duration: this.dateSetter(7, 0, 23),
         completion: false,
         category: "weekly",
-        reward: "Weekly Reward",
+        reward: null,
       };
 
       const monthlyQuest: quest = {
@@ -261,7 +273,7 @@ export class FireService {
         duration: this.dateSetter(30, 0, 23),
         completion: false,
         category: "monthly",
-        reward: "Monthly Reward",
+        reward: null,
       };
 
       console.log(dailyQuest);
@@ -287,39 +299,6 @@ export class FireService {
     }
   }
 
-  async getGotchi(): Promise<gotchi>{
-
-    var gotchiDTO = new gotchi()
-
-    await this.firestore.collection("gotchi").where("user", "==", firebase.auth().currentUser?.uid)
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          if(doc.exists){
-            console.log(doc.data())
-            gotchiDTO = {
-              hunger: doc.data()['hunger'],
-              sleep: doc.data()['sleep'],
-              cleanliness: doc.data()['cleanliness'],
-              health: doc.data()['health'],
-              strength: doc.data()['strength'],
-              dexterity: doc.data()['dexterity'],
-              stamina: doc.data()['stamina'],
-            }
-            return gotchiDTO;
-
-          }
-          else {console.log("Your gotchi does not exist");
-            return gotchiDTO;
-          }
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-    return gotchiDTO;
-  }
-
   async signIn(email: string, password: string) {
     await this.auth.signInWithEmailAndPassword(email, password);
   }
@@ -327,7 +306,7 @@ export class FireService {
   async signOut() {
     await this.auth.signOut();
   }
-// method used to get online players, with centralapi call and displaying them front end
+
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
@@ -371,7 +350,6 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
-   // method used getting battle notifcation
   async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
     try {
       const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
@@ -381,9 +359,6 @@ export class FireService {
       throw new Error('Failed to retrieve battle notifications');
     }
   }
-
-
-
 
   async sendReq(reqString: string){
     const reqId = this.auth.currentUser?.uid;
@@ -409,6 +384,7 @@ export class FireService {
     return snapshot.docs.map(doc => doc.data());
 
   }
+
   async unequip(itemName, type) {
     try {
       const userId = this.auth.currentUser?.uid;
@@ -435,6 +411,7 @@ export class FireService {
       throw new Error('Failed to equip item');
     }
  }
+
   async mock() {
       try {
         const db = firebase.firestore();

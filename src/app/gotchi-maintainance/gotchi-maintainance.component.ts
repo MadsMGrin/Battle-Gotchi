@@ -86,7 +86,7 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-  async itemsOverview() {
-    await this.router.navigateByUrl("itemview");
+  async quest() {
+    await this.router.navigateByUrl("quest");
   }
 }

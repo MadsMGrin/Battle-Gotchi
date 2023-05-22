@@ -17,17 +17,17 @@ import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {firebaseConfig} from "../../firebaseconfig";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NgOptimizedImage} from "@angular/common";
-import {HomeComponent} from "./home/home.component";
+import { UserQuestListComponent } from './quest/user-quest-list/user-quest-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent,
     QuestComponent,
     GotchiMaintainanceComponent,
     TestComponent,
     ItemoverviewComponent,
+    UserQuestListComponent,
   ],
   imports: [
     BrowserModule,
