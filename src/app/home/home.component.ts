@@ -14,7 +14,6 @@ export class HomeComponent implements OnInit {
 
 
 
-
   constructor(public fireService: FireService, private router: Router) {}
 
   async ngOnInit() {
@@ -59,4 +58,5 @@ export class HomeComponent implements OnInit {
   async gotToMaintainance(){
     await this.router.navigateByUrl("gotchiMain");
   }
+
 }

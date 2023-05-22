@@ -5,6 +5,7 @@ import 'firebase/compat/auth';
 import axios from 'axios'
 import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
+import {item} from "../entities/item";
 
 @Injectable({
   providedIn: 'root'
@@ -155,6 +156,46 @@ export class FireService {
       throw new Error("You've done you allotted amounts of this action today already")
     }
   }
+  
+  async getAllItems() {
+    const snapshot = await this.firestore.collection('item').where('user', '==', this.auth.currentUser?.uid).get();
+    return snapshot.docs.map(doc => doc.data());
+  }
 
+  async getEquippedItem(type) {
+    const snapshot = await this.firestore.collection('item')
+      .where('user', '==', this.auth.currentUser?.uid)
+      .where("itemType","==", type)
+      .where("inUse", "==", true)
+      .get();
+    return snapshot.docs.map(doc => doc.data());
 
+  }
+  async unequip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "unequipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to unequip item');
+    }
+
+  }
+
+  async equip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "equipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to equip item');
+    }
+
+  }
 }
