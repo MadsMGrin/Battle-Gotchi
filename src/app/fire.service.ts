@@ -29,6 +29,9 @@ export class FireService {
       if (user) {
         // mark user as online on sign in
         this.firestore.collection('users').doc(user.uid).update({ status: 'online' });
+
+        this.unassignExpiredQuests();
+
       } else {
         // mark user as offline on sign out
         if (this.auth.currentUser) {
@@ -148,20 +151,59 @@ export class FireService {
     return quests[randomIndex];
   }
 
+  async unassignExpiredQuests() {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) {
+      return;
+    }
+
+    const userQuests = await this.getUserQuests();
+    const currentDate = new Date();
+
+    // Check and unassign daily quest
+    if (userQuests.dailyQuest && userQuests.dailyQuest.duration.end < currentDate) {
+      const newDailyQuest = await this.assignNewQuest("daily"); // Assign a new daily quest
+      await this.firestore.collection("users").doc(userId).update({ dailyQuest: newDailyQuest });
+      console.log(newDailyQuest)
+    }
+
+    // Check and unassign weekly quest
+    if (userQuests.weeklyQuest && userQuests.weeklyQuest.duration.end < currentDate) {
+      const newWeeklyQuest = await this.assignNewQuest("weekly"); // Assign a new weekly quest
+      await this.firestore.collection("users").doc(userId).update({ weeklyQuest: newWeeklyQuest });
+    }
+
+    // Check and unassign monthly quest
+    if (userQuests.monthlyQuest && userQuests.monthlyQuest.duration.end < currentDate) {
+      const newMonthlyQuest = await this.assignNewQuest("monthly"); // Assign a new monthly quest
+      await this.firestore.collection("users").doc(userId).update({ monthlyQuest: newMonthlyQuest });
+    }
+  }
+
+  async assignNewQuest(category: string): Promise<quest> {
+    const newQuest = await this.getRandomQuest(category);
+    if (!newQuest) {
+      throw new Error('Failed to get new quest');
+    }
+    return {
+      name: newQuest.name,
+      description: newQuest.description,
+      progress: newQuest.progress,
+      duration: newQuest.duration,
+      completion: newQuest.completion,
+      category: newQuest.category,
+      reward: newQuest.reward,
+    };
+  }
+
   dateSetter(days: number, startHour: number, endHour: number): { start: Date, end: Date } {
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     startDate.setHours(startHour, 0, 0, 0);
     const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days - 1);
-    endDate.setHours(endHour, 59, 59, 999);
-
-    console.log(startDate);
-    console.log(endDate);
-
+    endDate.setHours(endHour, 50, 0, 999);
     return { start: startDate, end: endDate };
   }
-
-
 
   async mockQuestDataToFirebase() {
     const db = firebase.firestore();
@@ -171,7 +213,7 @@ export class FireService {
         name: "Daily Quest",
         description: "Fuck Jen",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(1, 0, 14),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -181,7 +223,7 @@ export class FireService {
         name: "Daily Quest 2",
         description: "Fuck Marcus",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(1, 0, 14),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -191,7 +233,7 @@ export class FireService {
         name: "Daily Quest 3",
         description: "Fuck Filip",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(1, 0, 14),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -239,7 +281,6 @@ export class FireService {
       console.log("Failed to send mock quest data to Firebase:", error);
     }
   }
-
 
   async getGotchi(): Promise<gotchi>{
 
