@@ -369,3 +369,69 @@ exports.statemodification = functions.auth.user().onCreate(async (user, context)
   }
 });
 //// GOTCHI STATE MANIPULATION - END
+
+
+
+// ITEM STUFF
+app.post("/equipItem",async (req, res,) => {
+  const reqId = req.body.reqId;
+  const itemType = req.body.itemType;
+  const itemName = req.body.itemName;
+  const db = admin.firestore();
+  const querySnapshot = await db.collection("item")
+    .where("user", "==", reqId)
+    .where("itemType", "==",itemType)
+    .where("itemName","==",itemName)
+    .get();
+  const docRef = querySnapshot.docs[0].ref;
+
+  return db.runTransaction((transaction) => {
+    // This code may get re-run multiple times if there are conflicts.
+    return transaction.get(docRef).then((doc) => {
+      transaction.set(docRef,{
+          inUse: true,
+        },
+        {merge: true}
+      )
+    });
+  }).then(() => {
+    res.status(200).send("item unequipped");
+    console.log("Transaction successfully committed!");
+  }).catch((error) => {
+    res.status(400).send("error");
+    console.log("Transaction failed: ", error);
+  });
+});
+
+app.post("/unequipItem",async (req, res,) => {
+  const reqId = req.body.reqId;
+  const itemType = req.body.itemType;
+  const itemName = req.body.itemName;
+  const db = admin.firestore();
+  const querySnapshot = await db.collection("item")
+    .where("user", "==", reqId)
+    .where("itemType", "==",itemType)
+    .where("itemName","==",itemName)
+    .get();
+  const docRef = querySnapshot.docs[0].ref;
+
+  return db.runTransaction((transaction) => {
+    // This code may get re-run multiple times if there are conflicts.
+    return transaction.get(docRef).then((doc) => {
+      transaction.set(docRef,{
+          inUse: false,
+        },
+        {merge: true}
+      )
+    });
+  }).then(() => {
+    res.status(200).send("item unequipped");
+    console.log("Transaction successfully committed!");
+  }).catch((error) => {
+    res.status(400).send("error");
+    console.log("Transaction failed: ", error);
+  });
+});
+
+
+///ITEM STUFF END
