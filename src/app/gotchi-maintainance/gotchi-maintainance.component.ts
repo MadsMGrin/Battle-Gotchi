@@ -13,8 +13,10 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   gotchiData: any;
   onlineUsers: any[] = [];
-  battleRequests: any[]= [];
-  constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) { }
+  battleRequests: any[] = [];
+
+  constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
+  }
 
   ngOnInit(): void {
     this.getOnlineUsers();
@@ -31,35 +33,33 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-  async sleep(){
+  async sleep() {
     try {
       await this.fireservice.sendReq("increaseSleep");
       await this.getGotchi();
-    }
-    catch (error){
+    } catch (error) {
       this.matSnackbar.open("Something went wrong")
     }
   }
 
-  async eat(){
+  async eat() {
     try {
       await this.fireservice.sendReq("increaseHunger");
       await this.getGotchi();
-    }
-    catch (error){
+    } catch (error) {
       this.matSnackbar.open("Something went wrong")
     }
   }
 
-  async shower(){
+  async shower() {
     try {
       await this.fireservice.sendReq("increaseCleanliness");
       await this.getGotchi();
-    }
-    catch (error){
+    } catch (error) {
       this.matSnackbar.open("Something went wrong")
     }
   }
+
   goBack() {
     this.router.navigateByUrl("home")
   }
@@ -114,8 +114,22 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
+  // In your GotchiMaintainanceComponent:
+  async acceptBattleRequest(request: any): Promise<void> {
+    try {
+      // Accept the battle request and delete it from the Firestore 'battleRequests' collection
+      await this.fireservice.getDocId(request);
+      // Get the current user id
+      const currentUserId = this.fireservice.getCurrentUserId();
+      console.log(currentUserId)
+      // Simulate the battle and get the result
+      await this.fireservice.simulateBattle(currentUserId, request);
 
-  acceptBattleRequest(request: any) {
-
+    } catch (error) {
+      throw error;
+    }
   }
+
+
 }
+

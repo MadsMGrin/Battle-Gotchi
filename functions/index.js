@@ -382,3 +382,83 @@ app.post("/unequipItem",async (req, res,) => {
 
 
 ///ITEM STUFF END
+
+
+
+// battle simulation stuff.
+app.post('/simulateBattle', async (req, res) => {
+  const challengerId = req.body.challengerId;
+  const opponentId = req.body.opponentId;
+  try {
+    const db = admin.firestore();
+
+    const result = await db.runTransaction(async (t) => {
+      const challengerQuerySnapshot = await db.collection("gotchi").where("user", "==", challengerId).get();
+      const challengerRef = challengerQuerySnapshot.docs[0].ref;
+
+      const opponentQuerySnapshot = await db.collection("gotchi").where("user", "==", opponentId).get();
+      const opponentRef = opponentQuerySnapshot.docs[0].ref;
+
+      const challengerSnap = await t.get(challengerRef);
+      const opponentSnap = await t.get(opponentRef);
+
+      const challengerGotchi = challengerSnap.data();
+      const opponentGotchi = opponentSnap.data();
+      // calculate score for each gotchi based on attributes and their weights
+      const attributeWeights = {
+        hunger: 0.2,
+        sleep: 0.2,
+        cleanliness: 0.2,
+        health: 0.2,
+        strength: 0.1,
+        dexterity: 0.1,
+        stamina: 0.1,
+      };
+
+      let challengerScore = 0;
+      let opponentScore = 0;
+      for (let attribute in attributeWeights) {
+        challengerScore += challengerGotchi[attribute] * attributeWeights[attribute];
+        opponentScore += opponentGotchi[attribute] * attributeWeights[attribute];
+      }
+
+      // decide the winner and loser
+      let winner, loser;
+      if (challengerScore > opponentScore) {
+        winner = challengerGotchi;
+        loser = opponentGotchi;
+      } else {
+        winner = opponentGotchi;
+        loser = challengerGotchi;
+      }
+
+      console.log(loser)
+      console.log(winner)
+      // update the loser's health - reduce it by a random percentage
+      const healthLoss = Math.floor(Math.random() * 10);
+      loser.health = Math.max(0, loser.health - healthLoss);
+
+      // update the loser's document in Firestore
+
+      const losersnap = await db.collection("gotchi").where("user", "==", loser.user).get();
+      const loseref = losersnap.docs[0].ref;
+      t.update(loseref, loser);
+      // generate a random reward for the winner
+      const rewards = ["item1", "item2", "item3", "item4", "item5"]; // needs to be replaced with actual rewards
+      const randomReward = rewards[Math.floor(Math.random() * rewards.length)];
+
+      // add the reward to the winner's document in Firestore
+      winner.rewards = winner.rewards || [];
+      winner.rewards.push(randomReward);
+      const winnersnap = await db.collection("gotchi").where("user", "==", winner.user).get();
+      const winnerref = winnersnap.docs[0].ref;
+      t.update(winnerref, winner);
+      console.log("hit service++++++++++++++ index")
+      return { winner: winner.user, loser: loser.user, reward: randomReward };
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});

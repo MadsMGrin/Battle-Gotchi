@@ -157,6 +157,21 @@ export class FireService {
       throw error;
     }
   }
+  async getDocId(senderId: string){
+    console.log("hereeeeeeeeeeeeeeeeee")
+    try {
+      console.log(senderId)
+      const refdoc = this.firestore.collection("battleRequests").doc(senderId);
+      const query = await refdoc.get();
+      console.log(refdoc);
+      await refdoc.delete();
+      return query
+
+    }
+    catch (error){
+      throw error;
+    }
+  }
 
   // rejections of battle request
   async rejectBattleRequest(request: any): Promise<void> {
@@ -175,18 +190,30 @@ export class FireService {
           });
         });
 
-      // Unsubscribe from the onSnapshot listener
       unsubscribe();
 
-      // Optionally, you can perform additional actions after deleting the battle request
 
     } catch (error) {
       throw error;
     }
   }
 
+  // simulate the battle
+  async simulateBattle(challengerId: string, opponentId: string) {
+    console.log(challengerId)
+    console.log(opponentId)
+    const response = await axios.post(
 
+      this.baseurl + "simulateBattle",
+      { challengerId: challengerId, opponentId: opponentId }
+    );
+    console.log("hit service++++++++++++++")
+    if(response.status === 500){
+      throw new Error("There was an error simulating the battle");
+    }
 
+    return response.data;
+  }
 
   async sendReq(reqString: string){
     const reqId = this.auth.currentUser?.uid;
@@ -1210,6 +1237,15 @@ export class FireService {
         console.log("Failed to send mock quest data to Firebase:", error);
       }
     }
+
+
+  getCurrentUserId(): string {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) {
+      throw new Error('User not logged in!');
+    }
+    return uid;
+  }
 
 }
 
