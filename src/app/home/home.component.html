@@ -1,20 +1,6 @@
-<button mat-raised-button (click)="signOut()">SIGN OUT</button>
+<button mat-raised-button (click)="signOut()">Back (to do)</button>
 
-<br>
-<mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your Gotchi:</mat-card-title>
-<mat-card class="gotchi-display"  *ngIf="gotchiData">
-<mat-card-content>
-  Hunger: {{ gotchiData.hunger }}
-  <br>Sleep: {{ gotchiData.sleep }}
-  <br>Cleanliness: {{ gotchiData.cleanliness }}
-  <br>Health: {{ gotchiData.health }}
-  <br>Strength: {{ gotchiData.strength }}
-  <br>Dexterity: {{ gotchiData.dexterity }}
-  <br>Stamina: {{ gotchiData.stamina }}
-</mat-card-content>
-</mat-card>
-
-  <mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your current quests:</mat-card-title>
+<mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">Your current quests:</mat-card-title>
   <mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
     <mat-card-title>{{userData.dailyQuest?.name}}</mat-card-title>
@@ -26,7 +12,7 @@
     <br>Reward : {{userData.dailyQuest?.reward}}
     </mat-card-content>
   </mat-card>
-<mat-card class="quest-display" *ngIf="userData">
+  <mat-card class="quest-display" *ngIf="userData">
   <mat-card-header>
     <mat-card-title>{{userData.weeklyQuest?.name}}</mat-card-title>
     <mat-card-subtitle>{{userData.weeklyQuest?.description}}</mat-card-subtitle>
@@ -48,14 +34,3 @@
     <br>Reward : {{userData.monthlyQuest?.reward}}
   </mat-card-content>
   </mat-card>
-
-<button mat-raised-button (click)="gotToMaintainance()">Go to maintainance</button>
-<button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Item overview</button>
-<button mat-raised-button (click)="questComponent()">Quest component</button>
-
-<div class="online_users">
-  <p class="title">Online Users:</p>
-  <ul>
-    <li *ngFor="let user of onlineUsers" (click)="requestBattle(user.uid)">{{ user.username }}</li>
-  </ul>
-</div>

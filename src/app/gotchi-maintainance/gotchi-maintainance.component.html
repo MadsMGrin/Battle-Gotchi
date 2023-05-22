@@ -4,7 +4,7 @@
     <div *ngFor="let user of onlineUsers">
     <mat-card>
       <p>{{user.username}}</p>
-      <button (click)="requestBattle(user.uid)">Fight</button>
+      <button mat-raised-button (click)="requestBattle(user.uid)">Fight</button>
     </mat-card>
   </div>
   </div>
@@ -12,7 +12,7 @@
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
   <div class="username">
-    <p style="text-align: center">{{gotchiData.name}}</p>
+    <h2 style="text-align: center">{{gotchiData.name}}</h2>
   </div>
   <div class="item healthInfo">
     <p>Health</p>
@@ -46,6 +46,10 @@
       <p>dexterity: {{gotchiData.dexterity}}</p>
     </div>
   </div>
+  <div class="item questButton">
+    <button mat-raised-button (click)="signOut()" class="bottomButtons">Quests</button>
+  </div>
+
   <div class="showerAction">
     <p>Take a shower</p>
     <button (click)="shower()"><img src="https://w7.pngwing.com/pngs/46/230/png-transparent-computer-icons-shower-shower-icon-game-angle-line.png" height="80" width="100"></button>
@@ -56,7 +60,6 @@
       <p>Showers taken today: 0</p>
     </ng-template>
   </div>
-
   <div class="hungerAction">
     <p>Eat some food</p>
     <button (click)="eat()"><img src="https://image.pngaaa.com/456/3964456-middle.png" height="80" width="100"></button>
