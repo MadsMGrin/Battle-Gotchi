@@ -1,13 +1,17 @@
 <div class="container">
+
+
   <div class="online_users">
     <p class="title">Online Users:</p>
-    <div *ngFor="let user of onlineUsers">
+    <div *ngFor="let user of onlineUsers.slice(0,10);">
     <mat-card>
       <p>{{user.username}}</p>
       <button (click)="requestBattle(user.uid)">Fight</button>
     </mat-card>
   </div>
   </div>
+
+
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
@@ -77,4 +81,15 @@
       <p>Naps taken today: 0</p>
     </ng-template>
   </div>
+
+  <div class="battleRequests">
+    <h2>Battle Requests:</h2>
+    <div *ngFor="let request of battleRequests">
+      <p>{{ request.senderName }} wants to battle!</p>
+      <button (click)="acceptBattleRequest(request)">Accept</button>
+      <button (click)="rejectBattleRequest(request)">Reject</button>
+    </div>
+  </div>
 </div>
+
+

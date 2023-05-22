@@ -101,7 +101,7 @@ export class FireService {
   }
 
 
-  // method used for sending battle request to another user.
+  // method used for sending battle request to another user./*
   async sendBattleRequest(receiverId: string): Promise<void> {
     console.log('Current user:', this.auth.currentUser, 'UID:', this.auth.currentUser?.uid, 'Receiver ID:', receiverId);
 
@@ -132,19 +132,28 @@ export class FireService {
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
-
-   // method used getting battle notifcation
-  async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
+  // used to get all the request the user has for battle request.
+  async getMyBattleRequests(): Promise<any[]>{
     try {
-      const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error retrieving battle notifications:', error);
-      throw new Error('Failed to retrieve battle notifications');
+      const requestList: any[] = [];
+
+      const docSnap = await this.firestore
+        .collection("battleRequests")
+        .where("receiverId", "==", this.auth.currentUser?.uid)
+        .get();
+
+      const docs = docSnap.docs;
+
+      for(const document of docs){
+        requestList.push(document.data());
+      }
+      console.log(requestList);
+      return requestList;
     }
-  }
-
-
+    catch (error){
+      throw error;
+    }
+  };
 
 
   async sendReq(reqString: string){
