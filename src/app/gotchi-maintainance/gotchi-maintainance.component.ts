@@ -13,7 +13,7 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   gotchiData: any;
   onlineUsers: any[] = [];
-  battleRequests: any;
+  battleRequests: any[]= [];
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) { }
 
   ngOnInit(): void {
@@ -75,13 +75,13 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async getMyBattleRequests() {
     try {
-      const requestList = await this.fireservice.getMyBattleRequests();
-      console.log(requestList);
-      // Do something with the battle request list
+      this.battleRequests = await this.fireservice.getMyBattleRequests();
+      console.log(this.battleRequests);
     } catch (error) {
       console.error('Error retrieving battle requests:', error);
     }
   }
+
 
   async getOnlineUsers() {
     try {

@@ -134,27 +134,27 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
   // used to get all the request the user has for battle request.
-  async getMyBattleRequests(): Promise<any[]>{
+  async getMyBattleRequests(): Promise<any[]> {
     try {
       const requestList: any[] = [];
 
-      const docSnap = await this.firestore
+      await this.firestore
         .collection("battleRequests")
         .where("receiverId", "==", this.auth.currentUser?.uid)
-        .get();
+        .onSnapshot((querySnapshot) => {
+          requestList.length = 0; // Clear the existing list
+          querySnapshot.forEach((doc) => {
+            requestList.push(doc.data());
+          });
+          console.log(requestList);
+        });
 
-      const docs = docSnap.docs;
-
-      for(const document of docs){
-        requestList.push(document.data());
-      }
-      console.log(requestList);
       return requestList;
-    }
-    catch (error){
+    } catch (error) {
       throw error;
     }
-  };
+  }
+
 
 
   async sendReq(reqString: string){
