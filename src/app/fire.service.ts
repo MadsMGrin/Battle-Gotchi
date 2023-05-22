@@ -7,7 +7,7 @@ import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
 import {quest} from "../entities/quest";
 import {userQuest} from "../entities/userQuest";
-import {timestamp} from "rxjs";
+import {item} from "../entities/item";
 
 @Injectable({
   providedIn: 'root'
@@ -96,8 +96,13 @@ export class FireService {
       throw new Error("Failed to get quests");
     }
   }
+  async getGotchiSpecific() {
+    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
+    const doc = snapshot.docs[0];
+    return doc ? doc.data() : null;
+  }
 
-  async register(email, password, username) {
+  async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
     const db = firebase.firestore();
 
     const userSnapshot = await db.collection('users').where('username', '==', username).get();
@@ -322,7 +327,7 @@ export class FireService {
   async signOut() {
     await this.auth.signOut();
   }
-
+// method used to get online players, with centralapi call and displaying them front end
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
@@ -366,14 +371,69 @@ export class FireService {
     await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
+   // method used getting battle notifcation
+  async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
+    try {
+      const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error retrieving battle notifications:', error);
+      throw new Error('Failed to retrieve battle notifications');
+    }
+  }
+
+
+
+
   async sendReq(reqString: string){
     const reqId = this.auth.currentUser?.uid;
 
     const response = await axios.post(this.baseurl + reqString, {reqId: reqId});
 
-    if(response.status === 450){
+    if(response.status === 500){
       throw new Error("You've done you allotted amounts of this action today already")
     }
   }
 
+  async getAllItems() {
+    const snapshot = await this.firestore.collection('item').where('user', '==', this.auth.currentUser?.uid).get();
+    return snapshot.docs.map(doc => doc.data());
+  }
+
+  async getEquippedItem(type) {
+    const snapshot = await this.firestore.collection('item')
+      .where('user', '==', this.auth.currentUser?.uid)
+      .where("itemType","==", type)
+      .where("inUse", "==", true)
+      .get();
+    return snapshot.docs.map(doc => doc.data());
+
+  }
+  async unequip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "unequipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to unequip item');
+    }
+
+  }
+
+  async equip(itemName, type) {
+    try {
+      const userId = this.auth.currentUser?.uid;
+      const response = await axios.post(this.baseurl + "equipItem", {reqId: userId, itemName: itemName, itemType: type });
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to equip item');
+    }
+
+  }
 }

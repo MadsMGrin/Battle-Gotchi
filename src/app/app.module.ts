@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { FormsModule} from "@angular/forms";
-import { HomeComponent } from './home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatCardModule} from "@angular/material/card";
 import {MatButtonModule} from "@angular/material/button";
@@ -16,6 +15,9 @@ import { appRoutingModule } from "./app.router";
 import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {firebaseConfig} from "../../firebaseconfig";
+import {MatProgressBarModule} from "@angular/material/progress-bar";
+import {NgOptimizedImage} from "@angular/common";
+import {HomeComponent} from "./home/home.component";
 
 @NgModule({
   declarations: [
@@ -40,9 +42,13 @@ import {firebaseConfig} from "../../firebaseconfig";
     appRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressBarModule,
+    NgOptimizedImage,
+    MatButtonModule,
+    MatCardModule
   ],
-
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

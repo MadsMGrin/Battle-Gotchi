@@ -1,30 +1,124 @@
 .container {
   display: grid;
-  grid-template-rows: repeat(6, 100px);
-  grid-template-columns: 100px 1fr 2fr 1fr 100px;
-  align-items: baseline;
-  justify-items: baseline;
-  grid-gap: 3em;
+  grid-template-rows:  minmax(20px, 40px) repeat(8, 80px);
+  grid-template-columns: minmax(10px, 50px) 2fr repeat(6, 1fr) 2fr minmax(10px, 50px);
+  grid-gap: 2em;
 }
 
-.item-1{ // row-str, column-str, row-end, column-end
-  grid-area: 2 / 3 / 3 / 4;
-  justify-self: center;
-  align-self: center;
+.backBtn{
+  grid-area: 1 / 1 / 2 / 2;
+  margin-left: 20px;
+}
+.username{
+  grid-area: 1 / 5 / 2 / 7;
+  margin-top: 50px;
 }
 
-.item-2{
-  grid-area: 3 / 3 / 4 / 4;
+.healthInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 4 / 3 / 6;
   justify-self: center;
   align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+
 }
-.item-3{
-  grid-area: 4 / 3 / 5 / 4;
+
+.sleepInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 6 / 3 / 8;
   justify-self: center;
   align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
 }
-.item-4{
-  grid-area: 5 / 3 / 6 / 4;
+
+.hungerInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 5 / 4 / 6 / 6;
   justify-self: center;
   align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
 }
+
+.cleanlinessInfo{ // row-str, column-str, row-end, column-end
+  grid-area: 5 / 6 / 6 / 8;
+  justify-self: center;
+  align-self: center;
+  align-items: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+// statlist
+.gotchiStats{ // row-str, column-str, row-end, column-end
+  grid-area: 3 / 2 / 6 / 3;
+  justify-self: right;
+  align-self: center;
+  align-items: center;
+
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+
+.determinateBar {
+  justify-self: center;
+  min-width: 200px;
+  max-width: 200px;
+  border: 2px solid #039be5;
+  padding-bottom: 10px;
+}
+
+.statBorder{
+  background-color: #1F1F1F;
+  border: 2px solid #039be5;
+  min-width: 100px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+
+.showerAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 3 / 9 / 5;
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.hungerAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 5 / 9 / 7;
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.sleepAction{ // row-str, column-str, row-end, column-end
+  grid-area: 7 / 7 / 9 / 9;
+
+  align-items: center;
+  justify-self: center;
+  text-align: center;
+}
+
+.online_users{
+  grid-area: 2 / 9 / 9 / 10;
+}
+
