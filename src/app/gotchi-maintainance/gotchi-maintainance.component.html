@@ -89,6 +89,11 @@
       <button (click)="rejectBattleRequest(request)">Reject</button>
     </div>
   </div>
+
+  <div class="inputContainer">
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type your message">
+    <button (click)="sendMessage()">Send</button>
+  </div>
 </div>
 
 

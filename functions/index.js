@@ -383,6 +383,48 @@ app.post("/unequipItem",async (req, res,) => {
 
 ///ITEM STUFF END
 
+// chat functions
+app.post('/chatMessage', async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const message = req.body.message;
+
+    const db = admin.firestore();
+
+    // Get the user's name based on the user ID
+    const userDoc = await db.collection('users').doc(userId).get();
+    const username = userDoc.data().username;
+
+    // Save the chat message with the user's name to Firestore
+    await db.collection('chat').add({
+      userId: userId,
+      username: username,
+      message: message
+    });
+
+    res.status(200).send('Chat message sent successfully');
+  } catch (error) {
+    console.error('Error sending chat message:', error);
+    res.status(500).send('Failed to send chat message');
+  }
+});
+
+// Fetch chat messages from Firestore using real-time listeners
+app.get('/chatMessages', async (req, res) => {
+  try {
+    const chatRef = db.collection('chat').orderBy('timestamp');
+
+    // Attach a snapshot listener to get real-time updates
+    chatRef.onSnapshot((snapshot) => {
+      const chatMessages = snapshot.docs.map((doc) => doc.data().message);
+      res.status(200).json(chatMessages);
+    });
+  } catch (error) {
+    console.error('Error fetching chat messages:', error);
+    res.status(500).json({ error: 'Failed to fetch chat messages' });
+  }
+});
+
 
 
 // battle simulation stuff.

@@ -1265,6 +1265,24 @@ export class FireService {
     return uid;
   }
 
+  // chat message methods / https
+
+  async sendChatMessage(userId: string, message: string): Promise<void> {
+    try {
+      const response = await axios.post(this.baseurl + "chatMessage", {
+        userId: userId,
+        message: message
+      });
+
+      console.log('Chat message sent successfully');
+      console.log(response.data);
+
+    } catch (error) {
+      console.error('Error sending chat message:', error);
+      throw new Error('Failed to send chat message');
+    }
+  }
+
 }
 
 

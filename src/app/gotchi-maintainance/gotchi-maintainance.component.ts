@@ -14,6 +14,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   gotchiData: any;
   onlineUsers: any[] = [];
   battleRequests: any[] = [];
+  newMessage: any;
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
@@ -127,7 +128,19 @@ export class GotchiMaintainanceComponent implements OnInit {
       throw error;
     }
   }
+  // chat methods
 
 
+  async sendMessage(): Promise<void> {
+    const currentUserId = this.fireservice.getCurrentUserId();
+    const message = this.newMessage
+
+    try {
+      await this.fireservice.sendChatMessage(currentUserId, message);
+      console.log('Message sent successfully');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  }
 }
 
