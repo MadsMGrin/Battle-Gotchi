@@ -91,8 +91,9 @@ export class FireService {
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
-      const onlineUsers = response.data.filter(user => user.uid !== this.auth.currentUser?.uid)
-        .map(user => ({ username: user.username, uid: user.uid }));
+      // Filter out the current user from the response data
+      const onlineUsers = response.data.filter(user => user && user.uid !== this.auth.currentUser?.uid)
+        .map(user => ({ username: user?.username, uid: user?.uid }));
       return onlineUsers;
     } catch (error) {
       console.error('Error retrieving online users:', error);
