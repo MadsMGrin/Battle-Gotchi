@@ -72,4 +72,8 @@ export class LoginComponent implements OnInit {
       this.isSignUp = true;
     }
   }
+
+  async mock() {
+    await this.fireService.mock();
+  }
 }
