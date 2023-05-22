@@ -387,23 +387,23 @@ app.post("/unequipItem",async (req, res,) => {
 
 // battle simulation stuff.
 app.post('/simulateBattle', async (req, res) => {
-  const challengerId = req.body.challengerId;
-  const opponentId = req.body.opponentId;
+  const senderId = req.body.senderId;
+  const receiverId = req.body.receiverId;
   try {
     const db = admin.firestore();
 
     const result = await db.runTransaction(async (t) => {
-      const challengerQuerySnapshot = await db.collection("gotchi").where("user", "==", challengerId).get();
-      const challengerRef = challengerQuerySnapshot.docs[0].ref;
+      const senderQuerySnapshot = await db.collection("gotchi").where("user", "==", senderId).get();
+      const senderRef = senderQuerySnapshot.docs[0].ref;
 
-      const opponentQuerySnapshot = await db.collection("gotchi").where("user", "==", opponentId).get();
-      const opponentRef = opponentQuerySnapshot.docs[0].ref;
+      const receiverQuerySnapshot = await db.collection("gotchi").where("user", "==", receiverId).get();
+      const receiverRef = receiverQuerySnapshot.docs[0].ref;
 
-      const challengerSnap = await t.get(challengerRef);
-      const opponentSnap = await t.get(opponentRef);
+      const senderSnap = await t.get(senderRef);
+      const receiverSnap = await t.get(receiverRef);
 
-      const challengerGotchi = challengerSnap.data();
-      const opponentGotchi = opponentSnap.data();
+      const senderGotchi = senderSnap.data();
+      const receiverGotchi = receiverSnap.data();
       // calculate score for each gotchi based on attributes and their weights
       const attributeWeights = {
         hunger: 0.2,
@@ -415,25 +415,22 @@ app.post('/simulateBattle', async (req, res) => {
         stamina: 0.1,
       };
 
-      let challengerScore = 0;
-      let opponentScore = 0;
+      let senderScore = 0;
+      let receiverScore = 0;
       for (let attribute in attributeWeights) {
-        challengerScore += challengerGotchi[attribute] * attributeWeights[attribute];
-        opponentScore += opponentGotchi[attribute] * attributeWeights[attribute];
+        senderScore += senderGotchi[attribute] * attributeWeights[attribute];
+        receiverScore += receiverGotchi[attribute] * attributeWeights[attribute];
       }
 
       // decide the winner and loser
       let winner, loser;
-      if (challengerScore > opponentScore) {
-        winner = challengerGotchi;
-        loser = opponentGotchi;
+      if (senderScore > receiverScore) {
+        winner = senderGotchi;
+        loser = receiverGotchi;
       } else {
-        winner = opponentGotchi;
-        loser = challengerGotchi;
+        winner = receiverGotchi;
+        loser = senderGotchi;
       }
-
-      console.log(loser)
-      console.log(winner)
       // update the loser's health - reduce it by a random percentage
       const healthLoss = Math.floor(Math.random() * 10);
       loser.health = Math.max(0, loser.health - healthLoss);
