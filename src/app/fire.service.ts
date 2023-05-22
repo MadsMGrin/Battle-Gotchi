@@ -7,6 +7,7 @@ import * as config from '../../firebaseconfig.js'
 import { gotchi } from "../entities/gotchi";
 import {quest} from "../entities/quest";
 import {userQuest} from "../entities/userQuest";
+import {timestamp} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -140,12 +141,27 @@ export class FireService {
 
     return credential;
   }
-  
+
   async getRandomQuest(category: string): Promise<quest> {
     const quests = await this.getQuest(category);
     const randomIndex = Math.floor(Math.random() * quests.length);
     return quests[randomIndex];
   }
+
+  dateSetter(days: number, startHour: number, endHour: number): { start: Date, end: Date } {
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    startDate.setHours(startHour, 0, 0, 0);
+    const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days - 1);
+    endDate.setHours(endHour, 59, 59, 999);
+
+    console.log(startDate);
+    console.log(endDate);
+
+    return { start: startDate, end: endDate };
+  }
+
+
 
   async mockQuestDataToFirebase() {
     const db = firebase.firestore();
@@ -153,9 +169,9 @@ export class FireService {
     try {
       const dailyQuest: quest = {
         name: "Daily Quest",
-        description: "Complete a daily task",
+        description: "Fuck Jen",
         progress: 0,
-        duration: 60,
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -163,9 +179,9 @@ export class FireService {
 
       const dailyQuest2: quest = {
         name: "Daily Quest 2",
-        description: "Complete a daily task",
+        description: "Fuck Marcus",
         progress: 0,
-        duration: 60,
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -173,9 +189,9 @@ export class FireService {
 
       const dailyQuest3: quest = {
         name: "Daily Quest 3",
-        description: "Complete a daily task",
+        description: "Fuck Filip",
         progress: 0,
-        duration: 60,
+        duration: this.dateSetter(1, 0, 23),
         completion: false,
         category: "daily",
         reward: "Daily Reward",
@@ -185,7 +201,7 @@ export class FireService {
         name: "Weekly Quest",
         description: "Complete a weekly task",
         progress: 0,
-        duration: 604800,
+        duration: this.dateSetter(7, 0, 23),
         completion: false,
         category: "weekly",
         reward: "Weekly Reward",
@@ -195,18 +211,21 @@ export class FireService {
         name: "Monthly Quest",
         description: "Complete a monthly task",
         progress: 0,
-        duration: 2628000,
+        duration: this.dateSetter(30, 0, 23),
         completion: false,
         category: "monthly",
         reward: "Monthly Reward",
       };
 
+      console.log(dailyQuest);
+      console.log(dailyQuest2);
+      console.log(dailyQuest3);
+      console.log(weeklyQuest);
+      console.log(monthlyQuest);
 
-      // Add the daily quest to Firestore with a random ID
+      // Add the daily quests to Firestore with random IDs
       await db.collection("quests").add(dailyQuest);
-
       await db.collection("quests").add(dailyQuest2);
-
       await db.collection("quests").add(dailyQuest3);
 
       // Add the weekly quest to Firestore with a random ID
@@ -220,6 +239,7 @@ export class FireService {
       console.log("Failed to send mock quest data to Firebase:", error);
     }
   }
+
 
   async getGotchi(): Promise<gotchi>{
 

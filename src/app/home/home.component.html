@@ -22,7 +22,7 @@
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.dailyQuest?.progress}}
-    <br>Duration : {{userData.dailyQuest?.duration}} seconds
+    <br>End date : {{userData.dailyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
     <br>Reward : {{userData.dailyQuest?.reward}}
     </mat-card-content>
   </mat-card>
@@ -33,7 +33,7 @@
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.weeklyQuest?.progress}}
-    <br>Duration : {{userData.weeklyQuest?.duration}} seconds
+    <br>End date : {{userData.weeklyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
     <br>Reward : {{userData.weeklyQuest?.reward}}
   </mat-card-content>
 </mat-card>
@@ -44,7 +44,7 @@
   </mat-card-header>
   <mat-card-content>
     Progress : {{userData.monthlyQuest?.progress}}
-    <br>Duration : {{userData.monthlyQuest?.duration}} seconds
+    <br>End date : {{userData.monthlyQuest?.duration.end.seconds*1000 | date: 'MMM d, y, h:mm a' }}
     <br>Reward : {{userData.monthlyQuest?.reward}}
   </mat-card-content>
   </mat-card>
