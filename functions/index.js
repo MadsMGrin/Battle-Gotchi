@@ -253,13 +253,13 @@ app.post("/increaseSleep", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if (doc.data().sleepTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesSleptToday >= 3){
+      if (doc.data().sleepTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesSleptToday >= 2){
         throw new error("Failure")
       }
       const newSleep = doc.data().sleep >= 50 ? 100 : doc.data().sleep + 50;
       const newHealth = doc.data().health >= 75 ? 100 : doc.data().health + 25;
       transaction.set(docRef,{
-          sleepTimeout: Timestamp.now().toMillis() + 2000,
+          sleepTimeout: Timestamp.now().toMillis() + 7200000,
           timesSleptToday: FieldValue.increment(1),
           sleep: newSleep,
           health: newHealth,

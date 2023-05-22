@@ -1,6 +1,15 @@
 <div class="container">
+  <div class="online_users">
+    <p class="title">Online Users:</p>
+    <div *ngFor="let user of onlineUsers">
+    <mat-card>
+      <p>{{user.username}}</p>
+      <button (click)="requestBattle(user.uid)">Fight</button>
+    </mat-card>
+  </div>
+  </div>
 <div class="backBtn">
-  <button (click)="goBack()"><img src="https://www.pngkey.com/png/detail/128-1280901_back-png-image-background-back-arrow-icon-png.png" alt="Back Png Image Background - Back Arrow Icon Png@pngkey.com" height="40" width="60"></button>
+  <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
   <div class="username">
     <p style="text-align: center">{{gotchiData.name}}</p>

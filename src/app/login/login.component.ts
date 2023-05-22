@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FireService } from "../fire.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import {delay, timeout} from "rxjs";
 
 @Component({
   selector: 'app-login',
@@ -27,6 +28,7 @@ export class LoginComponent implements OnInit {
       await this.fireService.register(email, password, username);
       const user = this.fireService.auth.currentUser;
       if (user) {
+        delay(2000 );
         await this.router.navigateByUrl("home");
       }
     } catch (error) {

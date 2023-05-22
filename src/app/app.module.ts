@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { FormsModule} from "@angular/forms";
-import { HomeComponent } from './home/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule} from "@angular/material/snack-bar";
 import { GotchiMaintainanceComponent } from './gotchi-maintainance/gotchi-maintainance.component';
@@ -15,12 +14,13 @@ import {AngularFireAuthModule} from "@angular/fire/compat/auth";
 import {firebaseConfig} from "../../firebaseconfig";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NgOptimizedImage} from "@angular/common";
+import {MatButtonModule} from "@angular/material/button";
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent,
     GotchiMaintainanceComponent,
     TestComponent,
     ItemoverviewComponent,
@@ -34,7 +34,9 @@ import {NgOptimizedImage} from "@angular/common";
     BrowserAnimationsModule,
     MatSnackBarModule,
     MatProgressBarModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    MatButtonModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]
