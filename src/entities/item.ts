@@ -3,7 +3,7 @@ export class item {
 
   itemName?: string;
   itemType?: string;
-  itemImg?: string;
+  itemRarity?: string;
 
   armor?: number;
   additionalSTR?: number;
