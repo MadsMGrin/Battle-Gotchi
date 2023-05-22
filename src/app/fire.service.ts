@@ -104,16 +104,18 @@ export class FireService {
 
   // method used for sending battle request to another user./*
   async sendBattleRequest(receiverId: string): Promise<void> {
-    console.log('Current user:', this.auth.currentUser, 'UID:', this.auth.currentUser?.uid, 'Receiver ID:', receiverId);
 
     const senderId = this.auth.currentUser?.uid;
-
     if (!receiverId || !senderId) {
       throw new Error('User IDs not provided');
     }
-    const senderReferfance = this.firestore.collection('users').doc(senderId);
-    const senderDoc = await senderReferfance.get();
+    // Get the document reference for the sender
+    const senderReference = this.firestore.collection('users').doc(senderId);
+    // Retrieve the sender's document from Firestore
+    const senderDoc = await senderReference.get();
+    // Get the cooldown timestamp value from the sender's document, default to 0 if not available
     const cooldownTimestamp = senderDoc.data()?.['cooldownTimestamp'] || 0;
+    // Get the current timestamp
     const currentTimestamp = firebase.firestore.Timestamp.now().toMillis();
 
     if (currentTimestamp < cooldownTimestamp) {
@@ -126,13 +128,14 @@ export class FireService {
       status: 'pending'
     };
 
-    await this.firestore.collection('battleRequests').add(battleRequest);
+    const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
 
     // cooldown is set to 1min for now,
     const cooldownPeriod = 60000;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
-    await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
+    await senderReference.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
+
   // used to get all the request the user has for battle request.
   async getMyBattleRequests(): Promise<any[]> {
     try {
