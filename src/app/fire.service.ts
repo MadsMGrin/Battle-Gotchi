@@ -131,7 +131,7 @@ export class FireService {
     const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
 
     // cooldown is set to 1min for now,
-    const cooldownPeriod = 60000;
+    const cooldownPeriod = 600;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
     await senderReference.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
@@ -157,6 +157,34 @@ export class FireService {
       throw error;
     }
   }
+
+  // rejections of battle request
+  async rejectBattleRequest(request: any): Promise<void> {
+    try {
+      const requestDocRef = this.firestore.collection('battleRequests').doc(request.senderId);
+
+      // Delete the battle request document
+      await requestDocRef.delete();
+
+      // Remove the onSnapshot listener for the specific document
+      const unsubscribe = this.firestore.collection('battleRequests')
+        .where('senderId', '==', request.senderId)
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            doc.ref.delete();
+          });
+        });
+
+      // Unsubscribe from the onSnapshot listener
+      unsubscribe();
+
+      // Optionally, you can perform additional actions after deleting the battle request
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
 
 

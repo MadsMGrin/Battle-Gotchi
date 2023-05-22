@@ -105,9 +105,15 @@ export class GotchiMaintainanceComponent implements OnInit {
   }
 
 
-  rejectBattleRequest(request: any) {
-
+  async rejectBattleRequest(request: any) {
+    try {
+      await this.fireservice.rejectBattleRequest(request);
+      console.log('Battle request rejected successfully!');
+    } catch (error) {
+      console.error('Error rejecting battle request:', error);
+    }
   }
+
 
   acceptBattleRequest(request: any) {
 

@@ -189,24 +189,6 @@ exports.onUserRegister = functions.auth
   });
 
 
-// method used for sending battleNotifcation to another user
-exports.sendBattleNotification = functions.firestore
-  .document('battleRequests/{requestId}')
-  .onCreate(async (snap, context) => {
-    const battleRequest = snap.data();
-    // creating
-    await admin.firestore().collection('notifications').add({
-      receiverId: battleRequest.receiverId,
-      senderId: battleRequest.senderId,
-      type: 'battleRequest',
-      status: 'unread',
-      message: 'I wish to thee, thus thou dare accept?',
-      timestamp: Firestore.FieldValue.serverTimestamp()
-    });
-
-    console.log('Notification sent successfully');
-  });
-
 //// GOTCHI STATE MANIPULATION - START
 
 app.post("/increaseSleep", async (req, res) => {
