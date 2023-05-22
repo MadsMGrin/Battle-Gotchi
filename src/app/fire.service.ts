@@ -85,6 +85,20 @@ export class FireService {
   }
 
   async signOut() {
+    const userId = this.auth.currentUser?.uid;
+
+    if (userId) {
+      try {
+        const db = firebase.firestore();
+        await db.collection('users').doc(userId).set({
+          status: 'offline',
+        }, { merge: true });
+      } catch (error) {
+        console.error('Error updating user status:', error);
+        // Handle the error accordingly
+      }
+    }
+
     await this.auth.signOut();
   }
 // method used to get online players, with centralapi call and displaying them front end
