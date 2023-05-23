@@ -59,9 +59,6 @@ export class GotchiMaintainanceComponent implements OnInit {
       this.matSnackbar.open("Something went wrong")
     }
   }
-  goBack() {
-    this.router.navigateByUrl("home")
-  }
 
 
   async signOut() {

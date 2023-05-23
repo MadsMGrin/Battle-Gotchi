@@ -213,11 +213,11 @@ export class FireService {
     return randomItemDoc.data() as item;
   }
 
-  dateSetter(days: number, startHour: number, endHour: number): { start: Date, end: Date } {
+  dateSetter(startDay: number, endMonth: number, startHour: number, endHour: number): { start: Date, end: Date } {
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     startDate.setHours(startHour, 0, 0, 0);
-    const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days - 1);
+    const endDate = new Date(2023, endMonth, startDay);
     endDate.setHours(endHour, 59, 59, 999);
     return { start: startDate, end: endDate };
   }
@@ -230,7 +230,7 @@ export class FireService {
         name: "Daily Quest",
         description: "Fuck Jen",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(23, 4, 0, 23),
         completion: false,
         category: "daily",
         reward: null,
@@ -240,7 +240,7 @@ export class FireService {
         name: "Daily Quest 2",
         description: "Fuck Marcus",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(23, 4, 0, 23),
         completion: false,
         category: "daily",
         reward: null,
@@ -250,7 +250,7 @@ export class FireService {
         name: "Daily Quest 3",
         description: "Fuck Filip",
         progress: 0,
-        duration: this.dateSetter(1, 0, 23),
+        duration: this.dateSetter(23,4, 0, 23),
         completion: false,
         category: "daily",
         reward: null,
@@ -260,7 +260,7 @@ export class FireService {
         name: "Weekly Quest",
         description: "Complete a weekly task",
         progress: 0,
-        duration: this.dateSetter(7, 0, 23),
+        duration: this.dateSetter(29,4, 0, 23),
         completion: false,
         category: "weekly",
         reward: null,
@@ -270,7 +270,7 @@ export class FireService {
         name: "Monthly Quest",
         description: "Complete a monthly task",
         progress: 0,
-        duration: this.dateSetter(30, 0, 23),
+        duration: this.dateSetter(1,5, 0, 23),
         completion: false,
         category: "monthly",
         reward: null,
