@@ -156,9 +156,6 @@ export class GotchiMaintainanceComponent implements OnInit {
     try {
       const messages: string[] = await this.fireservice.fetchChatMessages();
       this.chatMessages = messages;
-      console.log(messages);
-      console.log(this.chatMessages);
-
       // Scroll to the bottom of the chat container
       setTimeout(() => {
         this.scrollToBottom();

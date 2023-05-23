@@ -1287,7 +1287,6 @@ export class FireService {
     try {
       const response = await axios.get<string[]>(this.baseurl + 'chatMessages');
       const chatMessages = response.data;
-      console.log('Received chat messages:', chatMessages);
       return chatMessages;
     } catch (error) {
       console.error('Error fetching chat messages:', error);
