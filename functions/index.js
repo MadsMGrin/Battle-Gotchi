@@ -388,6 +388,7 @@ app.post('/chatMessage', async (req, res) => {
   try {
     const userId = req.body.userId;
     const message = req.body.message;
+    const timestamp = new Date(); // Get the current timestamp
 
     const db = admin.firestore();
 
@@ -395,11 +396,12 @@ app.post('/chatMessage', async (req, res) => {
     const userDoc = await db.collection('users').doc(userId).get();
     const username = userDoc.data().username;
 
-    // Save the chat message with the user's name to Firestore
+    // Save the chat message with the user's name and timestamp to Firestore
     await db.collection('chat').add({
       userId: userId,
       username: username,
-      message: message
+      message: message,
+      timestamp: timestamp
     });
 
     res.status(200).send('Chat message sent successfully');
@@ -409,22 +411,32 @@ app.post('/chatMessage', async (req, res) => {
   }
 });
 
+
 // Fetch chat messages from Firestore using real-time listeners
 app.get('/chatMessages', async (req, res) => {
   try {
-    const chatRef = db.collection('chat').orderBy('timestamp');
+    const db = admin.firestore();
+    const chatRef = db.collection('chat').orderBy('timestamp', 'desc').limit(100);
 
-    // Attach a snapshot listener to get real-time updates
+    const initialSnapshot = await chatRef.get();
+    const chatMessages = initialSnapshot.docs
+      .map((doc) => doc.data().message)
+      .reverse();
+
+    res.status(200).json(chatMessages);
+
     chatRef.onSnapshot((snapshot) => {
-      const chatMessages = snapshot.docs.map((doc) => doc.data().message);
-      res.status(200).json(chatMessages);
+      const updatedChatMessages = snapshot.docs
+        .map((doc) => doc.data().message)
+        .reverse();
+
+      res.status(200).json(updatedChatMessages);
     });
   } catch (error) {
     console.error('Error fetching chat messages:', error);
     res.status(500).json({ error: 'Failed to fetch chat messages' });
   }
 });
-
 
 
 // battle simulation stuff.
