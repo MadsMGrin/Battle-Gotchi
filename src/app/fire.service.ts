@@ -78,6 +78,7 @@ export class FireService {
           const questDTO: quest = {
             name: doc.data()['name'],
             description: doc.data()['description'],
+            action: doc.data()['action'],
             progress: doc.data()['progress'],
             duration: doc.data()['duration'],
             completion: doc.data()['completion'],
@@ -130,6 +131,7 @@ export class FireService {
         name: quest.name,
         description: quest.description,
         progress: quest.progress,
+        action: quest.action,
         duration: quest.duration,
         completion: quest.completion,
         category: quest.category,
@@ -172,7 +174,6 @@ export class FireService {
     if (userQuests.dailyQuest && userQuests.dailyQuest.duration.end < currentDate) {
       const newDailyQuest = await this.assignNewQuest("daily"); // Assign a new daily quest
       await this.firestore.collection("users").doc(userId).update({ dailyQuest: newDailyQuest });
-      console.log(newDailyQuest)
     }
 
     // Check and unassign weekly quest
@@ -222,56 +223,106 @@ export class FireService {
     return { start: startDate, end: endDate };
   }
 
+  async increaseQuestProgress(increment: number, action: string) {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) {
+      return;
+    }
+
+    const currentDate = new Date();
+    const userQuests = await this.firestore.collection("users").doc(userId).get();
+
+    if (!userQuests.exists) {
+      throw new Error("User quests not found");
+    }
+
+    const questFields = ["dailyQuest", "weeklyQuest", "monthlyQuest"];
+
+    await this.firestore.runTransaction(async (transaction) => {
+      const gotchiDoc = await transaction.get(this.firestore.collection("gotchi").doc(userId));
+      const questDoc = await transaction.get(this.firestore.collection("users").doc(userId));
+
+      if (!questDoc.exists) {
+        throw new Error("Quest document not found");
+      }
+
+      for (const questField of questFields) {
+        const quest = questDoc.data()![questField];
+
+        if (quest && quest.duration.end <= currentDate && quest.action === action) {
+          const newProgress = (quest.progress || 0) + increment;
+          transaction.update(questDoc.ref, {
+            [`${questField}.progress`]: newProgress,
+          });
+
+          // Check if the quest has been completed
+          if (newProgress >= quest.completion) {
+            const currentItems = gotchiDoc.data()?.['items'] || [];
+            const updatedItems = [...currentItems, quest.reward];
+            transaction.update(gotchiDoc.ref, {
+              items: updatedItems,
+            });
+          }
+        }
+      }
+    });
+  }
+
   async mockQuestDataToFirebase() {
     const db = firebase.firestore();
 
     try {
       const dailyQuest: quest = {
-        name: "Daily Quest",
-        description: "Fuck Jen",
+        name: "Nap time!",
+        description: "Sleep 2 times today.",
+        action: "sleep",
         progress: 0,
         duration: this.dateSetter(23, 4, 0, 23),
-        completion: false,
+        completion: 2,
         category: "daily",
         reward: null,
       };
 
       const dailyQuest2: quest = {
-        name: "Daily Quest 2",
-        description: "Fuck Marcus",
+        name: "Nutrition is key!",
+        description: "Eat 3 times today.",
+        action: "eat",
         progress: 0,
         duration: this.dateSetter(23, 4, 0, 23),
-        completion: false,
+        completion: 3,
         category: "daily",
         reward: null,
       };
 
       const dailyQuest3: quest = {
-        name: "Daily Quest 3",
-        description: "Fuck Filip",
+        name: "You're kinda smelly!",
+        description: "Shower 2 times today.",
+        action: "shower",
         progress: 0,
-        duration: this.dateSetter(23,4, 0, 23),
-        completion: false,
+        duration: this.dateSetter(23, 4, 0, 23),
+        completion: 2,
         category: "daily",
         reward: null,
       };
 
       const weeklyQuest: quest = {
-        name: "Weekly Quest",
-        description: "Complete a weekly task",
+        name: "Hungry little one you are!",
+        description: "Eat 2 times this weak.",
+        action: "eat",
         progress: 0,
-        duration: this.dateSetter(29,4, 0, 23),
-        completion: false,
+        duration: this.dateSetter(22, 4, 0, 23),
+        completion: 2,
         category: "weekly",
         reward: null,
       };
 
       const monthlyQuest: quest = {
-        name: "Monthly Quest",
-        description: "Complete a monthly task",
+        name: "Battle god",
+        description: "Fight 20 times this month.",
+        action: "battle",
         progress: 0,
-        duration: this.dateSetter(1,5, 0, 23),
-        completion: false,
+        duration: this.dateSetter(31, 4, 0, 23),
+        completion: 20,
         category: "monthly",
         reward: null,
       };

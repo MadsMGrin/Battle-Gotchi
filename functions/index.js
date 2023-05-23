@@ -172,23 +172,7 @@ app.get('/onlineusers', async (req, res) => {
 exports.onUserRegister = functions.auth
   .user()
   .onCreate((user, context) => {
-    admin.firestore().collection("gotchi").add({
-      user: user.uid,
-      hunger: 50,
-      sleep: 50,
-      cleanliness: 50,
-      health: 50,
-      strength: 0,
-      dexterity: 0,
-      stamina: 0,
-    })
-  })
-
-
-exports.onUserRegister = functions.auth
-  .user()
-  .onCreate((user, context) => {
-    admin.firestore().collection("gotchi").add({
+    admin.firestore().collection("gotchi").doc(user.uid).set({
       user: user.uid,
       name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
       hunger: 50,

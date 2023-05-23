@@ -30,36 +30,35 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-  async sleep(){
+  async sleep() {
     try {
       await this.fireservice.sendReq("increaseSleep");
       await this.getGotchi();
-    }
-    catch (error){
-      this.matSnackbar.open("Something went wrong")
+      await this.fireservice.increaseQuestProgress(1, "sleep");
+    } catch (error) {
+      this.matSnackbar.open("Something went wrong");
     }
   }
 
-  async eat(){
+  async eat() {
     try {
       await this.fireservice.sendReq("increaseHunger");
       await this.getGotchi();
-    }
-    catch (error){
-      this.matSnackbar.open("Something went wrong")
+      await this.fireservice.increaseQuestProgress(1, "eat");
+    } catch (error) {
+      this.matSnackbar.open("Something went wrong");
     }
   }
 
-  async shower(){
+  async shower() {
     try {
       await this.fireservice.sendReq("increaseCleanliness");
       await this.getGotchi();
-    }
-    catch (error){
-      this.matSnackbar.open("Something went wrong")
+      await this.fireservice.increaseQuestProgress(1, "shower");
+    } catch (error) {
+      this.matSnackbar.open("Something went wrong");
     }
   }
-
 
   async signOut() {
     await this.fireservice.signOut();
@@ -86,4 +85,5 @@ export class GotchiMaintainanceComponent implements OnInit {
   async quest() {
     await this.router.navigateByUrl("quest");
   }
+
 }
