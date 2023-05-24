@@ -401,26 +401,15 @@ export class FireService {
   }
   // method to get the items for the current user.
   async getMyGotchiItems(): Promise<any[]> {
-    try {
-      const itemList: any[] = [];
-
-      await this.firestore
-        .collection("gotchi")
-        .where(firebase.firestore.FieldPath.documentId(), "==", this.auth.currentUser?.uid)
-        .onSnapshot(async (querySnapshot) => {
-          itemList.length = 0;
-          for (const doc of querySnapshot.docs) {
-            const gotchi = doc.data();
-            const items = gotchi['items'] || {}; // Handle the case when items are not present or null
-            itemList.push({ ...gotchi, items });
-          }
-          console.log(itemList);
-        });
-
-      return itemList;
-    } catch (error) {
-      throw error;
+    const snapshot = await this.firestore.collection('gotchi')
+      .doc(this.auth.currentUser?.uid).get();
+    if (snapshot.exists) {
+      const data = snapshot.data();
+      if (data && data['items']) {
+        return data['items'];
+      }
     }
+    return [];
   }
 
 
