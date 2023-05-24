@@ -125,9 +125,9 @@ const wackyLastNames = [
   "Fluffernutter",
 ]
 
+
+
 app.use(cors());
-
-
 exports.api = functions.runWith(runtimeOpts).https.onRequest(app);
 // used to delete any duplicate username document that maybe created
 exports.enforceUniqueUsername = functions.firestore
@@ -166,24 +166,6 @@ app.get('/onlineusers', async (req, res) => {
   } catch (error) {
     console.error("Error retrieving online users:", error);
     res.status(500).json({error: "Failed to retrieve online users"});
-  }
-});
-// used for fetching all items for an online users.
-app.get('/onlineusers/:id/items', async (req, res) => {
-  try {
-    const userId = req.params.id;
-
-    const gotchiDoc = await admin.firestore().collection('gotchi').doc(userId).get();
-    if (!gotchiDoc.exists) {
-      return res.status(404).json({ error: 'Gotchi not found' });
-    }
-    const gotchiData = gotchiDoc.data();
-    const items = gotchiData?.items || {};
-
-    res.json({ userId, items });
-  } catch (error) {
-    console.error("Error retrieving items for online user:", error);
-    res.status(500).json({ error: "Failed to retrieve items for online user" });
   }
 });
 
@@ -335,84 +317,60 @@ exports.statemodification = functions.auth.user().onCreate(async (user, context)
 
 
 // ITEM STUFF
-app.post("/equipItem", async (req, res) => {
-  const user = req.body.userId;
+app.post("/equipItem",async (req, res,) => {
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
-  let items;
-  const querySnapshot = await db.collection('gotchi')
-    .doc(user)
+  const querySnapshot = await db.collection("item")
+    .where("itemType", "==",itemType)
+    .where("itemName","==",itemName)
     .get();
-
-  if (querySnapshot.exists) {
-    const data = querySnapshot.data();
-    if (data && data['items']) {
-      items = data['items'];
-      items = items.map(item => {
-        if (item.itemType === itemType && item.itemName === itemName) {
-          return { ...item, inUse: true };
-        }
-        return item;
-      });
-    }
-  }
-
-  const docRef = querySnapshot.ref;
+  const docRef = querySnapshot.docs[0].ref;
 
   return db.runTransaction((transaction) => {
+    // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      transaction.set(docRef, { items }, { merge: true });
+      transaction.set(docRef,{
+          inUse: true,
+        },
+        {merge: true}
+      )
     });
-  })
-    .then(() => {
-      res.status(200).send("item equipped");
-      console.log("Transaction successfully committed!");
-    })
-    .catch((error) => {
-      res.status(400).send("error");
-      console.log("Transaction failed: ", error);
-    });
+  }).then(() => {
+    res.status(200).send("item unequipped");
+    console.log("Transaction successfully committed!");
+  }).catch((error) => {
+    res.status(400).send("error");
+    console.log("Transaction failed: ", error);
+  });
 });
 
-app.post("/unequipItem", async (req, res) => {
-  const user = req.body.userId;
+app.post("/unequipItem",async (req, res,) => {
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
-  let items;
-  const querySnapshot = await db.collection('gotchi')
-    .doc(user)
+  const querySnapshot = await db.collection("item")
+    .where("itemType", "==",itemType)
+    .where("itemName","==",itemName)
     .get();
-
-  if (querySnapshot.exists) {
-    const data = querySnapshot.data();
-    if (data && data['items']) {
-      items = data['items'];
-      items = items.map(item => {
-        if (item.itemType === itemType && item.itemName === itemName) {
-          return { ...item, inUse: false };
-        }
-        return item;
-      });
-    }
-  }
-
-  const docRef = querySnapshot.ref;
+  const docRef = querySnapshot.docs[0].ref;
 
   return db.runTransaction((transaction) => {
+    // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      transaction.set(docRef, { items }, { merge: true });
+      transaction.set(docRef,{
+          inUse: false,
+        },
+        {merge: true}
+      )
     });
-  })
-    .then(() => {
-      res.status(200).send("item unequipped");
-      console.log("Transaction successfully committed!");
-    })
-    .catch((error) => {
-      res.status(400).send("error");
-      console.log("Transaction failed: ", error);
-    });
+  }).then(() => {
+    res.status(200).send("item unequipped");
+    console.log("Transaction successfully committed!");
+  }).catch((error) => {
+    res.status(400).send("error");
+    console.log("Transaction failed: ", error);
+  });
 });
 
 

@@ -1,5 +1,4 @@
-<div class="container">
-
+<div class="container" *ngIf="death==false">
   <div class="online_users">
     <p class="title">Online Users:</p>
     <div *ngFor="let user of onlineUsers?.slice(0, 10)">
@@ -132,4 +131,9 @@
 
 </div>
 
+<div *ngIf="death == true" class="death">
+  <img src="https://www.freeiconspng.com/thumbs/skull-and-crossbones-png/skull-and-crossbones-png-3.png">
+  <p>You died</p>
+  <button (click)="startAgain()">TRY AGAIN?</button>
+</div>
 

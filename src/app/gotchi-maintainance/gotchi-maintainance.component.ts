@@ -17,9 +17,8 @@ export class GotchiMaintainanceComponent implements OnInit {
   onlineUsers: any[] = [];
   battleRequests: any[] = [];
   newMessage: any;
-  chatMessages: any[] =[];
-  itemsList: any[] = [];
-  selectedItem: any;
+  chatMessages: any[] =[]
+
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
@@ -79,7 +78,7 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.router.navigateByUrl("login");
   }
 
-  // the battle request so the signed-in user.
+  // the battle request so the signed in user.
   async getMyBattleRequests() {
     try {
       this.battleRequests = await this.fireservice.getMyBattleRequests();
@@ -95,32 +94,6 @@ export class GotchiMaintainanceComponent implements OnInit {
       console.error('Error retrieving online users:', error);
     }
   }
-  item: any; // Declare the 'item' property
-
-  async displayItemsForSelectedUser(userId: string) {
-    try {
-      const user = this.onlineUsers.find(u => u?.uid === userId);
-      if (user) {
-        if (user.showItems) {
-          user.showItems = false;
-        } else {
-          this.itemsList = await this.fireservice.getItemsForOnlineUser(userId);
-          user.items = this.itemsList;
-          user.showItems = true;
-          console.log(this.itemsList + " hereeeeeeeeeeeeeeeeeeeeeeeee");
-
-          // Assign the first item from 'itemsList' to the 'item' property
-          this.item = this.itemsList[0];
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
-
-
 
   async requestBattle(userId: string) {
     try {
@@ -191,7 +164,6 @@ export class GotchiMaintainanceComponent implements OnInit {
   }
 
   // used so the chat is scrolled down when you refresh page.
-
   scrollToBottom(): void {
     const container = document.querySelector('.chatMessages');
     if (container) {
@@ -201,10 +173,6 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   itemsOverview() {
     this.router.navigateByUrl("itemview")
-  }
-
-  handleItemClick(itemName: any) {
-
   }
 }
 

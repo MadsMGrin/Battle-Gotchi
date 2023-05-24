@@ -8,6 +8,7 @@ import { gotchi } from "../entities/gotchi";
 import {quest} from "../entities/quest";
 import {userQuest} from "../entities/userQuest";
 import {item} from "../entities/item";
+import {deleteDoc} from "@angular/fire/firestore";
 
 @Injectable({
   providedIn: 'root'
@@ -589,6 +590,7 @@ export class FireService {
       throw new Error('Failed to equip item');
     }
  }
+
 
   async mock() {
       try {
@@ -1695,6 +1697,28 @@ export class FireService {
     }
   }
 
+  async getMyDeath(): Promise<boolean> {
+    try {
+      const snapshot = await this.firestore
+        .collection("gotchi")
+        .where("user", "==", this.auth.currentUser?.uid)
+        .get();
 
+      return snapshot.empty; // If the snapshot is empty, the document has been deleted
+    } catch (error) {
+      throw error;
+    }
+  }
 
+  async restart() {
+    try {
+      const response = await axios.post(this.baseurl + "restart", {
+        user: this.auth.currentUser?.uid
+      });
+      return response.status != 200;
+    }
+    catch (error){
+      throw error;
+    }
+  }
 }
