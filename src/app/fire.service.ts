@@ -514,9 +514,9 @@ export class FireService {
     }
   }
 
-  async rejectTradeRequest() {
+  async rejectTradeRequest(documentId) {
     try {
-      const response = await axios.post(this.baseurl + "rejectTrade", {});
+      const response = await axios.post(this.baseurl + "rejectTrade", {docId: documentId});
       console.log(response)
       return response;
 

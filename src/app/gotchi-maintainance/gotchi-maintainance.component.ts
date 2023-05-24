@@ -222,7 +222,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   }
 
   rejectTradeRequest(request: any) {
-
+    this.fireservice.rejectTradeRequest(request);
   }
 }
 
