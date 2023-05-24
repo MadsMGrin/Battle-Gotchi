@@ -411,8 +411,6 @@ export class FireService {
       receiverId: receiverId,
     };
 
-    const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
-
     // cooldown is set to 1min for now,
     const cooldownPeriod = 600;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
@@ -500,7 +498,7 @@ export class FireService {
 
     return response.data;
   }
-  
+
   async sendReq(reqString: string){
     const reqId = this.auth.currentUser?.uid;
 
@@ -1525,7 +1523,6 @@ export class FireService {
         console.log("Failed to send mock quest data to Firebase:", error);
       }
     }
-
 
   getCurrentUserId(): string {
     const uid = this.auth.currentUser?.uid;

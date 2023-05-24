@@ -120,6 +120,7 @@ export class GotchiMaintainanceComponent implements OnInit {
       await this.fireservice.getDocId(request);
       // Get the current user id
       const currentUserId = this.fireservice.getCurrentUserId();
+      await this.fireservice.increaseQuestProgress(1, "battle");
       console.log(currentUserId)
       // Simulate the battle and get the result
       await this.fireservice.simulateBattle(currentUserId, request);
