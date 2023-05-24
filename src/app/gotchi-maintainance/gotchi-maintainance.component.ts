@@ -20,6 +20,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   chatMessages: any[] =[];
   itemsList: any[] = [];
   selectedItem: any;
+  death: boolean = false;
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
@@ -29,6 +30,7 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.getGotchi();
     this.getMyBattleRequests();
     this.fetchChatMessages();
+    this.checkDeathState();
   }
 
   async getGotchi() {
@@ -206,5 +208,27 @@ export class GotchiMaintainanceComponent implements OnInit {
   handleItemClick(itemName: any) {
 
   }
+
+
+  async restart(){
+    try {
+      this.death = await this.fireservice.restart()
+      console.log(this.death)
+      this.ngOnInit();
+    }
+    catch (error){
+      console.log("cba")
+    }
+  }
+  async checkDeathState(): Promise<void> {
+    try {
+      this.death = await this.fireservice.getMyDeath();
+      console.log("Hello, I am death:", this.death);
+    } catch (error) {
+      console.log('Error checking death state:', error);
+    }
+  }
+
+
 }
 
