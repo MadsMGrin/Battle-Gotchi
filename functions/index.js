@@ -7,8 +7,6 @@ const {every, timestamp} = require("rxjs");
 const {PromisePool} = require("promise-pool-executor");
 const {Timestamp, FieldValue} = require("firebase-admin/firestore")
 const {error} = require("firebase-functions/logger");
-
-
 admin.initializeApp({
   projectId: "battlegotchi-63c2e",
   databaseURL: "http://localhost:8080",
@@ -171,11 +169,10 @@ app.get('/onlineusers', async (req, res) => {
   }
 });
 
-
 exports.onUserRegister = functions.auth
   .user()
   .onCreate((user, context) => {
-    admin.firestore().collection("gotchi").add({
+    admin.firestore().collection("gotchi").doc(user.uid).set({
       user: user.uid,
       name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
       hunger: 50,

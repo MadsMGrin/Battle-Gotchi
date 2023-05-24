@@ -15,7 +15,8 @@
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
   <div class="username">
-    <p style="text-align: center">{{gotchiData?.name}}</p>
+    <h2 style="text-align: center">{{gotchiData.name}}</h2>
+
   </div>
   <div class="item healthInfo">
     <p>Health</p>
@@ -49,9 +50,11 @@
       <p>dexterity: {{gotchiData?.dexterity}}</p>
     </div>
   </div>
+  <div class="item questButton">
+    <button mat-raised-button (click)="quest()" class="bottomButtons">Quests</button>
+  </div>
   <div class="itemsList">
     <button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Your Items</button>
-
   </div>
   <div class="showerAction">
     <p>Take a shower</p>
@@ -63,7 +66,6 @@
       <p>Showers taken today: 0</p>
     </ng-template>
   </div>
-
   <div class="hungerAction">
     <p>Eat some food</p>
     <button (click)="eat()"><img src="https://image.pngaaa.com/456/3964456-middle.png" height="80" width="100"></button>

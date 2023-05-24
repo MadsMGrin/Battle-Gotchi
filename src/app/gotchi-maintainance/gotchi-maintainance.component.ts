@@ -43,8 +43,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     try {
       await this.fireservice.sendReq("increaseSleep");
       await this.getGotchi();
+      await this.fireservice.increaseQuestProgress(1, "sleep");
     } catch (error) {
-      this.matSnackbar.open("Something went wrong")
+      this.matSnackbar.open("Something went wrong");
     }
   }
 
@@ -52,8 +53,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     try {
       await this.fireservice.sendReq("increaseHunger");
       await this.getGotchi();
+      await this.fireservice.increaseQuestProgress(1, "eat");
     } catch (error) {
-      this.matSnackbar.open("Something went wrong")
+      this.matSnackbar.open("Something went wrong");
     }
   }
 
@@ -61,8 +63,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     try {
       await this.fireservice.sendReq("increaseCleanliness");
       await this.getGotchi();
+      await this.fireservice.increaseQuestProgress(1, "shower");
     } catch (error) {
-      this.matSnackbar.open("Something went wrong")
+      this.matSnackbar.open("Something went wrong");
     }
   }
 
@@ -70,12 +73,10 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.router.navigateByUrl("home")
   }
 
-
   async signOut() {
     await this.fireservice.signOut();
     this.router.navigateByUrl("login");
   }
-
 
   // the battle request so the signed in user.
   async getMyBattleRequests() {
@@ -85,7 +86,6 @@ export class GotchiMaintainanceComponent implements OnInit {
       console.error('Error retrieving battle requests:', error);
     }
   }
-
 
   async getOnlineUsers() {
     try {
@@ -104,11 +104,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-  async itemsOverview() {
-    await this.router.navigateByUrl("itemview");
+  async quest() {
+    await this.router.navigateByUrl("quest");
   }
-
-
   async rejectBattleRequest(request: any) {
     try {
       await this.fireservice.rejectBattleRequest(request);
@@ -125,6 +123,7 @@ export class GotchiMaintainanceComponent implements OnInit {
       await this.fireservice.getDocId(request);
       // Get the current user id
       const currentUserId = this.fireservice.getCurrentUserId();
+      await this.fireservice.increaseQuestProgress(1, "battle");
       console.log(currentUserId)
       // Simulate the battle and get the result
       await this.fireservice.simulateBattle(currentUserId, request);
@@ -134,7 +133,6 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
   // chat methods
-
 
   async sendMessage(): Promise<void> {
     const currentUserId = this.fireservice.getCurrentUserId();
@@ -151,8 +149,6 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-
-
   async fetchChatMessages(): Promise<void> {
     try {
       const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
@@ -167,9 +163,6 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-
-
-
   // used so the chat is scrolled down when you refresh page.
   scrollToBottom(): void {
     const container = document.querySelector('.chatMessages');
@@ -178,6 +171,8 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
-
+  itemsOverview() {
+    this.router.navigateByUrl("itemview")
+  }
 }
 

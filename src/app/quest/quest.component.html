@@ -1,0 +1,43 @@
+<button mat-raised-button (click)="back()">back</button>
+
+
+<mat-card-title class="title" style="display: flex; justify-content: center; align-items: center;">All quests:</mat-card-title>
+  <mat-card class="quest-display" *ngFor="let d of dailyQuests">
+    <mat-card-header>
+    <mat-card-title>Daily quest : {{d.name}}</mat-card-title>
+      <mat-card-subtitle>description: {{d.description}}</mat-card-subtitle>
+    </mat-card-header>
+  <mat-card-content>
+    progress: {{d.progress}}
+    <br>duration: {{d.duration}}
+    <br>completion: {{d.completion}}
+    <br>category: {{d.category}}
+    <br>reward: {{d.reward}}
+  </mat-card-content>
+  </mat-card>
+  <mat-card class="quest-display" *ngFor="let w of weeklyQuests">
+    <mat-card-header>
+      <mat-card-title>Daily quest : {{w.name}}</mat-card-title>
+      <mat-card-subtitle>description: {{w.description}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      progress: {{w.progress}}
+      <br>duration: {{w.duration}}
+      <br>completion: {{w.completion}}
+      <br>category: {{w.category}}
+      <br>reward: {{w.reward}}
+  </mat-card-content>
+  </mat-card>
+    <mat-card class="quest-display" *ngFor="let m of monthlyQuests">
+      <mat-card-header>
+        <mat-card-title>Daily quest : {{m.name}}</mat-card-title>
+        <mat-card-subtitle>description: {{m.description}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        progress: {{m.progress}}
+        <br>duration: {{m.duration}}
+        <br>completion: {{m.completion}}
+        <br>category: {{m.category}}
+        <br>reward: {{m.reward}}
+  </mat-card-content>
+</mat-card>

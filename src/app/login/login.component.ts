@@ -61,6 +61,10 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  async mockQuestDataToFirebase(){
+    await this.fireService.mockQuestDataToFirebase();
+  }
+
   toggleSignUp() {
     if (this.isSignUp) {
       // Switch to sign-in mode

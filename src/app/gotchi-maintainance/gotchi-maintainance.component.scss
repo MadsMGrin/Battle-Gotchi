@@ -67,7 +67,7 @@
 // statlist
 .gotchiStats{ // row-str, column-str, row-end, column-end
   grid-area: 3 / 2 / 6 / 3;
-  justify-self: right;
+  justify-self: center;
   align-self: center;
   align-items: center;
 
@@ -76,6 +76,18 @@
   padding-left: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
+}
+
+// statlist
+.questButton{ // row-str, column-str, row-end, column-end
+  grid-area: 6 / 2 / 6 / 3;
+  justify-self: center;
+  align-self: start;
+  align-items: center;
+
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding: 10px;
 }
 
 
