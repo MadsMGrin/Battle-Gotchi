@@ -244,13 +244,19 @@ export class FireService {
   }
 
   async getAllItems() {
-    const snapshot = await this.firestore.collection('item').where('user', '==', this.auth.currentUser?.uid).get();
+    const snapshot = await this.firestore.collection('item').get();
+    return snapshot.docs.map(doc => doc.data());
+  }
+
+  async getAllItemsOfType(type) {
+    const snapshot = await this.firestore.collection('item')
+      .where("itemType","==", type)
+      .get();
     return snapshot.docs.map(doc => doc.data());
   }
 
   async getEquippedItem(type) {
     const snapshot = await this.firestore.collection('item')
-      .where('user', '==', this.auth.currentUser?.uid)
       .where("itemType","==", type)
       .where("inUse", "==", true)
       .get();
@@ -259,8 +265,7 @@ export class FireService {
   }
   async unequip(itemName, type) {
     try {
-      const userId = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "unequipItem", {reqId: userId, itemName: itemName, itemType: type });
+      const response = await axios.post(this.baseurl + "unequipItem", {itemName: itemName, itemType: type });
       console.log(response)
       return response;
 
@@ -1297,5 +1302,3 @@ export class FireService {
 
 
 }
-
-
