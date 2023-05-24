@@ -43,4 +43,8 @@ export class ItemoverviewComponent implements OnInit {
       console.error('Error retrieving items:', error);
     }
   }
+
+  goBack() {
+    this.router.navigateByUrl("home")
+  }
 }

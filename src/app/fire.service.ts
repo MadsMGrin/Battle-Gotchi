@@ -510,29 +510,49 @@ export class FireService {
   }
 
   async getAllItems() {
-    const snapshot = await this.firestore.collection('item').get();
-    return snapshot.docs.map(doc => doc.data());
+    const snapshot = await this.firestore.collection('gotchi')
+      .doc(this.auth.currentUser?.uid).get();
+    if (snapshot.exists) {
+      const data = snapshot.data();
+      if (data && data['items']) {
+        return data['items'];
+      }
+    }
+    return [];
   }
 
   async getAllItemsOfType(type) {
-    const snapshot = await this.firestore.collection('item')
-      .where("itemType","==", type)
+    const snapshot = await this.firestore.collection('gotchi')
+      .doc(this.auth.currentUser?.uid)
       .get();
-    return snapshot.docs.map(doc => doc.data());
+    if (snapshot.exists) {
+      const data = snapshot.data();
+      if (data && data['items']) {
+        const items = data['items'];
+        return items.filter(item => item.itemType === type);
+      }
+    }
+    return [];
   }
 
   async getEquippedItem(type) {
-    const snapshot = await this.firestore.collection('item')
-      .where("itemType","==", type)
-      .where("inUse", "==", true)
+    const snapshot = await this.firestore.collection('gotchi')
+      .doc(this.auth.currentUser?.uid)
       .get();
-    return snapshot.docs.map(doc => doc.data());
-
+    if (snapshot.exists) {
+      const data = snapshot.data();
+      if (data && data['items']) {
+        const items = data['items'];
+        return items.filter(item => item.itemType === type && item.inUse === true);
+      }
+    }
+    return [];
   }
 
   async unequip(itemName, type) {
     try {
-      const response = await axios.post(this.baseurl + "unequipItem", {itemName: itemName, itemType: type });
+      const user = this.getCurrentUserId();
+      const response = await axios.post(this.baseurl + "unequipItem", {userId: user, itemName: itemName, itemType: type });
       console.log(response)
       return response;
 
@@ -540,13 +560,12 @@ export class FireService {
       console.error('Error:', error);
       throw new Error('Failed to unequip item');
     }
-
   }
 
   async equip(itemName, type) {
     try {
-      const userId = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "equipItem", {reqId: userId, itemName: itemName, itemType: type });
+      const user = this.getCurrentUserId();
+      const response = await axios.post(this.baseurl + "equipItem", {userId: user, itemName: itemName, itemType: type });
       console.log(response)
       return response;
 
@@ -562,6 +581,7 @@ export class FireService {
 
 
         const weapon1Common = {
+          inUse: false,
           itemName: "Blade of Shadows",
           itemType: "weapon",
           itemRarity: "common",
@@ -572,6 +592,7 @@ export class FireService {
         };
 
         const weapon2Common = {
+          inUse: false,
           itemName: "Stormcaller",
           itemType: "weapon",
           itemRarity: "common",
@@ -582,6 +603,7 @@ export class FireService {
         };
 
         const weapon3Common = {
+          inUse: false,
           itemName: "Frostbite",
           itemType: "weapon",
           itemRarity: "common",
@@ -592,6 +614,7 @@ export class FireService {
         };
 
         const weapon4Common = {
+          inUse: false,
           itemName: "Venomstrike",
           itemType: "weapon",
           itemRarity: "common",
@@ -602,6 +625,7 @@ export class FireService {
         };
 
         const weapon5Common = {
+          inUse: false,
           itemName: "Raging Inferno",
           itemType: "weapon",
           itemRarity: "common",
@@ -612,6 +636,7 @@ export class FireService {
         };
 
         const weapon6Common = {
+          inUse: false,
           itemName: "Thunderclap",
           itemType: "weapon",
           itemRarity: "common",
@@ -622,6 +647,7 @@ export class FireService {
         };
 
         const weapon7Common = {
+          inUse: false,
           itemName: "Doombringer",
           itemType: "weapon",
           itemRarity: "common",
@@ -632,6 +658,7 @@ export class FireService {
         };
 
         const weapon8Common = {
+          inUse: false,
           itemName: "Soulrender",
           itemType: "weapon",
           itemRarity: "common",
@@ -642,6 +669,7 @@ export class FireService {
         };
 
         const weapon9Common = {
+          inUse: false,
           itemName: "Whispering Death",
           itemType: "weapon",
           itemRarity: "common",
@@ -652,6 +680,7 @@ export class FireService {
         };
 
         const weapon10Common = {
+          inUse: false,
           itemName: "Serpent's Fang",
           itemType: "weapon",
           itemRarity: "common",
@@ -662,6 +691,7 @@ export class FireService {
         };
 
         const weapon11Common = {
+          inUse: false,
           itemName: "Molten Fury",
           itemType: "weapon",
           itemRarity: "common",
@@ -672,6 +702,7 @@ export class FireService {
         };
 
         const weapon12Common = {
+          inUse: false,
           itemName: "Galeforce",
           itemType: "weapon",
           itemRarity: "common",
@@ -682,6 +713,7 @@ export class FireService {
         };
 
         const weapon13Common = {
+          inUse: false,
           itemName: "Nightfall",
           itemType: "weapon",
           itemRarity: "common",
@@ -692,6 +724,7 @@ export class FireService {
         };
 
         const weapon14Common = {
+          inUse: false,
           itemName: "Obsidian Slicer",
           itemType: "weapon",
           itemRarity: "common",
@@ -702,6 +735,7 @@ export class FireService {
         };
 
         const weapon15Common = {
+          inUse: false,
           itemName: "Viper's Bite",
           itemType: "weapon",
           itemRarity: "common",
@@ -711,6 +745,7 @@ export class FireService {
           additionalSTM: 25
         };
         const chestplate1Common = {
+          inUse: false,
           itemName: "Plate of Protection",
           itemType: "chestplate",
           itemRarity: "common",
@@ -721,6 +756,7 @@ export class FireService {
         };
 
         const chestplate2Common = {
+          inUse: false,
           itemName: "Guardian's Embrace",
           itemType: "chestplate",
           itemRarity: "common",
@@ -731,6 +767,7 @@ export class FireService {
         };
 
         const chestplate3Common = {
+          inUse: false,
           itemName: "Knight's Valor",
           itemType: "chestplate",
           itemRarity: "common",
@@ -741,6 +778,7 @@ export class FireService {
         };
 
         const chestplate4Common = {
+          inUse: false,
           itemName: "Platinum Chestplate",
           itemType: "chestplate",
           itemRarity: "common",
@@ -751,6 +789,7 @@ export class FireService {
         };
 
         const chestplate5Common = {
+          inUse: false,
           itemName: "Defender's Plate",
           itemType: "chestplate",
           itemRarity: "common",
@@ -761,6 +800,7 @@ export class FireService {
         };
 
         const chestplate6Common = {
+          inUse: false,
           itemName: "Scalemail Vest",
           itemType: "chestplate",
           itemRarity: "common",
@@ -771,6 +811,7 @@ export class FireService {
         };
 
         const chestplate7Common = {
+          inUse: false,
           itemName: "Titanium Breastplate",
           itemType: "chestplate",
           itemRarity: "common",
@@ -781,6 +822,7 @@ export class FireService {
         };
 
         const chestplate8Common = {
+          inUse: false,
           itemName: "Sentinel's Guard",
           itemType: "chestplate",
           itemRarity: "common",
@@ -791,6 +833,7 @@ export class FireService {
         };
 
         const chestplate9Common = {
+          inUse: false,
           itemName: "Ironclad Chestpiece",
           itemType: "chestplate",
           itemRarity: "common",
@@ -801,6 +844,7 @@ export class FireService {
         };
 
         const chestplate10Common = {
+          inUse: false,
           itemName: "Bulwark Plate",
           itemType: "chestplate",
           itemRarity: "common",
@@ -811,6 +855,7 @@ export class FireService {
         };
 
         const helmet1Common = {
+          inUse: false,
           itemName: "Helm of Valor",
           itemType: "helmet",
           itemRarity: "common",
@@ -821,6 +866,7 @@ export class FireService {
         };
 
         const helmet2Common = {
+          inUse: false,
           itemName: "Guardian's Visage",
           itemType: "helmet",
           itemRarity: "common",
@@ -831,6 +877,7 @@ export class FireService {
         };
 
         const helmet3Common = {
+          inUse: false,
           itemName: "Steel Coif",
           itemType: "helmet",
           itemRarity: "common",
@@ -841,6 +888,7 @@ export class FireService {
         };
 
         const helmet4Common = {
+          inUse: false,
           itemName: "Silver Crown",
           itemType: "helmet",
           itemRarity: "common",
@@ -851,6 +899,7 @@ export class FireService {
         };
 
         const helmet5Common = {
+          inUse: false,
           itemName: "Hood of Shadows",
           itemType: "helmet",
           itemRarity: "common",
@@ -861,6 +910,7 @@ export class FireService {
         };
 
         const helmet6Common = {
+          inUse: false,
           itemName: "Plated Helm",
           itemType: "helmet",
           itemRarity: "common",
@@ -871,6 +921,7 @@ export class FireService {
         };
 
         const helmet7Common = {
+          inUse: false,
           itemName: "Crest of Protection",
           itemType: "helmet",
           itemRarity: "common",
@@ -881,6 +932,7 @@ export class FireService {
         };
 
         const helmet8Common = {
+          inUse: false,
           itemName: "Leather Hood",
           itemType: "helmet",
           itemRarity: "common",
@@ -891,6 +943,7 @@ export class FireService {
         };
 
         const helmet9Common = {
+          inUse: false,
           itemName: "Mystic Crown",
           itemType: "helmet",
           itemRarity: "common",
@@ -901,6 +954,7 @@ export class FireService {
         };
 
         const helmet10Common = {
+          inUse: false,
           itemName: "Visor of Agility",
           itemType: "helmet",
           itemRarity: "common",
@@ -911,6 +965,7 @@ export class FireService {
         };
 
         const weapon1Rare = {
+          inUse: false,
           itemName: "Blade of Thunder",
           itemType: "weapon",
           itemRarity: "rare",
@@ -921,6 +976,7 @@ export class FireService {
         };
 
         const weapon2Rare = {
+          inUse: false,
           itemName: "Soulreaper",
           itemType: "weapon",
           itemRarity: "rare",
@@ -931,6 +987,7 @@ export class FireService {
         };
 
         const weapon3Rare = {
+          inUse: false,
           itemName: "Whisperwind Bow",
           itemType: "weapon",
           itemRarity: "rare",
@@ -941,6 +998,7 @@ export class FireService {
         };
 
         const weapon4Rare = {
+          inUse: false,
           itemName: "Doombringer Axe",
           itemType: "weapon",
           itemRarity: "rare",
@@ -951,6 +1009,7 @@ export class FireService {
         };
 
         const weapon5Rare = {
+          inUse: false,
           itemName: "Serrated Dagger",
           itemType: "weapon",
           itemRarity: "rare",
@@ -961,6 +1020,7 @@ export class FireService {
         };
 
         const weapon6Rare = {
+          inUse: false,
           itemName: "Skullcrusher Mace",
           itemType: "weapon",
           itemRarity: "rare",
@@ -971,6 +1031,7 @@ export class FireService {
         };
 
         const weapon7Rare = {
+          inUse: false,
           itemName: "Widowmaker Crossbow",
           itemType: "weapon",
           itemRarity: "rare",
@@ -981,6 +1042,7 @@ export class FireService {
         };
 
         const weapon8Rare = {
+          inUse: false,
           itemName: "Stormstrike Staff",
           itemType: "weapon",
           itemRarity: "rare",
@@ -991,6 +1053,7 @@ export class FireService {
         };
 
         const weapon9Rare = {
+          inUse: false,
           itemName: "Viper's Fang",
           itemType: "weapon",
           itemRarity: "rare",
@@ -1001,6 +1064,7 @@ export class FireService {
         };
 
         const weapon10Rare = {
+          inUse: false,
           itemName: "Ethereal Blade",
           itemType: "weapon",
           itemRarity: "rare",
@@ -1011,6 +1075,7 @@ export class FireService {
         };
 
         const chestplate1Rare = {
+          inUse: false,
           itemName: "Radiant Chestplate",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1021,6 +1086,7 @@ export class FireService {
         };
 
         const chestplate2Rare = {
+          inUse: false,
           itemName: "Crimson Battleplate",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1031,6 +1097,7 @@ export class FireService {
         };
 
         const chestplate3Rare = {
+          inUse: false,
           itemName: "Shimmering Scalemail",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1041,6 +1108,7 @@ export class FireService {
         };
 
         const chestplate4Rare = {
+          inUse: false,
           itemName: "Titanic Chestguard",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1051,6 +1119,7 @@ export class FireService {
         };
 
         const chestplate5Rare = {
+          inUse: false,
           itemName: "Serpentbane Vest",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1061,6 +1130,7 @@ export class FireService {
         };
 
         const chestplate6Rare = {
+          inUse: false,
           itemName: "Ironbark Plate",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1071,6 +1141,7 @@ export class FireService {
         };
 
         const chestplate7Rare = {
+          inUse: false,
           itemName: "Azure Breastplate",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1081,6 +1152,7 @@ export class FireService {
         };
 
         const chestplate8Rare = {
+          inUse: false,
           itemName: "Dreadforge Armor",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1091,6 +1163,7 @@ export class FireService {
         };
 
         const chestplate9Rare = {
+          inUse: false,
           itemName: "Obsidian Chestpiece",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1101,6 +1174,7 @@ export class FireService {
         };
 
         const chestplate10Rare = {
+          inUse: false,
           itemName: "Gilded Platemail",
           itemType: "chestplate",
           itemRarity: "rare",
@@ -1111,6 +1185,7 @@ export class FireService {
         };
 
         const helmet1Rare = {
+          inUse: false,
           itemName: "Dreadmist Helm",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1121,6 +1196,7 @@ export class FireService {
         };
 
         const helmet2Rare = {
+          inUse: false,
           itemName: "Whisperwind Cowl",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1131,6 +1207,7 @@ export class FireService {
         };
 
         const helmet3Rare = {
+          inUse: false,
           itemName: "Soulguard Helmet",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1141,6 +1218,7 @@ export class FireService {
         };
 
         const helmet4Rare = {
+          inUse: false,
           itemName: "Stormcaller Crown",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1151,6 +1229,7 @@ export class FireService {
         };
 
         const helmet5Rare = {
+          inUse: false,
           itemName: "Radiant Visage",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1161,6 +1240,7 @@ export class FireService {
         };
 
         const helmet6Rare = {
+          inUse: false,
           itemName: "Gilded Helm",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1171,6 +1251,7 @@ export class FireService {
         };
 
         const helmet7Rare = {
+          inUse: false,
           itemName: "Shadowstrike Hood",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1181,6 +1262,7 @@ export class FireService {
         };
 
         const helmet8Rare = {
+          inUse: false,
           itemName: "Ironbark Coif",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1191,6 +1273,7 @@ export class FireService {
         };
 
         const helmet9Rare = {
+          inUse: false,
           itemName: "Skullcrusher Helm",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1201,6 +1284,7 @@ export class FireService {
         };
 
         const helmet10Rare = {
+          inUse: false,
           itemName: "Crimson Crown",
           itemType: "helmet",
           itemRarity: "rare",
@@ -1211,6 +1295,7 @@ export class FireService {
         };
 
         const weapon1Legendary = {
+          inUse: false,
           itemName: "Excalibur",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1221,6 +1306,7 @@ export class FireService {
         };
 
         const weapon2Legendary = {
+          inUse: false,
           itemName: "Mjolnir",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1231,6 +1317,7 @@ export class FireService {
         };
 
         const weapon3Legendary = {
+          inUse: false,
           itemName: "Gungnir",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1241,6 +1328,7 @@ export class FireService {
         };
 
         const weapon4Legendary = {
+          inUse: false,
           itemName: "Masamune",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1251,6 +1339,7 @@ export class FireService {
         };
 
         const weapon5Legendary = {
+          inUse: false,
           itemName: "Durandal",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1261,6 +1350,7 @@ export class FireService {
         };
 
         const weapon6Legendary = {
+          inUse: false,
           itemName: "Gram",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1271,6 +1361,7 @@ export class FireService {
         };
 
         const weapon7Legendary = {
+          inUse: false,
           itemName: "Caladbolg",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1281,6 +1372,7 @@ export class FireService {
         };
 
         const weapon8Legendary = {
+          inUse: false,
           itemName: "Claiomh Solais",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1291,6 +1383,7 @@ export class FireService {
         };
 
         const weapon9Legendary = {
+          inUse: false,
           itemName: "Hofud",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1301,6 +1394,7 @@ export class FireService {
         };
 
         const weapon10Legendary = {
+          inUse: false,
           itemName: "Joyeuse",
           itemType: "weapon",
           itemRarity: "legendary",
@@ -1311,6 +1405,7 @@ export class FireService {
         };
 
         const chestplate1Legendary = {
+          inUse: false,
           itemName: "Armor of the Phoenix",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1321,6 +1416,7 @@ export class FireService {
         };
 
         const chestplate2Legendary = {
+          inUse: false,
           itemName: "Dragonscale Plate",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1331,6 +1427,7 @@ export class FireService {
         };
 
         const chestplate3Legendary = {
+          inUse: false,
           itemName: "Titanium Chestguard",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1341,6 +1438,7 @@ export class FireService {
         };
 
         const chestplate4Legendary = {
+          inUse: false,
           itemName: "Sentinel's Embrace",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1351,6 +1449,7 @@ export class FireService {
         };
 
         const chestplate5Legendary = {
+          inUse: false,
           itemName: "Guardian's Plate",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1361,6 +1460,7 @@ export class FireService {
         };
 
         const chestplate6Legendary = {
+          inUse: false,
           itemName: "Celestial Armor",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1371,6 +1471,7 @@ export class FireService {
         };
 
         const chestplate7Legendary = {
+          inUse: false,
           itemName: "Eternal Aegis",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1381,6 +1482,7 @@ export class FireService {
         };
 
         const chestplate8Legendary = {
+          inUse: false,
           itemName: "Dreadplate of the Conqueror",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1391,6 +1493,7 @@ export class FireService {
         };
 
         const chestplate9Legendary = {
+          inUse: false,
           itemName: "Archon's Breastplate",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1401,6 +1504,7 @@ export class FireService {
         };
 
         const chestplate10Legendary = {
+          inUse: false,
           itemName: "Majestic Warplate",
           itemType: "chestplate",
           itemRarity: "legendary",
@@ -1411,6 +1515,7 @@ export class FireService {
         };
 
         const helmet1Legendary = {
+          inUse: false,
           itemName: "Helm of the Celestial",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1421,6 +1526,7 @@ export class FireService {
         };
 
         const helmet2Legendary = {
+          inUse: false,
           itemName: "Crown of the Phoenix",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1431,6 +1537,7 @@ export class FireService {
         };
 
         const helmet3Legendary = {
+          inUse: false,
           itemName: "Visage of the Guardian",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1441,6 +1548,7 @@ export class FireService {
         };
 
         const helmet4Legendary = {
+          inUse: false,
           itemName: "Mask of the Eternal",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1451,6 +1559,7 @@ export class FireService {
         };
 
         const helmet5Legendary = {
+          inUse: false,
           itemName: "Helm of the Titan",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1461,6 +1570,7 @@ export class FireService {
         };
 
         const helmet6Legendary = {
+          inUse: false,
           itemName: "Crown of the Archon",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1471,6 +1581,7 @@ export class FireService {
         };
 
         const helmet7Legendary = {
+          inUse: false,
           itemName: "Visage of the Seraph",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1481,6 +1592,7 @@ export class FireService {
         };
 
         const helmet8Legendary = {
+          inUse: false,
           itemName: "Mask of the Dreadlord",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1491,6 +1603,7 @@ export class FireService {
         };
 
         const helmet9Legendary = {
+          inUse: false,
           itemName: "Helm of the Warlord",
           itemType: "helmet",
           itemRarity: "legendary",
@@ -1501,6 +1614,7 @@ export class FireService {
         };
 
         const helmet10Legendary = {
+          inUse: false,
           itemName: "Crown of the Conqueror",
           itemType: "helmet",
           itemRarity: "legendary",
