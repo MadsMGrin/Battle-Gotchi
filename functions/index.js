@@ -321,12 +321,10 @@ exports.statemodification = functions.auth.user().onCreate(async (user, context)
 
 // ITEM STUFF
 app.post("/equipItem",async (req, res,) => {
-  const reqId = req.body.reqId;
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
   const querySnapshot = await db.collection("item")
-    .where("user", "==", reqId)
     .where("itemType", "==",itemType)
     .where("itemName","==",itemName)
     .get();
@@ -351,12 +349,10 @@ app.post("/equipItem",async (req, res,) => {
 });
 
 app.post("/unequipItem",async (req, res,) => {
-  const reqId = req.body.reqId;
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
   const querySnapshot = await db.collection("item")
-    .where("user", "==", reqId)
     .where("itemType", "==",itemType)
     .where("itemName","==",itemName)
     .get();

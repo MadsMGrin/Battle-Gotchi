@@ -36,4 +36,11 @@ export class ItemoverviewComponent implements OnInit {
   }
 
 
+  async getAllItemsOfType(type) {
+    try {
+      this.items = await this.fireService.getAllItemsOfType(type);
+    } catch (error) {
+      console.error('Error retrieving items:', error);
+    }
+  }
 }
