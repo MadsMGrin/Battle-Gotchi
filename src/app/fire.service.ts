@@ -388,8 +388,8 @@ export class FireService {
       throw new Error('Failed to retrieve online users');
     }
   }
-
-  async getItemsForOnlineUser(userId) {
+  // method/api to items for the online users.
+  async getItemsForOnlineUsers(userId) {
     try {
       const response = await axios.get(`http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers/${userId}/items`);
       return response.data.items;
@@ -399,6 +399,32 @@ export class FireService {
       throw new Error('Failed to retrieve items for online user');
     }
   }
+  // method to get the items for the current user.
+  async getMyGotchiItems(): Promise<any[]> {
+    try {
+      const itemList: any[] = [];
+
+      await this.firestore
+        .collection("gotchi")
+        .where(firebase.firestore.FieldPath.documentId(), "==", this.auth.currentUser?.uid)
+        .onSnapshot(async (querySnapshot) => {
+          itemList.length = 0;
+          for (const doc of querySnapshot.docs) {
+            const gotchi = doc.data();
+            const items = gotchi['items'] || {}; // Handle the case when items are not present or null
+            itemList.push({ ...gotchi, items });
+          }
+          console.log(itemList);
+        });
+
+      return itemList;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+
 
 
   async sendBattleRequest(receiverId: string): Promise<void> {

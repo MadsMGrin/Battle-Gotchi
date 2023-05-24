@@ -10,7 +10,6 @@ import { Router } from "@angular/router";
 })
 
 export class GotchiMaintainanceComponent implements OnInit {
-  // a refresh to the chat container.
   @ViewChild('chatContainer', { static: true })
   private chatContainer!: ElementRef;
   gotchiData: any;
@@ -104,7 +103,7 @@ export class GotchiMaintainanceComponent implements OnInit {
         if (user.showItems) {
           user.showItems = false;
         } else {
-          this.itemsList = await this.fireservice.getItemsForOnlineUser(userId);
+          this.itemsList = await this.fireservice.getItemsForOnlineUsers(userId);
           user.items = this.itemsList;
           user.showItems = true;
           console.log(this.itemsList + " hereeeeeeeeeeeeeeeeeeeeeeeee");

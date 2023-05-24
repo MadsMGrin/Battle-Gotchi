@@ -187,6 +187,8 @@ app.get('/onlineusers/:id/items', async (req, res) => {
   }
 });
 
+
+
 exports.onUserRegister = functions.auth
   .user()
   .onCreate((user, context) => {
@@ -202,6 +204,9 @@ exports.onUserRegister = functions.auth
       stamina: 0,
     });
   });
+
+
+
 
 
 //// GOTCHI STATE MANIPULATION - START
@@ -456,7 +461,7 @@ app.get('/chatMessages', async (req, res) => {
   }
 });
 
-
+// CHAT FUNCTIONS END
 
 // battle simulation stuff.
 app.post('/simulateBattle', async (req, res) => {
@@ -531,3 +536,4 @@ app.post('/simulateBattle', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// SIM END

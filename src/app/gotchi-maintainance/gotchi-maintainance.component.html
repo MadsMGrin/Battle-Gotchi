@@ -13,7 +13,7 @@
           <ul>
             <li *ngFor="let item of user?.items">
           <span class="item-property">
-       <a (click)="item && user && handleItemClick(item.ownerId, user.uid)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
+       <a (click)="item && user && handleItemClick(item.itemId, user.uid)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
 
          </span>
               <br>
