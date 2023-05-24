@@ -463,14 +463,22 @@ app.post("/acceptTrade", async (req, res) => {
     const receiverGotchiData = (await receiverGotchiRef.get()).data();
 
     // Find the items to be traded
-    const sellItem = senderGotchiData.items.find(item => item.itemId === sellItemId);
-    const buyItem = receiverGotchiData.items.find(item => item.itemId === buyItemId);
+    const sellItemIndex = senderGotchiData.items.findIndex(item => item.itemId === sellItemId);
+    const buyItemIndex = receiverGotchiData.items.findIndex(item => item.itemId === buyItemId);
 
-    // Update the items arrays
-    senderGotchiData.items = senderGotchiData.items.filter(item => item.itemId !== sellItemId);
+    if (sellItemIndex === -1 || buyItemIndex === -1) {
+      res.status(400).send("Item not found for trade.");
+      return;
+    }
+
+    const sellItem = senderGotchiData.items[sellItemIndex];
+    const buyItem = receiverGotchiData.items[buyItemIndex];
+
+    // Move items between gotchis
+    senderGotchiData.items.splice(sellItemIndex, 1);
     senderGotchiData.items.push(buyItem);
 
-    receiverGotchiData.items = receiverGotchiData.items.filter(item => item.itemId !== buyItemId);
+    receiverGotchiData.items.splice(buyItemIndex, 1);
     receiverGotchiData.items.push(sellItem);
 
     // Update the gotchis' documents
