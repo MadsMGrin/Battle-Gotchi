@@ -434,10 +434,11 @@ app.post("/rejectTrade", async (req, res) => {
 
 app.post("/acceptTrade", async (req, res) => {
   const { tradeId } = req.body;
-
+  const tradeuriId = tradeId.docId;
+  console.log(tradeuriId);
   try {
     const db = admin.firestore();
-    const tradeMessageRef = db.collection("tradeMessage").doc(tradeId);
+    const tradeMessageRef = db.collection("tradeMessage").doc(tradeuriId);
     const tradeMessageDoc = await tradeMessageRef.get();
 
     if (!tradeMessageDoc.exists) {
@@ -463,27 +464,34 @@ app.post("/acceptTrade", async (req, res) => {
     const receiverGotchiData = (await receiverGotchiRef.get()).data();
 
     // Find the items to be traded
-    const sellItem = senderGotchiData.items.find(item => item.itemName === sellItemId);
-    const buyItem = receiverGotchiData.items.find(item => item.itemName === buyItemId);
+    const sellItemIndex = senderGotchiData.items.findIndex(item => item.itemId === sellItemId);
+    const buyItemIndex = receiverGotchiData.items.findIndex(item => item.itemId === buyItemId);
+    if (sellItemIndex === -1 || buyItemIndex === -1) {
+      res.status(400).send("Item not found for trade.");
+      return;
+    }
 
-    // Update the items arrays
-    senderGotchiData.items = senderGotchiData.items.filter(item => item.itemName !== sellItemId);
+    const sellItem = senderGotchiData.items[sellItemIndex];
+    const buyItem = receiverGotchiData.items[buyItemIndex];
+
+    // Move items between gotchis
+    senderGotchiData.items.splice(sellItemIndex, 1);
     senderGotchiData.items.push(buyItem);
 
-    receiverGotchiData.items = receiverGotchiData.items.filter(item => item.itemName !== buyItemId);
+    receiverGotchiData.items.splice(buyItemIndex, 1);
     receiverGotchiData.items.push(sellItem);
 
     // Update the gotchis' documents
     batch.update(senderGotchiRef, { items: senderGotchiData.items });
     batch.update(receiverGotchiRef, { items: receiverGotchiData.items });
 
-    // Update the trade status
-    batch.update(tradeMessageRef, { status: "Accepted" });
+    // Delete the trade message document
+    batch.delete(tradeMessageRef);
 
     // Commit the batch
     await batch.commit();
 
-    res.status(200).send("Trade accepted successfully.");
+    res.status(200).send("Trade accepted and trade message deleted successfully.");
   } catch (error) {
     console.error(error);
     res.status(500).send("An error occurred while accepting the trade.");

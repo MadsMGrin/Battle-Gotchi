@@ -525,6 +525,20 @@ export class FireService {
       throw new Error('Failed to equip item');
     }
   }
+  async acceptTrade(tradeId: string): Promise<void> {
+    try {
+      const response = await axios.post(this.baseurl + "acceptTrade", {
+        tradeId: tradeId
+      });
+      console.log('Trade accepted successfully');
+      console.log(response.data);
+
+    } catch (error) {
+      console.error('Error accepting trade:', error);
+      throw new Error('Failed to accept trade');
+    }
+  }
+
 
   async getDocId(senderId: string){
     try {

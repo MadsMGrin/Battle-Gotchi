@@ -217,9 +217,15 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.router.navigate(['trade-window', itemId, uid]);
   }
 
-  acceptTradeRequest(senderId: any) {
-
+  async acceptTradeRequest(sender: any) {
+    try {
+      await this.fireservice.acceptTrade(sender);
+      console.log('Trade accepted successfully');
+    } catch (error) {
+      console.error('Failed to accept trade:', error);
+    }
   }
+
 
   rejectTradeRequest(request: any) {
     this.fireservice.rejectTradeRequest(request);

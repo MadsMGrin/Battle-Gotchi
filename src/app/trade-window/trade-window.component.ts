@@ -66,7 +66,6 @@ export class TradeWindowComponent implements OnInit {
       console.log(response);
     } catch (error) {
       console.error('Error:', error);
-      // Handle the error
     }
   }
 
