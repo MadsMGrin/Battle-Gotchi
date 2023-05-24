@@ -53,7 +53,9 @@
   <div class="item questButton">
     <button mat-raised-button (click)="quest()" class="bottomButtons">Quests</button>
   </div>
-
+  <div class="itemsList">
+    <button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Your Items</button>
+  </div>
   <div class="showerAction">
     <p>Take a shower</p>
     <button (click)="shower()"><img src="https://w7.pngwing.com/pngs/46/230/png-transparent-computer-icons-shower-shower-icon-game-angle-line.png" height="80" width="100"></button>
@@ -93,6 +95,17 @@
       <button (click)="rejectBattleRequest(request)">Reject</button>
     </div>
   </div>
+
+  <div class="inputContainer">
+    <div class="chatMessages" #chatContainer>
+      <div *ngFor="let chat of chatMessages">
+        <p>{{ chat.username }}: {{ chat.message }}</p>
+      </div>
+    </div>
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type your message">
+    <button (click)="sendMessage()">Send</button>
+  </div>
+
 </div>
 
 
