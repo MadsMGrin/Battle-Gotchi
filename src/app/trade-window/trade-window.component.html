@@ -9,7 +9,7 @@
       <p>Additional STM: {{ item?.additionalSTM }}</p>
       <p>Additional STR: {{ item?.additionalSTR }}</p>
       <p>Armor: {{ item?.armor }}</p>
-      <button (click)="addToTrade(item)">Trade this item</button>
+      <button (click)="addToTrade(item.itemId)">Trade this item</button>
     </li>
   </ul>
 </div>

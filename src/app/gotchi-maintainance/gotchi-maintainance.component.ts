@@ -19,7 +19,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   chatMessages: any[] =[];
   itemsList: any[] = [];
   selectedItem: any;
-
+  tradeRequests: any[] = [];
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
 
@@ -28,6 +28,17 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.getGotchi();
     this.getMyBattleRequests();
     this.fetchChatMessages();
+    this.getMyTradeMessages();
+
+
+  }
+  async getMyTradeMessages() {
+    try {
+      this.tradeRequests = await this.fireservice.getMytradeMessages();
+      console.log(this.tradeRequests + "heereeeeeeeeeeeeee compo")
+    } catch (error) {
+      console.error('Failed to retrieve trade messages:', error);
+    }
   }
 
   async getGotchi() {
@@ -178,7 +189,6 @@ export class GotchiMaintainanceComponent implements OnInit {
   async fetchChatMessages(): Promise<void> {
     try {
       const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
-      console.log(messages); // Check the contents of the `messages` array
       this.chatMessages = messages;
       // Scroll to the bottom of the chat container
       setTimeout(() => {
@@ -204,9 +214,15 @@ export class GotchiMaintainanceComponent implements OnInit {
 
 
   handleItemClick(itemId: any, uid: any) {
-    console.log("iteeeeeeeeeeeeeem"+itemId)
-    console.log(uid)
     this.router.navigate(['trade-window', itemId, uid]);
+  }
+
+  acceptTradeRequest(senderId: any) {
+
+  }
+
+  rejectTradeRequest(request: any) {
+
   }
 }
 

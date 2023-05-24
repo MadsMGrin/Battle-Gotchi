@@ -27,14 +27,9 @@
           </ul>
         </div>
 
-
-
-
       </mat-card>
     </div>
   </div>
-
-
 
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
@@ -118,6 +113,15 @@
       <p>{{ request?.senderUsername }} wants to battle!</p>
       <button (click)="acceptBattleRequest(request.senderId)">Accept</button>
       <button (click)="rejectBattleRequest(request)">Reject</button>
+    </div>
+  </div>
+
+  <div class="tradeRequests">
+    <h2>Trade Requests:</h2>
+    <div *ngFor="let request of tradeRequests">
+      <p>{{ request?.senderUsername }} wants to trade!</p>
+      <button (click)="acceptTradeRequest(request.senderId)">Accept</button>
+      <button (click)="rejectTradeRequest(request)">Reject</button>
     </div>
   </div>
 

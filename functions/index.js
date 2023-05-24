@@ -399,6 +399,29 @@ app.post("/unequipItem",async (req, res,) => {
 
 ///ITEM STUFF END
 
+
+/// trade stuff
+app.post("/tradeMessage", async (req, res) => {
+
+  const { senderiD, sellItemId, buyItemId, recieversID} = req.body;
+  try {
+    await admin.firestore().collection("tradeMessage").add({
+      senderiD: senderiD,
+      sellItemId: sellItemId,
+      buyItemId: buyItemId,
+      recieversID: recieversID
+    });
+
+    res.status(201).send("message sent")
+  }
+  catch (error){
+    res.status(400).send("error something happened")
+  }
+})
+
+
+// trade stuff end
+
 // chat functions
 app.post('/chatMessage', async (req, res) => {
   try {
