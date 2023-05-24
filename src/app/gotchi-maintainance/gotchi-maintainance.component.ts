@@ -171,5 +171,8 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
+  itemsOverview() {
+    this.router.navigateByUrl("itemview")
+  }
 }
 
