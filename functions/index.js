@@ -432,7 +432,59 @@ app.post("/rejectTrade", async (req, res) => {
 });
 
 
+app.post("/acceptTrade", async (req, res) => {
+  const { tradeId } = req.body;
 
+  try {
+    const db = admin.firestore();
+    const tradeMessageRef = db.collection("tradeMessage").doc(tradeId);
+    const tradeMessageDoc = await tradeMessageRef.get();
+
+    if (!tradeMessageDoc.exists) {
+      res.status(404).send("Trade message not found.");
+      return;
+    }
+
+    const tradeMessageData = tradeMessageDoc.data();
+    const senderId = tradeMessageData.senderiD;
+    const sellItemId = tradeMessageData.sellItemId;
+    const buyItemId = tradeMessageData.buyItemId;
+    const receiverId = tradeMessageData.recieversID;
+
+    // Start a batch operation for atomic updates
+    const batch = db.batch();
+
+    // Get the items
+    const sellItemRef = db.collection("items").doc(sellItemId);
+    const buyItemRef = db.collection("items").doc(buyItemId);
+
+    // Update ownership in the items collection
+    batch.update(sellItemRef, { owner: receiverId });
+    batch.update(buyItemRef, { owner: senderId });
+
+    // Get the gotchi
+    const senderGotchiRef = db.collection("gotchi").doc(senderId);
+    const receiverGotchiRef = db.collection("gotchi").doc(receiverId);
+
+    // Update the items that each gotchi has
+    batch.update(senderGotchiRef, { [items.${[sellItemId]}]: admin.firestore.FieldValue.delete() });
+    batch.update(senderGotchiRef, { [items.${buyItemId}]: true });
+
+    batch.update(receiverGotchiRef, { [items.${buyItemId}]: admin.firestore.FieldValue.delete() });
+    batch.update(receiverGotchiRef, { [items.${sellItemId}]: true });
+
+    // Update the trade status
+    batch.update(tradeMessageRef, { status: "Accepted" });
+
+    // Commit the batch
+    await batch.commit();
+
+    res.status(200).send("Trade accepted successfully.");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while accepting the trade.");
+  }
+});
 
 
 
