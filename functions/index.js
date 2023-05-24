@@ -555,3 +555,38 @@ app.post('/simulateBattle', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+
+app.post("/restart", async (req, res) => {
+  try {
+    const userId = req.body.user;
+    await admin.firestore().collection("gotchi").doc(userId).set({
+      user: userId,
+      name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
+      hunger: 50,
+      sleep: 50,
+      cleanliness: 50,
+      health: 50,
+      strength: 0,
+      dexterity: 0,
+      stamina: 0,
+    });
+    console.log(200);
+    res.status(200).send("Gotchi restarted successfully.");
+  } catch (error) {
+    console.error("Error restarting Gotchi:", error);
+    res.status(500).send("Failed to restart Gotchi.");
+  }
+});
+exports.deathTrigger = functions.firestore.document("gotchi/id").onUpdate(async (snap, context) =>{
+  const gotchiData = snap.after.data();
+  const health = gotchiData.health;
+  const user = gotchiData.user;
+
+  if(health >= 0){
+    await admin.firestore().collection("gotchi").doc(user).delete();
+  }
+
+}
+)
+

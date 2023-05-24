@@ -239,7 +239,15 @@ grid-area:4/9/9/10;
   /* Add your preferred highlighted styling */
 }
 
-
+.death{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  font-size: 60px;
+  font-family: "Comic Sans MS", serif;
+}
 
 
 

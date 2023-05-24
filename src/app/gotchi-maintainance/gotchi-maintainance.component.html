@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" *ngIf="death == false">
 
   <div class="online_users">
     <p class="title">Online Users:</p>
@@ -132,4 +132,8 @@
 
 </div>
 
-
+<div *ngIf="death == true" class="death">
+  <img src="https://www.freeiconspng.com/thumbs/skull-and-crossbones-png/skull-and-crossbones-png-3.png">
+  <p>You are dead</p>
+  <button (click)="restart()">Try again?</button>
+</div>
