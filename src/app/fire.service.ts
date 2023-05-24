@@ -411,11 +411,14 @@ export class FireService {
       receiverId: receiverId,
     };
 
+    const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
     // cooldown is set to 1min for now,
     const cooldownPeriod = 600;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
     await senderReference.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
+
+
 
   // used to get all the request the user has for battle request.
   async getMyBattleRequests(): Promise<any[]> {
