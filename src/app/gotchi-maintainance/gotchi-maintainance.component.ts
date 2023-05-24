@@ -17,7 +17,8 @@ export class GotchiMaintainanceComponent implements OnInit {
   onlineUsers: any[] = [];
   battleRequests: any[] = [];
   newMessage: any;
-  chatMessages: any[] = [];
+  chatMessages: any[] =[]
+
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
@@ -154,7 +155,8 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async fetchChatMessages(): Promise<void> {
     try {
-      const messages: string[] = await this.fireservice.fetchChatMessages();
+      const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
+      console.log(messages); // Check the contents of the `messages` array
       this.chatMessages = messages;
       // Scroll to the bottom of the chat container
       setTimeout(() => {
@@ -164,6 +166,10 @@ export class GotchiMaintainanceComponent implements OnInit {
       console.log('Error fetching chat messages:', error);
     }
   }
+
+
+
+
   // used so the chat is scrolled down when you refresh page.
   scrollToBottom(): void {
     const container = document.querySelector('.chatMessages');

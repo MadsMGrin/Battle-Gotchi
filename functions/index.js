@@ -420,14 +420,21 @@ app.get('/chatMessages', async (req, res) => {
 
     const initialSnapshot = await chatRef.get();
     const chatMessages = initialSnapshot.docs
-      .map((doc) => doc.data().message)
+      .map((doc) => ({
+        message: doc.data().message,
+        username: doc.data().username, // Include the 'username' field
+      }))
       .reverse();
 
     res.status(200).json(chatMessages);
 
     chatRef.onSnapshot((snapshot) => {
       const updatedChatMessages = snapshot.docs
-        .map((doc) => doc.data().message)
+        .map((doc) => ({
+          // the message and username
+          message: doc.data().message,
+          username: doc.data().username,
+        }))
         .reverse();
 
       res.status(200).json(updatedChatMessages);
@@ -437,6 +444,7 @@ app.get('/chatMessages', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch chat messages' });
   }
 });
+
 
 
 // battle simulation stuff.

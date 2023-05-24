@@ -1283,9 +1283,9 @@ export class FireService {
     }
   }
 
-  async fetchChatMessages(): Promise<string[]> {
+  async fetchChatMessages(): Promise<{ message: string; username: string }[]> {
     try {
-      const response = await axios.get<string[]>(this.baseurl + 'chatMessages');
+      const response = await axios.get<{ message: string; username: string }[]>(this.baseurl + 'chatMessages');
       const chatMessages = response.data;
       return chatMessages;
     } catch (error) {
@@ -1293,6 +1293,7 @@ export class FireService {
       throw new Error('Failed to fetch chat messages');
     }
   }
+
 
 
 }
