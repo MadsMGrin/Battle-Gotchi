@@ -30,4 +30,7 @@ export class TradeWindowComponent implements OnInit {
   }
 
 
+  addToTrade(item: any) {
+    
+  }
 }

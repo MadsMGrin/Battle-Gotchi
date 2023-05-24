@@ -9,10 +9,10 @@
       <p>Additional STM: {{ item?.additionalSTM }}</p>
       <p>Additional STR: {{ item?.additionalSTR }}</p>
       <p>Armor: {{ item?.armor }}</p>
+      <button (click)="addToTrade(item)">Trade this item</button>
     </li>
   </ul>
 </div>
-
 
 <div *ngIf="items.length === 0">
   <p>No items found for current user.</p>
