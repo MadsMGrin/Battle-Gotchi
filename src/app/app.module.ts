@@ -18,6 +18,7 @@ import {firebaseConfig} from "../../firebaseconfig";
 import {MatProgressBarModule} from "@angular/material/progress-bar";
 import {NgOptimizedImage} from "@angular/common";
 import { UserQuestListComponent } from './quest/user-quest-list/user-quest-list.component';
+import { TradeWindowComponent } from './trade-window/trade-window.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { UserQuestListComponent } from './quest/user-quest-list/user-quest-list.
     TestComponent,
     ItemoverviewComponent,
     UserQuestListComponent,
+    TradeWindowComponent,
   ],
   imports: [
     BrowserModule,

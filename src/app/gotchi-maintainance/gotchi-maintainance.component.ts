@@ -203,8 +203,11 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.router.navigateByUrl("itemview")
   }
 
-  handleItemClick(itemName: any) {
 
+  handleItemClick(itemId: any, uid: any) {
+    console.log("iteeeeeeeeeeeeeem"+itemId)
+    console.log(uid)
+    this.router.navigate(['trade-window', itemId, uid]);
   }
 }
 

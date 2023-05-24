@@ -241,6 +241,7 @@ export class FireService {
     await this.firestore.runTransaction(async (transaction) => {
       const gotchiDoc = await transaction.get(this.firestore.collection("gotchi").doc(userId));
       const questDoc = await transaction.get(this.firestore.collection("users").doc(userId));
+      const itemdoc = await transaction.get(this.firestore.collection("item").doc());
 
       if (!questDoc.exists) {
         throw new Error("Quest document not found");
@@ -258,7 +259,10 @@ export class FireService {
           // Check if the quest has been completed
           if (newProgress >= quest.completion) {
             const currentItems = gotchiDoc.data()?.['items'] || [];
-            const updatedItems = [...currentItems, quest.reward];
+            const itemId = itemdoc.id;
+            const updatedItems = currentItems.map(item => ({ ...item, ownerId:itemId}));
+            updatedItems.push({ ...quest.reward, itemId: itemId });
+
             transaction.update(gotchiDoc.ref, {
               items: updatedItems,
             });
