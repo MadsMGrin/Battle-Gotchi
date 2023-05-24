@@ -125,9 +125,9 @@ const wackyLastNames = [
   "Fluffernutter",
 ]
 
-
-
 app.use(cors());
+
+
 exports.api = functions.runWith(runtimeOpts).https.onRequest(app);
 // used to delete any duplicate username document that maybe created
 exports.enforceUniqueUsername = functions.firestore
@@ -340,60 +340,84 @@ exports.statemodification = functions.auth.user().onCreate(async (user, context)
 
 
 // ITEM STUFF
-app.post("/equipItem",async (req, res,) => {
+app.post("/equipItem", async (req, res) => {
+  const user = req.body.userId;
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
-  const querySnapshot = await db.collection("item")
-    .where("itemType", "==",itemType)
-    .where("itemName","==",itemName)
+  let items;
+  const querySnapshot = await db.collection('gotchi')
+    .doc(user)
     .get();
-  const docRef = querySnapshot.docs[0].ref;
+
+  if (querySnapshot.exists) {
+    const data = querySnapshot.data();
+    if (data && data['items']) {
+      items = data['items'];
+      items = items.map(item => {
+        if (item.itemType === itemType && item.itemName === itemName) {
+          return { ...item, inUse: true };
+        }
+        return item;
+      });
+    }
+  }
+
+  const docRef = querySnapshot.ref;
 
   return db.runTransaction((transaction) => {
-    // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      transaction.set(docRef,{
-          inUse: true,
-        },
-        {merge: true}
-      )
+      transaction.set(docRef, { items }, { merge: true });
     });
-  }).then(() => {
-    res.status(200).send("item unequipped");
-    console.log("Transaction successfully committed!");
-  }).catch((error) => {
-    res.status(400).send("error");
-    console.log("Transaction failed: ", error);
-  });
+  })
+    .then(() => {
+      res.status(200).send("item equipped");
+      console.log("Transaction successfully committed!");
+    })
+    .catch((error) => {
+      res.status(400).send("error");
+      console.log("Transaction failed: ", error);
+    });
 });
 
-app.post("/unequipItem",async (req, res,) => {
+app.post("/unequipItem", async (req, res) => {
+  const user = req.body.userId;
   const itemType = req.body.itemType;
   const itemName = req.body.itemName;
   const db = admin.firestore();
-  const querySnapshot = await db.collection("item")
-    .where("itemType", "==",itemType)
-    .where("itemName","==",itemName)
+  let items;
+  const querySnapshot = await db.collection('gotchi')
+    .doc(user)
     .get();
-  const docRef = querySnapshot.docs[0].ref;
+
+  if (querySnapshot.exists) {
+    const data = querySnapshot.data();
+    if (data && data['items']) {
+      items = data['items'];
+      items = items.map(item => {
+        if (item.itemType === itemType && item.itemName === itemName) {
+          return { ...item, inUse: false };
+        }
+        return item;
+      });
+    }
+  }
+
+  const docRef = querySnapshot.ref;
 
   return db.runTransaction((transaction) => {
-    // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      transaction.set(docRef,{
-          inUse: false,
-        },
-        {merge: true}
-      )
+      transaction.set(docRef, { items }, { merge: true });
     });
-  }).then(() => {
-    res.status(200).send("item unequipped");
-    console.log("Transaction successfully committed!");
-  }).catch((error) => {
-    res.status(400).send("error");
-    console.log("Transaction failed: ", error);
-  });
+  })
+    .then(() => {
+      res.status(200).send("item unequipped");
+      console.log("Transaction successfully committed!");
+    })
+    .catch((error) => {
+      res.status(400).send("error");
+      console.log("Transaction failed: ", error);
+    });
 });
 
 
@@ -640,4 +664,39 @@ app.post('/simulateBattle', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 // SIM END
+
+app.post("/restart", async (req, res) => {
+  try {
+    const userId = req.body.user;
+    await admin.firestore().collection("gotchi").doc(userId).set({
+      user: userId,
+      name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
+      hunger: 50,
+      sleep: 50,
+      cleanliness: 50,
+      health: 50,
+      strength: 0,
+      dexterity: 0,
+      stamina: 0,
+    });
+    console.log(200);
+    res.status(200).send("Gotchi restarted successfully.");
+  } catch (error) {
+    console.error("Error restarting Gotchi:", error);
+    res.status(500).send("Failed to restart Gotchi.");
+  }
+});
+exports.deathTrigger = functions.firestore.document("gotchi/id").onUpdate(async (snap, context) =>{
+  const gotchiData = snap.after.data();
+  const health = gotchiData.health;
+  const user = gotchiData.user;
+
+  if(health >= 0){
+    await admin.firestore().collection("gotchi").doc(user).delete();
+  }
+
+}
+)
+

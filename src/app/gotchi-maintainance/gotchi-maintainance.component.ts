@@ -19,7 +19,9 @@ export class GotchiMaintainanceComponent implements OnInit {
   chatMessages: any[] =[];
   itemsList: any[] = [];
   selectedItem: any;
+
   tradeRequests: any[] = [];
+  death: boolean = false;
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
 
@@ -28,6 +30,7 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.getGotchi();
     this.getMyBattleRequests();
     this.fetchChatMessages();
+   this.checkDeathState();
     this.getMyTradeMessages();
 
 
@@ -39,6 +42,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     } catch (error) {
       console.error('Failed to retrieve trade messages:', error);
     }
+
+  
+
   }
 
   async getGotchi() {
@@ -230,5 +236,27 @@ export class GotchiMaintainanceComponent implements OnInit {
   rejectTradeRequest(request: any) {
     this.fireservice.rejectTradeRequest(request);
   }
+
+
+  async restart(){
+    try {
+      this.death = await this.fireservice.restart()
+      console.log(this.death)
+      this.ngOnInit();
+    }
+    catch (error){
+      console.log("cba")
+    }
+  }
+  async checkDeathState(): Promise<void> {
+    try {
+      this.death = await this.fireservice.getMyDeath();
+      console.log("Hello, I am death:", this.death);
+    } catch (error) {
+      console.log('Error checking death state:', error);
+    }
+  }
+
+
 }
 

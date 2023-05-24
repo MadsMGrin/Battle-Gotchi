@@ -1,3 +1,6 @@
+<div class="itemsList">
+  <button mat-raised-button (click)="goBack()" class="bottomButtons">Go back</button>
+</div>
 
 <div class="buttons">
       <button mat-raised-button (click)="getAllItems()" class="bottomButtons">All Itmes</button>
@@ -21,6 +24,7 @@
       <td>STR</td>
       <td>DEX</td>
       <td>STM</td>
+      <td>Equipment</td>
     </tr>
     <tr *ngFor="let item of items">
       <td>{{ item.itemName }}</td>
@@ -28,8 +32,8 @@
       <td>{{item.additionalSTR}}</td>
       <td>{{item.additionalDEX}}</td>
       <td>{{item.additionalSTM}}</td>
-      <td>{{item.inUse}}</td>
-      <td><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
+      <td *ngIf="item.inUse == true">Equipped</td>
+      <td *ngIf="item.inUse == false && item"><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
     </tr>
     </tbody>
   </table>
