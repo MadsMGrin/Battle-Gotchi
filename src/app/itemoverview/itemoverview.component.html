@@ -1,8 +1,37 @@
+
+<div class="buttons">
+      <button mat-raised-button (click)="getAllItems()" class="bottomButtons">All Itmes</button>
+      <button mat-raised-button (click)="getAllItemsOfType('weapon')" class="bottomButtons">Weapons</button>
+      <button mat-raised-button (click)="getAllItemsOfType('chestplate')" class="bottomButtons">Chest plates</button>
+      <button mat-raised-button (click)="getAllItemsOfType('helmet')" class="bottomButtons">Helmets</button>
+</div>
+<br>
+
 <div class="items">
-  <p class="title">Your items:</p>
-  <ul>
-    <li *ngFor="let item of items" >{{ item.itemName }}, {{item.itemType}}, {{item.inUse}}
-      <button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></li>
-  </ul>
+  <table>
+    <thead>
+    <tr>
+      <th colspan="2"><p class="title">Your items:</p></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>Item Name</td>
+      <td>Type</td>
+      <td>STR</td>
+      <td>DEX</td>
+      <td>STM</td>
+    </tr>
+    <tr *ngFor="let item of items">
+      <td>{{ item.itemName }}</td>
+      <td>{{item.itemType}}</td>
+      <td>{{item.additionalSTR}}</td>
+      <td>{{item.additionalDEX}}</td>
+      <td>{{item.additionalSTM}}</td>
+      <td>{{item.inUse}}</td>
+      <td><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 <br>

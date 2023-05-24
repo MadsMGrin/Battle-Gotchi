@@ -124,4 +124,14 @@
 .battleRequests{
 grid-area:4/9/9/10;
 }
+.itemsList{
+  grid-area: 8 / 2 / 9 / 3;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding: 10px;
+}
+
 
