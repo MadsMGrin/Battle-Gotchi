@@ -250,38 +250,23 @@ export class FireService {
         const quest = questDoc.data()![questField];
 
         if (quest && quest.duration.end <= currentDate && quest.action === action) {
-          const currentProgress = quest.progress || 0;
-          const completion = quest.completion || 0;
+          const newProgress = (quest.progress || 0) + increment;
+          transaction.update(questDoc.ref, {
+            [`${questField}.progress`]: newProgress,
+          });
 
-          console.log("Current Progress:", currentProgress);
-          console.log("Completion:", completion);
-
-          if (currentProgress < completion) {
-            const newProgress = Math.min(currentProgress + increment, completion);
-            console.log("New Progress:", newProgress);
-
-            transaction.update(questDoc.ref, {
-              [`${questField}.progress`]: newProgress,
+          // Check if the quest has been completed
+          if (newProgress >= quest.completion) {
+            const currentItems = gotchiDoc.data()?.['items'] || [];
+            const updatedItems = [...currentItems, quest.reward];
+            transaction.update(gotchiDoc.ref, {
+              items: updatedItems,
             });
-
-            // Check if the quest has been completed
-            if (newProgress >= completion) {
-              const currentItems = gotchiDoc.data()?.['items'] || [];
-              const rewardItem = quest.reward;
-
-              if (!currentItems.includes(rewardItem)) {
-                const updatedItems = [...currentItems, rewardItem];
-                transaction.update(gotchiDoc.ref, {
-                  items: updatedItems,
-                });
-              }
-            }
           }
         }
       }
     });
   }
-
 
   async mockQuestDataToFirebase() {
     const db = firebase.firestore();
@@ -322,11 +307,11 @@ export class FireService {
 
       const weeklyQuest: quest = {
         name: "Hungry little one you are!",
-        description: "Eat 10 times this weak.",
+        description: "Eat 2 times this weak.",
         action: "eat",
         progress: 0,
         duration: this.dateSetter(22, 4, 0, 23),
-        completion: 10,
+        completion: 2,
         category: "weekly",
         reward: null,
       };
