@@ -93,6 +93,17 @@
       <button (click)="rejectBattleRequest(request)">Reject</button>
     </div>
   </div>
+
+  <div class="inputContainer">
+    <div class="chatMessages" #chatContainer>
+      <div *ngFor="let chat of chatMessages">
+        <p>{{ chat.username }}: {{ chat.message }}</p>
+      </div>
+    </div>
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type your message">
+    <button (click)="sendMessage()">Send</button>
+  </div>
+
 </div>
 
 

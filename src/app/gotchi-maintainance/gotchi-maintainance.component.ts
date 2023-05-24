@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { FireService } from "../fire.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
@@ -10,10 +10,15 @@ import { Router } from "@angular/router";
 })
 
 export class GotchiMaintainanceComponent implements OnInit {
-
+  // a refresh to the chat container.
+  @ViewChild('chatContainer', { static: true })
+  private chatContainer!: ElementRef;
   gotchiData: any;
   onlineUsers: any[] = [];
   battleRequests: any[] = [];
+  newMessage: any;
+  chatMessages: any[] =[]
+
 
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
@@ -22,6 +27,7 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.getOnlineUsers();
     this.getGotchi();
     this.getMyBattleRequests();
+    this.fetchChatMessages();
   }
 
   async getGotchi() {
@@ -125,6 +131,50 @@ export class GotchiMaintainanceComponent implements OnInit {
 
     } catch (error) {
       throw error;
+    }
+  }
+  // chat methods
+
+
+  async sendMessage(): Promise<void> {
+    const currentUserId = this.fireservice.getCurrentUserId();
+    const message = this.newMessage;
+
+    try {
+      await this.fireservice.sendChatMessage(currentUserId, message);
+      console.log('Message sent successfully');
+
+      // Clear the input field after sending the message
+      this.newMessage = '';
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    }
+  }
+
+
+
+  async fetchChatMessages(): Promise<void> {
+    try {
+      const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
+      console.log(messages); // Check the contents of the `messages` array
+      this.chatMessages = messages;
+      // Scroll to the bottom of the chat container
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 0);
+    } catch (error) {
+      console.log('Error fetching chat messages:', error);
+    }
+  }
+
+
+
+
+  // used so the chat is scrolled down when you refresh page.
+  scrollToBottom(): void {
+    const container = document.querySelector('.chatMessages');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
     }
   }
 
