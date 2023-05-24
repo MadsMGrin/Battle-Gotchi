@@ -454,24 +454,28 @@ app.post("/acceptTrade", async (req, res) => {
     // Start a batch operation for atomic updates
     const batch = db.batch();
 
-    // Get the items
-    const sellItemRef = db.collection("items").doc(sellItemId);
-    const buyItemRef = db.collection("items").doc(buyItemId);
-
-    // Update ownership in the items collection
-    batch.update(sellItemRef, { owner: receiverId });
-    batch.update(buyItemRef, { owner: senderId });
-
-    // Get the gotchi
+    // Get the gotchis
     const senderGotchiRef = db.collection("gotchi").doc(senderId);
     const receiverGotchiRef = db.collection("gotchi").doc(receiverId);
 
-    // Update the items that each gotchi has
-    batch.update(senderGotchiRef, { [items.${[sellItemId]}]: admin.firestore.FieldValue.delete() });
-    batch.update(senderGotchiRef, { [items.${buyItemId}]: true });
+    // Get gotchis' data
+    const senderGotchiData = (await senderGotchiRef.get()).data();
+    const receiverGotchiData = (await receiverGotchiRef.get()).data();
 
-    batch.update(receiverGotchiRef, { [items.${buyItemId}]: admin.firestore.FieldValue.delete() });
-    batch.update(receiverGotchiRef, { [items.${sellItemId}]: true });
+    // Find the items to be traded
+    const sellItem = senderGotchiData.items.find(item => item.itemName === sellItemId);
+    const buyItem = receiverGotchiData.items.find(item => item.itemName === buyItemId);
+
+    // Update the items arrays
+    senderGotchiData.items = senderGotchiData.items.filter(item => item.itemName !== sellItemId);
+    senderGotchiData.items.push(buyItem);
+
+    receiverGotchiData.items = receiverGotchiData.items.filter(item => item.itemName !== buyItemId);
+    receiverGotchiData.items.push(sellItem);
+
+    // Update the gotchis' documents
+    batch.update(senderGotchiRef, { items: senderGotchiData.items });
+    batch.update(receiverGotchiRef, { items: receiverGotchiData.items });
 
     // Update the trade status
     batch.update(tradeMessageRef, { status: "Accepted" });
@@ -485,6 +489,7 @@ app.post("/acceptTrade", async (req, res) => {
     res.status(500).send("An error occurred while accepting the trade.");
   }
 });
+
 
 
 
