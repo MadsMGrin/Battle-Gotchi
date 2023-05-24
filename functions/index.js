@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const app = require("express")();
 const cors = require("cors");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
-const {every, timestamp} = require("rxjs");
+const {every, timestamp, asapScheduler} = require("rxjs");
 const {PromisePool} = require("promise-pool-executor");
 const {Timestamp, FieldValue} = require("firebase-admin/firestore")
 const {error} = require("firebase-functions/logger");
@@ -418,6 +418,22 @@ app.post("/tradeMessage", async (req, res) => {
     res.status(400).send("error something happened")
   }
 })
+
+
+app.post("/rejectTrade", async (req, res) => {
+  const {docId} = req.body;
+  try {
+    await admin.firestore().collection('tradeMessage').doc(docId).delete();
+
+    res.status(200).send("Trade messages deleted successfully.");
+  } catch (error) {
+    res.status(500).send("An error occurred while deleting trade messages.");
+  }
+});
+
+
+
+
 
 
 // trade stuff end

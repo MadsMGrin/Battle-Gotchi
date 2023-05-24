@@ -481,20 +481,15 @@ export class FireService {
   async getMytradeMessages(): Promise<any[]>{
     try {
       const tradeRequestList: any [] = [];
-      await this.firestore.collection("tradeMessage").where("recieversID", "==", this.auth.currentUser?.uid).onSnapshot(async (querysnapshopt)=>{
+      await this.firestore.collection("tradeMessage")
+        .where("recieversID", "==", this.auth.currentUser?.uid)
+        .onSnapshot(async (querysnapshopt)=>{
         tradeRequestList.length =0;
         for (const doc of querysnapshopt.docs){
           const request = doc.data();
-
-          const senderId = request['senderiD'];
-          const recieversId = request['recieversID']
-          const sellItemId = request['sellItemId'] // the item the other user wants to sell to this user
-          const buyItemId = request['J2cxdd8SGHEzzv81U7TB'] // the item he wants from this user
-          const sendersDoc = await this.firestore.collection("users").doc(senderId).get();
-          const sendersName = sendersDoc.data()?.['username']
-          tradeRequestList.push({...request,})
+          const tradeId = doc.id;
+          tradeRequestList.push({...request, docId: tradeId})
         }
-
       })
       return tradeRequestList;
     }
@@ -516,6 +511,18 @@ export class FireService {
     } catch (error) {
       console.error('Error:', error);
       throw new Error('Failed to send trade message');
+    }
+  }
+
+  async rejectTradeRequest() {
+    try {
+      const response = await axios.post(this.baseurl + "rejectTrade", {});
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to equip item');
     }
   }
 
