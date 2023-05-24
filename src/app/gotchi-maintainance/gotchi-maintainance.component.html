@@ -1,49 +1,53 @@
 <div class="container">
+
   <div class="online_users">
     <p class="title">Online Users:</p>
-    <div *ngFor="let user of onlineUsers">
-    <mat-card>
-      <p>{{user.username}}</p>
-      <button mat-raised-button (click)="requestBattle(user.uid)">Fight</button>
-    </mat-card>
+    <div *ngFor="let user of onlineUsers?.slice(0, 10)">
+      <mat-card>
+        <p>{{ user?.username}}</p>
+        <button (click)="requestBattle(user?.uid)">Fight</button>
+      </mat-card>
+    </div>
   </div>
-  </div>
+
+
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
   <div class="username">
     <h2 style="text-align: center">{{gotchiData.name}}</h2>
+
   </div>
   <div class="item healthInfo">
     <p>Health</p>
-    <p>{{gotchiData.health}}</p>
-    <mat-progress-bar mode="determinate" value="{{gotchiData.health}}" class="determinateBar"></mat-progress-bar>
+    <p>{{gotchiData?.health}}</p>
+    <mat-progress-bar mode="determinate" value="{{gotchiData?.health}}" class="determinateBar"></mat-progress-bar>
   </div>
   <div class="item sleepInfo">
     <p>Sleep</p>
-    <p>{{gotchiData.sleep}}</p>
-    <mat-progress-bar mode="determinate" value="{{gotchiData.sleep}}" class="determinateBar"></mat-progress-bar>
+    <p>{{gotchiData?.sleep}}</p>
+    <mat-progress-bar mode="determinate" value="{{gotchiData?.sleep}}" class="determinateBar"></mat-progress-bar>
   </div>
   <div class="item hungerInfo">
     <p>Hunger</p>
-    <p>{{gotchiData.hunger}}</p>
-    <mat-progress-bar mode="determinate" value="{{gotchiData.hunger}}" class="determinateBar"></mat-progress-bar>
+    <p>{{gotchiData?.hunger}}</p>
+    <mat-progress-bar mode="determinate" value="{{gotchiData?.hunger}}" class="determinateBar"></mat-progress-bar>
   </div>
   <div class="item cleanlinessInfo">
     <p>Cleanliness</p>
-    <p>{{gotchiData.cleanliness}}</p>
-    <mat-progress-bar mode="determinate" value="{{gotchiData.cleanliness}}" class="determinateBar"></mat-progress-bar>
+    <p>{{gotchiData?.cleanliness}}</p>
+    <mat-progress-bar mode="determinate" value="{{gotchiData?.cleanliness}}" class="determinateBar"></mat-progress-bar>
 
   </div>
   <div class="item gotchiStats">
     <p>Gotchi Stats</p>
     <br>
     <div class="statBorder">
-      <p>Strength: {{gotchiData.strength}}</p>
+      <p>Strength: {{gotchiData?.strength}}</p>
       <br>
-      <p>Stamina: {{gotchiData.stamina}}</p>
+      <p>Stamina: {{gotchiData?.stamina}}</p>
       <br>
-      <p>dexterity: {{gotchiData.dexterity}}</p>
+      <p>dexterity: {{gotchiData?.dexterity}}</p>
     </div>
   </div>
   <div class="item questButton">
@@ -53,8 +57,8 @@
   <div class="showerAction">
     <p>Take a shower</p>
     <button (click)="shower()"><img src="https://w7.pngwing.com/pngs/46/230/png-transparent-computer-icons-shower-shower-icon-game-angle-line.png" height="80" width="100"></button>
-    <ng-container *ngIf="gotchiData.timesShoweredToday; else noShowers">
-      <p>Showers taken today: {{ gotchiData.timesShoweredToday }} (Max 2)</p>
+    <ng-container *ngIf="gotchiData?.timesShoweredToday; else noShowers">
+      <p>Showers taken today: {{ gotchiData?.timesShoweredToday }} (Max 2)</p>
     </ng-container>
     <ng-template #noShowers>
       <p>Showers taken today: 0</p>
@@ -63,8 +67,8 @@
   <div class="hungerAction">
     <p>Eat some food</p>
     <button (click)="eat()"><img src="https://image.pngaaa.com/456/3964456-middle.png" height="80" width="100"></button>
-    <ng-container *ngIf="gotchiData.timesEatenToday; else noFood">
-      <p>Times eaten today: {{ gotchiData.timesEatenToday }} (Max 3)</p>
+    <ng-container *ngIf="gotchiData?.timesEatenToday; else noFood">
+      <p>Times eaten today: {{ gotchiData?.timesEatenToday }} (Max 3)</p>
     </ng-container>
     <ng-template #noFood>
       <p>Times eaten today: 0</p>
@@ -73,11 +77,22 @@
   <div class="sleepAction">
     <p>Take a nap</p>
     <button (click)="sleep()"><img src="data:image/png;base64,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" height="80" width="100"></button>
-    <ng-container *ngIf="gotchiData.timesSleptToday; else noNaps">
-      <p>Naps taken today: {{ gotchiData.timesSleptToday }} (Max 2)</p>
+    <ng-container *ngIf="gotchiData?.timesSleptToday; else noNaps">
+      <p>Naps taken today: {{ gotchiData?.timesSleptToday }} (Max 2)</p>
     </ng-container>
     <ng-template #noNaps>
       <p>Naps taken today: 0</p>
     </ng-template>
   </div>
+
+  <div class="battleRequests">
+    <h2>Battle Requests:</h2>
+    <div *ngFor="let request of battleRequests">
+      <p>{{ request?.senderUsername }} wants to battle!</p>
+      <button (click)="acceptBattleRequest(request.senderId)">Accept</button>
+      <button (click)="rejectBattleRequest(request)">Reject</button>
+    </div>
+  </div>
 </div>
+
+

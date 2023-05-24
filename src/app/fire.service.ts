@@ -355,14 +355,29 @@ export class FireService {
   }
 
   async signOut() {
+    const userId = this.auth.currentUser?.uid;
+
+    if (userId) {
+      try {
+        const db = firebase.firestore();
+        await db.collection('users').doc(userId).set({
+          status: 'offline',
+        }, { merge: true });
+      } catch (error) {
+        console.error('Error updating user status:', error);
+        // Handle the error accordingly
+      }
+    }
+
     await this.auth.signOut();
   }
 
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
-      const onlineUsers = response.data.filter(user => user.uid !== this.auth.currentUser?.uid)
-        .map(user => ({ username: user.username, uid: user.uid }));
+      // Filter out the current user from the response data
+      const onlineUsers = response.data.filter(user => user && user.uid !== this.auth.currentUser?.uid)
+        .map(user => ({ username: user?.username, uid: user?.uid }));
       return onlineUsers;
     } catch (error) {
       console.error('Error retrieving online users:', error);
@@ -371,16 +386,19 @@ export class FireService {
   }
 
   async sendBattleRequest(receiverId: string): Promise<void> {
-    console.log('Current user:', this.auth.currentUser, 'UID:', this.auth.currentUser?.uid, 'Receiver ID:', receiverId);
 
     const senderId = this.auth.currentUser?.uid;
-
     if (!receiverId || !senderId) {
       throw new Error('User IDs not provided');
     }
-    const senderReferfance = this.firestore.collection('users').doc(senderId);
-    const senderDoc = await senderReferfance.get();
+    // Get the document reference for the sender
+    const senderReference = this.firestore.collection('users').doc(senderId);
+    // Retrieve the sender's document from Firestore
+    const senderDoc = await senderReference.get();
+    // Get the cooldown timestamp value from the sender's document
     const cooldownTimestamp = senderDoc.data()?.['cooldownTimestamp'] || 0;
+    const senderUsername = senderDoc.data()?.['username'];
+    // Get the current timestamp
     const currentTimestamp = firebase.firestore.Timestamp.now().toMillis();
 
     if (currentTimestamp < cooldownTimestamp) {
@@ -389,28 +407,100 @@ export class FireService {
 
     const battleRequest = {
       senderId: senderId,
+      senderUsername: senderUsername,
       receiverId: receiverId,
-      status: 'pending'
     };
 
-    await this.firestore.collection('battleRequests').add(battleRequest);
+    const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
 
     // cooldown is set to 1min for now,
-    const cooldownPeriod = 60000;
+    const cooldownPeriod = 600;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
-    await senderReferfance.update({ ['cooldownTimestamp']: newCooldownTimestamp });
+    await senderReference.update({ ['cooldownTimestamp']: newCooldownTimestamp });
   }
 
-  async getBattleNotificationsByResceiverId(receiverId: string): Promise<any[]> {
+  // used to get all the request the user has for battle request.
+  async getMyBattleRequests(): Promise<any[]> {
     try {
-      const response = await axios.get(`${this.baseurl}battlenotifications/${receiverId}`);
-      return response.data;
+      const requestList: any[] = [];
+
+      await this.firestore
+        .collection("battleRequests")
+        .where("receiverId", "==", this.auth.currentUser?.uid)
+        .onSnapshot(async (querySnapshot) => {
+          requestList.length = 0;
+          for (const doc of querySnapshot.docs) {
+            const request = doc.data();
+            const senderId = request['senderId'];
+            const senderDoc = await this.firestore.collection("users").doc(senderId).get();
+            const senderName = senderDoc.data()?.['username'];
+            requestList.push({ ...request, senderName });
+          }
+          console.log(requestList);
+        });
+
+      return requestList;
     } catch (error) {
-      console.error('Error retrieving battle notifications:', error);
-      throw new Error('Failed to retrieve battle notifications');
+      throw error;
     }
   }
 
+  async getDocId(senderId: string){
+    try {
+      console.log(senderId)
+      const refdoc = this.firestore.collection("battleRequests").doc(senderId);
+      const query = await refdoc.get();
+      console.log(refdoc);
+      await refdoc.delete();
+      return query
+
+    }
+    catch (error){
+      throw error;
+    }
+  }
+
+  // rejections of battle request
+  async rejectBattleRequest(request: any): Promise<void> {
+    try {
+      const requestDocRef = this.firestore.collection('battleRequests').doc(request.senderId);
+
+      // Delete the battle request document
+      await requestDocRef.delete();
+
+      // Remove the onSnapshot listener for the specific document
+      const unsubscribe = this.firestore.collection('battleRequests')
+        .where('senderId', '==', request.senderId)
+        .onSnapshot((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            doc.ref.delete();
+          });
+        });
+
+      unsubscribe();
+
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // simulate the battle when user accepts the battle
+  async simulateBattle(challengerId: string, opponentId: string) {
+    console.log(challengerId)
+    console.log(opponentId)
+    const response = await axios.post(
+
+      this.baseurl + "simulateBattle",
+      { challengerId: challengerId, opponentId: opponentId }
+    );
+    if(response.status === 500){
+      throw new Error("There was an error simulating the battle");
+    }
+
+    return response.data;
+  }
+  
   async sendReq(reqString: string){
     const reqId = this.auth.currentUser?.uid;
 
@@ -1435,6 +1525,15 @@ export class FireService {
         console.log("Failed to send mock quest data to Firebase:", error);
       }
     }
+
+
+  getCurrentUserId(): string {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) {
+      throw new Error('User not logged in!');
+    }
+    return uid;
+  }
 
 }
 

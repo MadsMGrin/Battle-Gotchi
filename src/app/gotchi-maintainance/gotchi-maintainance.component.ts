@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../fire.service";
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {Router} from "@angular/router";
+import { FireService } from "../fire.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-gotchi-maintainance',
@@ -13,12 +13,15 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   gotchiData: any;
   onlineUsers: any[] = [];
+  battleRequests: any[] = [];
 
-  constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) { }
+  constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
+  }
 
   ngOnInit(): void {
     this.getOnlineUsers();
     this.getGotchi();
+    this.getMyBattleRequests();
   }
 
   async getGotchi() {
@@ -60,10 +63,26 @@ export class GotchiMaintainanceComponent implements OnInit {
     }
   }
 
+  goBack() {
+    this.router.navigateByUrl("home")
+  }
+
+
   async signOut() {
     await this.fireservice.signOut();
     this.router.navigateByUrl("login");
   }
+
+
+  // the battle request so the signed in user.
+  async getMyBattleRequests() {
+    try {
+      this.battleRequests = await this.fireservice.getMyBattleRequests();
+    } catch (error) {
+      console.error('Error retrieving battle requests:', error);
+    }
+  }
+
 
   async getOnlineUsers() {
     try {
@@ -85,5 +104,29 @@ export class GotchiMaintainanceComponent implements OnInit {
   async quest() {
     await this.router.navigateByUrl("quest");
   }
+  async rejectBattleRequest(request: any) {
+    try {
+      await this.fireservice.rejectBattleRequest(request);
+      console.log('Battle request rejected successfully!');
+    } catch (error) {
+      console.error('Error rejecting battle request:', error);
+    }
+  }
 
+  // In your GotchiMaintainanceComponent:
+  async acceptBattleRequest(request: any): Promise<void> {
+    try {
+      // Accept the battle request and delete it from the Firestore 'battleRequests' collection
+      await this.fireservice.getDocId(request);
+      // Get the current user id
+      const currentUserId = this.fireservice.getCurrentUserId();
+      console.log(currentUserId)
+      // Simulate the battle and get the result
+      await this.fireservice.simulateBattle(currentUserId, request);
+
+    } catch (error) {
+      throw error;
+    }
+  }
 }
+
