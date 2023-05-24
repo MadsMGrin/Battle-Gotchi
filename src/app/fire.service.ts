@@ -371,7 +371,7 @@ export class FireService {
 
     await this.auth.signOut();
   }
-
+  // get all the currently online users.
   async getOnlineUsers() {
     try {
       const response = await axios.get('http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers');
@@ -384,6 +384,18 @@ export class FireService {
       throw new Error('Failed to retrieve online users');
     }
   }
+
+  async getItemsForOnlineUser(userId) {
+    try {
+      const response = await axios.get(`http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers/${userId}/items`);
+      return response.data.items;
+      console.log(response)
+    } catch (error) {
+      console.error('Error retrieving items for online user:', error);
+      throw new Error('Failed to retrieve items for online user');
+    }
+  }
+
 
   async sendBattleRequest(receiverId: string): Promise<void> {
 

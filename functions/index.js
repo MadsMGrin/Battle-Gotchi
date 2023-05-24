@@ -168,6 +168,24 @@ app.get('/onlineusers', async (req, res) => {
     res.status(500).json({error: "Failed to retrieve online users"});
   }
 });
+// used for fetching all items for an online users.
+app.get('/onlineusers/:id/items', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const gotchiDoc = await admin.firestore().collection('gotchi').doc(userId).get();
+    if (!gotchiDoc.exists) {
+      return res.status(404).json({ error: 'Gotchi not found' });
+    }
+    const gotchiData = gotchiDoc.data();
+    const items = gotchiData?.items || {};
+
+    res.json({ userId, items });
+  } catch (error) {
+    console.error("Error retrieving items for online user:", error);
+    res.status(500).json({ error: "Failed to retrieve items for online user" });
+  }
+});
 
 exports.onUserRegister = functions.auth
   .user()
