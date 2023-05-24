@@ -134,7 +134,7 @@
   grid-area: 2 / 9 / 9 / 10;
 }
 .online_users {
-  max-height: 300px;
+  max-height: 1000px;
   overflow-y: auto;
 }
 
@@ -196,8 +196,48 @@ grid-area:4/9/9/10;
   border: 1px solid #ccc;
   padding: 10px;
 }
+.items-container {
+  background-color: #333333;
+  color: #CCCCCC;
+  padding: 10px;
+  margin-top: 10px;
+}
 
+.items-container p {
+  font-weight: bold;
+}
 
+.items-container ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.items-container li {
+  margin-bottom: 5px;
+}
+
+.item-property {
+  display: block;
+  color: #999999;
+}
+
+.items-container {
+  /* Add your preferred styling */
+}
+
+.item-property a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.item-property a:hover {
+  /* Add your preferred hover styling */
+}
+
+.highlighted {
+  /* Add your preferred highlighted styling */
+}
 
 
 
