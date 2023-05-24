@@ -10,7 +10,6 @@ import { Router } from "@angular/router";
 })
 
 export class GotchiMaintainanceComponent implements OnInit {
-  // a refresh to the chat container.
   @ViewChild('chatContainer', { static: true })
   private chatContainer!: ElementRef;
   gotchiData: any;
@@ -20,8 +19,9 @@ export class GotchiMaintainanceComponent implements OnInit {
   chatMessages: any[] =[];
   itemsList: any[] = [];
   selectedItem: any;
-  death: boolean = false;
 
+  tradeRequests: any[] = [];
+  death: boolean = false;
   constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
   }
 
@@ -30,7 +30,21 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.getGotchi();
     this.getMyBattleRequests();
     this.fetchChatMessages();
-    this.checkDeathState();
+   this.checkDeathState();
+    this.getMyTradeMessages();
+
+
+  }
+  async getMyTradeMessages() {
+    try {
+      this.tradeRequests = await this.fireservice.getMytradeMessages();
+      console.log(this.tradeRequests + "heereeeeeeeeeeeeee compo")
+    } catch (error) {
+      console.error('Failed to retrieve trade messages:', error);
+    }
+
+  
+
   }
 
   async getGotchi() {
@@ -106,7 +120,7 @@ export class GotchiMaintainanceComponent implements OnInit {
         if (user.showItems) {
           user.showItems = false;
         } else {
-          this.itemsList = await this.fireservice.getItemsForOnlineUser(userId);
+          this.itemsList = await this.fireservice.getItemsForOnlineUsers(userId);
           user.items = this.itemsList;
           user.showItems = true;
           console.log(this.itemsList + " hereeeeeeeeeeeeeeeeeeeeeeeee");
@@ -181,7 +195,6 @@ export class GotchiMaintainanceComponent implements OnInit {
   async fetchChatMessages(): Promise<void> {
     try {
       const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
-      console.log(messages); // Check the contents of the `messages` array
       this.chatMessages = messages;
       // Scroll to the bottom of the chat container
       setTimeout(() => {
@@ -205,8 +218,23 @@ export class GotchiMaintainanceComponent implements OnInit {
     this.router.navigateByUrl("itemview")
   }
 
-  handleItemClick(itemName: any) {
 
+  handleItemClick(itemId: any, uid: any) {
+    this.router.navigate(['trade-window', itemId, uid]);
+  }
+
+  async acceptTradeRequest(sender: any) {
+    try {
+      await this.fireservice.acceptTrade(sender);
+      console.log('Trade accepted successfully');
+    } catch (error) {
+      console.error('Failed to accept trade:', error);
+    }
+  }
+
+
+  rejectTradeRequest(request: any) {
+    this.fireservice.rejectTradeRequest(request);
   }
 
 

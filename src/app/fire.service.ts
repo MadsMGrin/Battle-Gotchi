@@ -90,7 +90,6 @@ export class FireService {
           console.log("Your quest does not exist");
         }
       });
-      console.log(quests);
       return quests;
     } catch (error) {
       console.log("Failed to get quests:", error);
@@ -241,6 +240,7 @@ export class FireService {
     await this.firestore.runTransaction(async (transaction) => {
       const gotchiDoc = await transaction.get(this.firestore.collection("gotchi").doc(userId));
       const questDoc = await transaction.get(this.firestore.collection("users").doc(userId));
+      const itemdoc = await transaction.get(this.firestore.collection("item").doc());
 
       if (!questDoc.exists) {
         throw new Error("Quest document not found");
@@ -260,8 +260,17 @@ export class FireService {
             const newProgress = Math.min(currentProgress + increment, completion);
             console.log("New Progress:", newProgress);
 
+
+          // Check if the quest has been completed
+          if (newProgress >= quest.completion) {
+            const currentItems = gotchiDoc.data()?.['items'] || [];
+            const itemId = itemdoc.id;
+            const updatedItems = currentItems.map(item => ({ ...item, ownerId:itemId}));
+            updatedItems.push({ ...quest.reward, itemId: itemId });
+
             transaction.update(questDoc.ref, {
               [`${questField}.progress`]: newProgress,
+
             });
 
             // Check if the quest has been completed
@@ -399,8 +408,8 @@ export class FireService {
       throw new Error('Failed to retrieve online users');
     }
   }
-
-  async getItemsForOnlineUser(userId) {
+  // method/api to items for the online users.
+  async getItemsForOnlineUsers(userId) {
     try {
       const response = await axios.get(`http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/onlineusers/${userId}/items`);
       return response.data.items;
@@ -410,6 +419,26 @@ export class FireService {
       throw new Error('Failed to retrieve items for online user');
     }
   }
+  // method to get the items for the current user.
+  async getMyGotchiItems(): Promise<any[]> {
+    const snapshot = await this.firestore.collection('gotchi')
+      .doc(this.auth.currentUser?.uid).get();
+    if (snapshot.exists) {
+      const data = snapshot.data();
+      if (data && data['items']) {
+        return data['items'];
+      }
+    }
+    return [];
+  }
+  // get item based on id
+  async getSpecificItem(itemId) {
+    const snapshot = await this.firestore.collection('item').doc(itemId).get();
+    console.log(snapshot.data())
+    return snapshot.data();
+  }
+
+
 
 
   async sendBattleRequest(receiverId: string): Promise<void> {
@@ -464,7 +493,6 @@ export class FireService {
             const senderName = senderDoc.data()?.['username'];
             requestList.push({ ...request, senderName });
           }
-          console.log(requestList);
         });
 
       return requestList;
@@ -472,6 +500,67 @@ export class FireService {
       throw error;
     }
   }
+  async getMytradeMessages(): Promise<any[]>{
+    try {
+      const tradeRequestList: any [] = [];
+      await this.firestore.collection("tradeMessage")
+        .where("recieversID", "==", this.auth.currentUser?.uid)
+        .onSnapshot(async (querysnapshopt)=>{
+        tradeRequestList.length =0;
+        for (const doc of querysnapshopt.docs){
+          const request = doc.data();
+          const tradeId = doc.id;
+          tradeRequestList.push({...request, docId: tradeId})
+        }
+      })
+      return tradeRequestList;
+    }
+    catch (error) {
+      throw (error);
+      console.error()
+    }
+  }
+  async sendTradeMessage(senderId, sellItemId, buyItemId,recieversID) {
+    try {
+      const response = await axios.post(this.baseurl + "tradeMessage", {
+        senderiD: senderId,
+        sellItemId: sellItemId,
+        buyItemId: buyItemId,
+        recieversID: recieversID
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to send trade message');
+    }
+  }
+
+  async rejectTradeRequest(documentId) {
+    try {
+      const response = await axios.post(this.baseurl + "rejectTrade", {docId: documentId});
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to equip item');
+    }
+  }
+  async acceptTrade(tradeId: string): Promise<void> {
+    try {
+      const response = await axios.post(this.baseurl + "acceptTrade", {
+        tradeId: tradeId
+      });
+      console.log('Trade accepted successfully');
+      console.log(response.data);
+
+    } catch (error) {
+      console.error('Error accepting trade:', error);
+      throw new Error('Failed to accept trade');
+    }
+  }
+
 
   async getDocId(senderId: string){
     try {

@@ -12,9 +12,10 @@
           <p>Items:</p>
           <ul>
             <li *ngFor="let item of user?.items">
-      <span class="item-property">
-        <a href="#" (click)="handleItemClick(item?.itemName)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
-      </span>
+          <span class="item-property">
+       <a (click)="item && user && handleItemClick(item.itemId, user.uid)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
+
+         </span>
               <br>
               <span class="item-property">Item Rarity: {{ item?.itemRarity }}</span><br>
               <span class="item-property">Item Type: {{ item?.itemType }}</span><br>
@@ -26,14 +27,9 @@
           </ul>
         </div>
 
-
-
-
       </mat-card>
     </div>
   </div>
-
-
 
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
@@ -117,6 +113,15 @@
       <p>{{ request?.senderUsername }} wants to battle!</p>
       <button (click)="acceptBattleRequest(request.senderId)">Accept</button>
       <button (click)="rejectBattleRequest(request)">Reject</button>
+    </div>
+  </div>
+
+  <div class="tradeRequests">
+    <h2>Trade Requests:</h2>
+    <div *ngFor="let request of tradeRequests">
+      <p>{{ request?.senderUsername }} wants to trade!</p>
+      <button (click)="acceptTradeRequest(request)">Accept</button>
+      <button (click)="rejectTradeRequest(request.docId)">Reject</button>
     </div>
   </div>
 
