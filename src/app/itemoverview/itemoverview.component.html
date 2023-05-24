@@ -1,12 +1,4 @@
 
-<div class="buttons">
-      <button mat-raised-button (click)="getAllItems()" class="bottomButtons">All Itmes</button>
-      <button mat-raised-button (click)="getAllItemsOfType('weapon')" class="bottomButtons">Weapons</button>
-      <button mat-raised-button (click)="getAllItemsOfType('chestplate')" class="bottomButtons">Chest plates</button>
-      <button mat-raised-button (click)="getAllItemsOfType('helmet')" class="bottomButtons">Helmets</button>
-</div>
-<br>
-
 <div class="items">
   <table>
     <thead>
@@ -28,8 +20,9 @@
       <td>{{item.additionalSTR}}</td>
       <td>{{item.additionalDEX}}</td>
       <td>{{item.additionalSTM}}</td>
-      <td>{{item.inUse}}</td>
-      <td><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
+      <td *ngIf="item.inUse == true">Equipped</td>
+      <td *ngIf="item.inUse == false && !item"><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
+      <td *ngIf="item.inUse == null && !item"><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></td>
     </tr>
     </tbody>
   </table>
