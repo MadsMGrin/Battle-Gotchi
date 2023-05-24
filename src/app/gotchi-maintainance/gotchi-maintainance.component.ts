@@ -155,6 +155,7 @@ export class GotchiMaintainanceComponent implements OnInit {
       console.log(messages); // Check the contents of the `messages` array
       this.chatMessages = messages;
       // Scroll to the bottom of the chat container
+      console.log(messages+ "hereeeeeeeeeeeeeeeeeeeeeeeee")
       setTimeout(() => {
         this.scrollToBottom();
       }, 0);

@@ -24,6 +24,7 @@
     "@material/card": "^14.0.0",
     "axios": "^1.4.0",
     "firebase": "^9.22.0",
+    "promise-pool-executor": "^1.1.1",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
