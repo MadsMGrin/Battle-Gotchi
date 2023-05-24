@@ -1,9 +1,29 @@
 mat-card {
   box-shadow: none !important;
+  font-family: 'Share Tech', sans-serif;
+  font-size: 18px;
+  color: white;
+}
+
+.mat-card-subtitle {
+  color: rgba(255, 255, 255, 0.73);
 }
 
 .quest-display {
   display: flex;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding-left: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  margin-bottom: 10px;
+  min-width: 600px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
   justify-content: center;
   align-items: center;
 }
