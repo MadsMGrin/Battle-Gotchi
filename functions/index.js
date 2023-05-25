@@ -7,6 +7,8 @@ const {every, timestamp, asapScheduler} = require("rxjs");
 const {PromisePool} = require("promise-pool-executor");
 const {Timestamp, FieldValue} = require("firebase-admin/firestore")
 const {error} = require("firebase-functions/logger");
+const firebase = require("firebase/compat");
+const {item} = require("../src/entities/item");
 admin.initializeApp({
   projectId: "battlegotchi-63c2e",
   databaseURL: "http://localhost:8080",
@@ -125,6 +127,13 @@ const wackyLastNames = [
   "Fluffernutter",
 ]
 
+const randomQuest = async () => {
+  const quests = await admin.firestore().collection("quests").where("category", "==", type).get();
+  let randomIndex = Math.floor(Math.random() * quests.size);
+  return quests.docs[randomIndex].data();
+}
+
+
 app.use(cors());
 
 
@@ -177,10 +186,14 @@ app.get('/onlineusers/:id/items', async (req, res) => {
     if (!gotchiDoc.exists) {
       return res.status(404).json({ error: 'Gotchi not found' });
     }
-    const gotchiData = gotchiDoc.data();
-    const items = gotchiData?.items || {};
 
-    res.json({ userId, items });
+    const gotchiData = gotchiDoc.data();
+    const items = gotchiData?.items || [];
+
+    // Filter the items based on the 'inUse' value being false
+    const filteredItems = items.filter((item) => item.inUse === false);
+
+    res.json({ userId, items: filteredItems });
   } catch (error) {
     console.error("Error retrieving items for online user:", error);
     res.status(500).json({ error: "Failed to retrieve items for online user" });
@@ -191,8 +204,8 @@ app.get('/onlineusers/:id/items', async (req, res) => {
 
 exports.onUserRegister = functions.auth
   .user()
-  .onCreate((user, context) => {
-    admin.firestore().collection("gotchi").doc(user.uid).set({
+  .onCreate( async (user, context) => {
+   await admin.firestore().collection("gotchi").doc(user.uid).set({
       user: user.uid,
       name: wackyFirstNames[Math.floor(Math.random() * wackyFirstNames.length)] + " " + wackyLastNames[Math.floor(Math.random() * wackyLastNames.length)],
       hunger: 50,
@@ -202,11 +215,36 @@ exports.onUserRegister = functions.auth
       strength: 0,
       dexterity: 0,
       stamina: 0,
+
     });
+    const questTypes = ['daily', 'weekly', 'monthly'];
+    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
+
+    const itemSnapshot = await admin.firestore().collection('item').get();
+    let randomItemIndex = Math.floor(Math.random() * itemSnapshot.size)
+    const randomItem = itemSnapshot.docs[randomItemIndex].data();
+    await Promise.all(questTypes.map(async (type) => {
+      const RandomQuest = randomQuest;
+      if (!RandomQuest) {
+        throw new Error('Failed to get quests');
+      }
+      return {
+        name: RandomQuest.name,
+        description: RandomQuest.description,
+        progress: RandomQuest.progress,
+        action: RandomQuest.action,
+        duration: RandomQuest.duration,
+        completion: RandomQuest.completion,
+        category: RandomQuest.category,
+        reward: randomItem,
+      };
+    }));
   });
 
 
+exports.triggerOnAuth = functions.auth.user().beforeSignIn((snap, context) => {
 
+}).
 
 
 //// GOTCHI STATE MANIPULATION - START
@@ -543,7 +581,6 @@ app.post("/rejectTrade", async (req, res) => {
 
 app.post("/acceptTrade", async (req, res) => {
   const tradeuriId = req.body.tradeId;
-  console.log(tradeuriId) + "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
   try {
     const db = admin.firestore();
     const tradeMessageRef = db.collection("tradeMessage").doc(tradeuriId);
@@ -784,4 +821,3 @@ exports.deathTrigger = functions.firestore.document("gotchi/id").onUpdate(async 
 
 }
 )
-

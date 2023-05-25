@@ -77,21 +77,16 @@ export class TradeService extends FireService{
     if (snapshot.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
-        return data['items'];
+        const filteredItems = data['items'].filter((item: any) => item.inUse === false);
+        return filteredItems;
       }
     }
+
     return [];
   }
   async getSpecificItem(itemId) {
     const snapshot = await this.firestore.collection('item').doc(itemId).get();
     return snapshot.data();
-  }
-  getCurrentUserId(): string {
-    const uid = this.auth.currentUser?.uid;
-    if (!uid) {
-      throw new Error('User not logged in!');
-    }
-    return uid;
   }
 
   async getItemsForOnlineUsers(userId) {

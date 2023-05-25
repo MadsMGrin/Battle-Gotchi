@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../../fire.service";
 import {Router} from "@angular/router";
+import {QuestService} from "../../services/quest.service";
 
 @Component({
   selector: 'app-user-quest-list',
@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 export class UserQuestListComponent implements OnInit {
   userData: any;
 
-  constructor(public fireService: FireService, private router: Router) {}
+  constructor(public questService: QuestService, private router: Router) {}
 
   async ngOnInit() {
     await this.getUserQuests();
@@ -18,8 +18,7 @@ export class UserQuestListComponent implements OnInit {
 
   async getUserQuests(){
     try {
-      this.userData = await this.fireService.getUserQuests();
-      console.log(this.userData)
+      this.userData = await this.questService.getUserQuests();
     } catch (error) {
       console.error('Error retriveing userData:', error)
     }

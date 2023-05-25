@@ -53,22 +53,18 @@ export class ItemService extends FireService{
 
   async unequip(itemName, type) {
     try {
-      const user = this.getCurrentUserId();
+      const user = this.auth.currentUser?.uid;
       const response = await axios.post(this.baseurl + "unequipItem", {userId: user, itemName: itemName, itemType: type });
-      console.log(response)
       return response;
-
     } catch (error) {
-      console.error('Error:', error);
       throw new Error('Failed to unequip item');
     }
   }
 
   async removeStats(itemName){
     try {
-      const user = this.getCurrentUserId();
+      const user = this.auth.currentUser?.uid;
       const response = await axios.post(this.baseurl + "removeStats", {userId: user, itemName: itemName});
-      console.log(response)
       return response;
 
     } catch (error) {
@@ -79,9 +75,8 @@ export class ItemService extends FireService{
 
   async equip(itemName, type) {
     try {
-      const user = this.getCurrentUserId();
+      const user = this.auth.currentUser?.uid;
       const response = await axios.post(this.baseurl + "equipItem", {userId: user, itemName: itemName, itemType: type });
-      console.log(response)
       return response;
 
     } catch (error) {
@@ -91,7 +86,7 @@ export class ItemService extends FireService{
   }
   async addStats(itemName){
     try {
-      const user = this.getCurrentUserId();
+      const user = this.auth.currentUser?.uid;
       const response = await axios.post(this.baseurl + "addStats", {userId: user, itemName: itemName});
       console.log(response)
       return response;

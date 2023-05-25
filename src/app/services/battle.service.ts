@@ -68,10 +68,8 @@ export class BattleService extends FireService{
   }
   async getDocId(senderId: string){
     try {
-      console.log(senderId)
       const refdoc = this.firestore.collection("battleRequests").doc(senderId);
       const query = await refdoc.get();
-      console.log(refdoc);
       await refdoc.delete();
       return query
 

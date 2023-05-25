@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FireService} from "../../fire.service";
+import {ChatService} from "../../services/chat.service";
 
 @Component({
   selector: 'app-chat',
@@ -12,7 +12,7 @@ export class ChatComponent implements OnInit {
   @ViewChild('chatContainer', { static: true })
   private chatContainer!: ElementRef;
 
-  constructor(private fireservice: FireService) { }
+  constructor(private chatService: ChatService) { }
 
   ngOnInit(): void {
     this.fetchChatMessages();
@@ -21,7 +21,7 @@ export class ChatComponent implements OnInit {
 
   async fetchChatMessages(): Promise<void> {
     try {
-      const messages: { message: string; username: string }[] = await this.fireservice.fetchChatMessages();
+      const messages: { message: string; username: string }[] = await this.chatService.fetchChatMessages();
       this.chatMessages = messages;
       // Scroll to the bottom of the chat container
       setTimeout(() => {
@@ -40,13 +40,10 @@ export class ChatComponent implements OnInit {
   }
 
   async sendMessage(): Promise<void> {
-    const currentUserId = this.fireservice.getCurrentUserId();
+    const currentUserId = this.chatService.getCurrentUserId();
     const message = this.newMessage;
-
     try {
-      await this.fireservice.sendChatMessage(currentUserId, message);
-      console.log('Message sent successfully');
-
+      await this.chatService.sendChatMessage(currentUserId, message);
       // Clear the input field after sending the message
       this.newMessage = '';
     } catch (error) {

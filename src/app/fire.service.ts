@@ -2,12 +2,7 @@ import { Injectable } from '@angular/core';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
-import axios from 'axios'
 import * as config from '../../firebaseconfig.js'
-import { gotchi } from "../entities/gotchi";
-import {quest} from "../entities/quest";
-import {userQuest} from "../entities/userQuest";
-import {item} from "../entities/item";
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +22,13 @@ export class FireService {
     // Handle auth state changes
 
   }
-
+  getCurrentUserId(): string {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) {
+      throw new Error('User not logged in!');
+    }
+    return uid;
+  }
   async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
     const db = firebase.firestore();
 
@@ -45,12 +46,12 @@ export class FireService {
     const questTypes = ['daily', 'weekly', 'monthly'];
 
     const quests = await Promise.all(questTypes.map(async (type) => {
-      const quest = await this.getRandomQuest(type);
+      const quest = await this.getRandomQuest(type); // this gets list of quests and then gives 3 random quests to the user
       if (!quest) {
         throw new Error('Failed to get quests');
       }
-      const rewardPromise = this.randomItem(); // Get the promise from randomItem()
-      const reward = await rewardPromise; // Await the resolution of the promise
+      const rewardPromise = this.randomItem();
+      const reward = await rewardPromise;
       return {
         name: quest.name,
         description: quest.description,
