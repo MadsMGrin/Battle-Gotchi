@@ -41,7 +41,6 @@ export class TradeService extends BaseService{
         buyItemId: buyItemId,
         recieversID: recieversID
       });
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Error:', error);
@@ -51,7 +50,6 @@ export class TradeService extends BaseService{
   async rejectTradeRequest(documentId) {
     try {
       const response = await axios.post(this.baseurl + "rejectTrade", {docId: documentId});
-      console.log(response)
       return response;
 
     } catch (error) {
@@ -64,8 +62,6 @@ export class TradeService extends BaseService{
       const response = await axios.post(this.baseurl + "acceptTrade", {
         tradeId: tradeId
       });
-      console.log('Trade accepted successfully');
-      console.log(response.data);
 
     } catch (error) {
       console.error('Error accepting trade:', error);

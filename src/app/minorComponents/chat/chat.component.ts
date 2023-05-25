@@ -28,7 +28,6 @@ export class ChatComponent implements OnInit {
         this.scrollToBottom();
       }, 0);
     } catch (error) {
-      console.log('Error fetching chat messages:', error);
     }
   }
 

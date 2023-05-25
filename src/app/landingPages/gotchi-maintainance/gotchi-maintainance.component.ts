@@ -85,19 +85,15 @@ export class GotchiMaintainanceComponent implements OnInit {
   async restart(){
     try {
       this.death = await this.gotchiService.restart()
-      console.log(this.death)
       this.ngOnInit();
     }
     catch (error){
-      console.log("cba")
     }
   }
   async checkDeathState(): Promise<void> {
     try {
       this.death = await this.gotchiService.getMyDeath();
-      console.log("Hello, I am death:", this.death);
     } catch (error) {
-      console.log('Error checking death state:', error);
     }
   }
 

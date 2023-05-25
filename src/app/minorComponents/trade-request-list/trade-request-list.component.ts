@@ -18,7 +18,6 @@ export class TradeRequestListComponent implements OnInit {
   async acceptTradeRequest(sender: any) {
     try {
       await this.tradeService.acceptTrade(sender);
-      console.log('Trade accepted successfully');
     } catch (error) {
       console.error('Failed to accept trade:', error);
     }
@@ -32,7 +31,6 @@ export class TradeRequestListComponent implements OnInit {
   async getMyTradeMessages() {
     try {
       this.tradeRequests = await this.tradeService.getMytradeMessages();
-      console.log(this.tradeRequests + "heereeeeeeeeeeeeee compo")
     } catch (error) {
       console.error('Failed to retrieve trade messages:', error);
     }

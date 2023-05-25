@@ -92,7 +92,6 @@ export class ItemService extends BaseService{
     try {
       const user = this.auth.currentUser?.uid;
       const response = await axios.post(this.baseurl + "addStats", {userId: user, itemName: itemName});
-      console.log(response)
       return response;
 
     } catch (error) {
@@ -1163,9 +1162,7 @@ export class ItemService extends BaseService{
         helmet6Legendary, helmet7Legendary, helmet8Legendary, helmet9Legendary, helmet10Legendary]
 
       await list.forEach(item => db.collection("item").add(item));
-      console.log("Mock quest data has been sent to Firebase");
     } catch (error) {
-      console.log("Failed to send mock quest data to Firebase:", error);
     }
   }
 }

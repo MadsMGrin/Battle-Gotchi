@@ -39,7 +39,6 @@ export class OnlineUserListComponent implements OnInit {
           this.itemsList = await this.tradeService.getItemsForOnlineUsers(userId);
           user.items = this.itemsList;
           user.showItems = true;
-          console.log(this.itemsList + " hereeeeeeeeeeeeeeeeeeeeeeeee");
 
           // Assign the first item from 'itemsList' to the 'item' property
           this.item = this.itemsList[0];

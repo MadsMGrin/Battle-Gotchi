@@ -143,42 +143,7 @@ exports.onUserRegister = functions.auth
       strength: 0,
       dexterity: 0,
       stamina: 0,
-
     });
-    const questTypes = ['daily', 'weekly', 'monthly'];
-
-    const snapshot = await admin.firestore().collection('item').get();
-    let randomItemIndex = Math.floor(Math.random() * snapshot.size)
-    const randomItem = snapshot.docs[randomItemIndex].data();
-
-    const quests = await Promise.all(questTypes.map(async (type) => {
-      const quests = await admin.firestore().collection("quests").where("category", "==", type).get();
-      let randomIndex = Math.floor(Math.random() * quests.size);
-      return quests.docs[randomIndex].data();
-      if (!quests) {
-        throw new Error('Failed to get quests');
-      }
-      return {
-        name: quests.name,
-        description: quests.description,
-        progress: quests.progress,
-        action: quests.action,
-        duration: quests.duration,
-        completion: quests.completion,
-        category: quests.category,
-        reward: randomItem,
-      };
-    }));
-
-    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
-
-    console.log(`dailyQuest.name: ${dailyQuest.name}`);
-    console.log(`weeklyQuest.name: ${weeklyQuest.name}`);
-    console.log(`monthlyQuest.name: ${monthlyQuest.name}`);
-
-    await admin.firestore().collection("users").doc(user.uid).set({dailyQuest}, {merge: true})
-    await admin.firestore().collection("users").doc(user.uid).set({weeklyQuest}, {merge: true})
-    await admin.firestore().collection("users").doc(user.uid).set({monthlyQuest}, {merge: true})
   });
 
 

@@ -20,29 +20,4 @@ export abstract class BaseService {
     }
     return uid;
   }
-  async register(email: string, password: string, username: string): Promise<firebase.auth.UserCredential> {
-    const db = firebase.firestore();
-
-    const userSnapshot = await db.collection('users').where('username', '==', username).get();
-    if (!userSnapshot.empty) {
-      throw new Error('This username already exists');
-    }
-
-    const credential = await this.auth.createUserWithEmailAndPassword(email, password);
-    if (!credential.user) {
-      throw new Error('Failed to create user');
-    }
-
-    const userId = credential.user.uid;
-
-    await db.collection('users').doc(userId).set({
-      username,
-      email,
-      status: 'online',
-    });
-
-    await db.collection('usernames').doc(username).set({ uid: userId });
-
-    return credential;
-  } // has to be moved to index
 }

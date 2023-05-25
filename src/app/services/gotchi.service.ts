@@ -19,12 +19,9 @@ export class GotchiFireService extends BaseService{
 
     if (currentUser) {
       const querySnapshot = await this.firestore?.collection('gotchi').where('user', '==', currentUser.uid).get();
-      console.log('Current user UID:', currentUser.uid);
-      console.log('Query snapshot:', querySnapshot);
 
       if (querySnapshot && !querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
-        console.log('Document:', doc);
         return doc ? doc.data() : null;
       }
     }
@@ -46,11 +43,9 @@ export class GotchiFireService extends BaseService{
 
   async restart() {
     try {
-      console.log("service")
       const response = await axios.post(this.baseurl + "restart", {
         user: this.auth.currentUser?.uid
       });
-      console.log(response)
       return response.status == 200;
     }
     catch (error){

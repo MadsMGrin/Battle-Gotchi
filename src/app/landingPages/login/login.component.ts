@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
 
   async register(email: string, password: string, username: string) {
     try {
-      await this.baseService.register(email, password, username);
+      await this.questService.register(email, password, username);
       const user = this.baseService.auth.currentUser;
       if (user) {
         delay(2000 );

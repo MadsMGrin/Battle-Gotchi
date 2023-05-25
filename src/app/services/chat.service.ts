@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {FirebaseInitService} from "../fire.service";
-import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import axios from "axios";
@@ -21,9 +20,6 @@ export class ChatService extends BaseService{
         userId: userId,
         message: message
       });
-
-      console.log('Chat message sent successfully');
-      console.log(response.data);
 
     } catch (error) {
       console.error('Error sending chat message:', error);
