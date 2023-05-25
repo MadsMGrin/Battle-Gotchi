@@ -7,8 +7,6 @@ const {every, timestamp, asapScheduler} = require("rxjs");
 const {PromisePool} = require("promise-pool-executor");
 const {Timestamp, FieldValue} = require("firebase-admin/firestore")
 const {error} = require("firebase-functions/logger");
-const firebase = require("firebase/compat");
-const {item} = require("../src/entities/item");
 admin.initializeApp({
   projectId: "battlegotchi-63c2e",
   databaseURL: "http://localhost:8080",

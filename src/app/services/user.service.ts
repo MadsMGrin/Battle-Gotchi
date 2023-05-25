@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
-import firebase from "firebase/compat";
+import {FirebaseInitService} from "../fire.service";
+import firebase from "firebase/compat/app";
 import axios from "axios";
+import {BaseService} from "./baseService";
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService extends FireService{
+export class UserService extends BaseService{
 
-  constructor() {
-    super();
+  constructor(firebaseInitService: FirebaseInitService) {
+    super(firebaseInitService);
   }
 
   async signIn(email: string, password: string) {

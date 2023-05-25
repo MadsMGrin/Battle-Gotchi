@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
+import {FirebaseInitService} from "../fire.service";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
 import axios from "axios";
+import {BaseService} from "./baseService";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService extends FireService{
+export class ChatService extends BaseService{
 
-  constructor() {
-    super();
+  constructor(firebaseInitService: FirebaseInitService) {
+    super(firebaseInitService);
   }
 
   async sendChatMessage(userId: string, message: string): Promise<void> {

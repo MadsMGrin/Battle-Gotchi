@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FireService } from "../../fire.service";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import {delay} from "rxjs";
 import {UserService} from "../../services/user.service";
 import {QuestService} from "../../services/quest.service";
 import {ItemService} from "../../services/item.service";
+import {BaseService} from "../../services/baseService";
 
 @Component({
   selector: 'app-login',
@@ -19,20 +19,20 @@ export class LoginComponent implements OnInit {
   isSignUp: boolean = false;
 
   constructor(
-    public fireService: FireService,
     private _snackBar: MatSnackBar,
     private router: Router,
     private userService: UserService,
     private questService: QuestService,
-    private itemServcie: ItemService
+    private itemServcie: ItemService,
+    private baseService: BaseService
   ) {}
 
   ngOnInit(): void {}
 
   async register(email: string, password: string, username: string) {
     try {
-      await this.fireService.register(email, password, username);
-      const user = this.fireService.auth.currentUser;
+      await this.baseService.register(email, password, username);
+      const user = this.baseService.auth.currentUser;
       if (user) {
         delay(2000 );
         await this.router.navigateByUrl("home");
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
 
     try {
       await this.userService.signIn(email, password);
-      const user = this.fireService.auth.currentUser;
+      const user = this.baseService.auth.currentUser;
       if (user) {
         await this.router.navigateByUrl("home"); // Replace '/dashboard' with the actual route of the screen
       }

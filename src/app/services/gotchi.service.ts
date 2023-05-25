@@ -1,30 +1,44 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
+import {FirebaseInitService} from "../fire.service";
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
 import axios from "axios";
+import {BaseService} from "./baseService";
 
 @Injectable({
   providedIn: 'root'
 })
-export class GotchiFireService extends FireService{
+export class GotchiFireService extends BaseService{
 
-  constructor() {
-    super();
+  constructor(firebaseInitService: FirebaseInitService) {
+    super(firebaseInitService);
   }
 
   async getGotchiSpecific() {
-    const snapshot = await this.firestore.collection('gotchi').where('user', '==', this.auth.currentUser?.uid).get();
-    const doc = snapshot.docs[0];
-    return doc ? doc.data() : null;
+    const currentUser = this.auth.currentUser;
+
+    if (currentUser) {
+      const querySnapshot = await this.firestore?.collection('gotchi').where('user', '==', currentUser.uid).get();
+      console.log('Current user UID:', currentUser.uid);
+      console.log('Query snapshot:', querySnapshot);
+
+      if (querySnapshot && !querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        console.log('Document:', doc);
+        return doc ? doc.data() : null;
+      }
+    }
+
+    return null;
   }
 
   async getMyDeath(): Promise<boolean> {
     try {
-      const snapshot = await this.firestore
-        .collection("gotchi")
+      const snapshot = await this.firestore?.collection("gotchi")
         .where("user", "==", this.auth.currentUser?.uid)
         .get();
 
-      return snapshot.empty; // If the snapshot is empty, the document has been deleted
+      return snapshot!.empty; // If the snapshot is empty, the document has been deleted
     } catch (error) {
       throw error;
     }

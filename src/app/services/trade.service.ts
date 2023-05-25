@@ -1,20 +1,22 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
+import {FirebaseInitService} from "../fire.service";
 import axios from "axios";
-
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
+import {BaseService} from "./baseService";
 @Injectable({
   providedIn: 'root'
 })
-export class TradeService extends FireService{
+export class TradeService extends BaseService{
 
-  constructor() {
-    super();
+  constructor(firebaseInitService: FirebaseInitService) {
+    super(firebaseInitService);
   }
 
   async getMytradeMessages(): Promise<any[]>{
     try {
       const tradeRequestList: any [] = [];
-      await this.firestore.collection("tradeMessage")
+      await this.firestore?.collection("tradeMessage")
         .where("recieversID", "==", this.auth.currentUser?.uid)
         .onSnapshot(async (querysnapshopt)=>{
           tradeRequestList.length =0;
@@ -72,9 +74,9 @@ export class TradeService extends FireService{
   }
 
   async getMyGotchiItems(): Promise<any[]> {
-    const snapshot = await this.firestore.collection('gotchi')
+    const snapshot = await this.firestore?.collection('gotchi')
       .doc(this.auth.currentUser?.uid).get();
-    if (snapshot.exists) {
+    if (snapshot?.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
         const filteredItems = data['items'].filter((item: any) => item.inUse === false);
@@ -85,8 +87,8 @@ export class TradeService extends FireService{
     return [];
   }
   async getSpecificItem(itemId) {
-    const snapshot = await this.firestore.collection('item').doc(itemId).get();
-    return snapshot.data();
+    const snapshot = await this.firestore?.collection('item').doc(itemId).get();
+    return snapshot?.data();
   }
 
   async getItemsForOnlineUsers(userId) {

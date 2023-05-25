@@ -1,20 +1,24 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
-import firebase from "firebase/compat";
+
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
 import axios from "axios";
+import {BaseService} from "./baseService";
+import {FirebaseInitService} from "../fire.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ItemService extends FireService{
+export class ItemService extends BaseService{
 
-  constructor() {
-    super();
+  constructor(firebaseInitService: FirebaseInitService) {
+    super(firebaseInitService);
   }
   async getAllItems() {
-    const snapshot = await this.firestore.collection('gotchi')
+    const snapshot = await this.firestore?.collection('gotchi')
       .doc(this.auth.currentUser?.uid).get();
-    if (snapshot.exists) {
+    if (snapshot?.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
         return data['items'];
@@ -24,10 +28,10 @@ export class ItemService extends FireService{
   }
 
   async getAllItemsOfType(type) {
-    const snapshot = await this.firestore.collection('gotchi')
+    const snapshot = await this.firestore?.collection('gotchi')
       .doc(this.auth.currentUser?.uid)
       .get();
-    if (snapshot.exists) {
+    if (snapshot?.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
         const items = data['items'];
@@ -38,10 +42,10 @@ export class ItemService extends FireService{
   }
 
   async getEquippedItem(type) {
-    const snapshot = await this.firestore.collection('gotchi')
+    const snapshot = await this.firestore?.collection('gotchi')
       .doc(this.auth.currentUser?.uid)
       .get();
-    if (snapshot.exists) {
+    if (snapshot?.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
         const items = data['items'];
