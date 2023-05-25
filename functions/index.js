@@ -125,13 +125,6 @@ const wackyLastNames = [
   "Fluffernutter",
 ]
 
-const randomQuest = async (type) => {
-  const quests = await admin.firestore().collection("quests").where("category", "==", type).get();
-  let randomIndex = Math.floor(Math.random() * quests.size);
-  return quests.docs[randomIndex].data();
-}
-
-
 app.use(cors());
 
 
@@ -217,36 +210,38 @@ exports.onUserRegister = functions.auth
     });
     const questTypes = ['daily', 'weekly', 'monthly'];
 
-
     const snapshot = await admin.firestore().collection('item').get();
     let randomItemIndex = Math.floor(Math.random() * snapshot.size)
     const randomItem = snapshot.docs[randomItemIndex].data();
+
     const quests = await Promise.all(questTypes.map(async (type) => {
-      const RandomQuest = randomQuest(questTypes);
-      if (!RandomQuest) {
+      const quests = await admin.firestore().collection("quests").where("category", "==", type).get();
+      let randomIndex = Math.floor(Math.random() * quests.size);
+      return quests.docs[randomIndex].data();
+      if (!quests) {
         throw new Error('Failed to get quests');
       }
       return {
-        name: RandomQuest.name,
-        description: RandomQuest.description,
-        progress: RandomQuest.progress,
-        action: RandomQuest.action,
-        duration: RandomQuest.duration,
-        completion: RandomQuest.completion,
-        category: RandomQuest.category,
+        name: quests.name,
+        description: quests.description,
+        progress: quests.progress,
+        action: quests.action,
+        duration: quests.duration,
+        completion: quests.completion,
+        category: quests.category,
         reward: randomItem,
       };
     }));
 
     const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
-    await admin.firestore().collection("users").doc(user.uid).set({
-      dailyQuest,
-      weeklyQuest,
-      monthlyQuest
-    },
-      {merge: true}
-    )
 
+    console.log(`dailyQuest.name: ${dailyQuest.name}`);
+    console.log(`weeklyQuest.name: ${weeklyQuest.name}`);
+    console.log(`monthlyQuest.name: ${monthlyQuest.name}`);
+
+    await admin.firestore().collection("users").doc(user.uid).set({dailyQuest}, {merge: true})
+    await admin.firestore().collection("users").doc(user.uid).set({weeklyQuest}, {merge: true})
+    await admin.firestore().collection("users").doc(user.uid).set({monthlyQuest}, {merge: true})
   });
 
 
@@ -343,40 +338,6 @@ app.post("/increaseCleanliness", async (req, res) => {
   }).catch((error) => {
     res.status(500).json({error: "failed to resolved maintainance"});
   });
-});
-
-//This method is supposed to be a cron job however emulators make this impossible so keeping it on user creation for now for testing purposes
-exports.statemodification = functions.auth.user().onCreate(async (user, context) => {
-  const gotchis = await getAllGotchis();
-  const promisePool = new PromisePool(
-    () =>
-      adjustGotchiValues(gotchis), 10,
-  );
-  logger.log("gotchi cleanup finished");
-  await promisePool.start();
-
-  async function adjustGotchiValues(gotchis) {
-    const batch = admin.firestore().batch();
-
-    gotchis.forEach((gotchi) => {
-      const docRef = admin.firestore().collection('gotchi').doc(gotchi.id);
-      const fieldValue = admin.firestore.FieldValue;
-
-      batch.set(docRef, {
-          // Example: Incrementing the 'health' and 'stamina' fields by 10
-          health: fieldValue.increment(50),
-          timesEatenToday: 0,
-          timesSleptToday: 0,
-          timesShoweredToday: 0,
-          // Add more field increments here if needed
-        },
-        {merge: true},
-      );
-    });
-
-    // Commit the batched updates
-    await batch.commit();
-  }
 });
 //// GOTCHI STATE MANIPULATION - END
 

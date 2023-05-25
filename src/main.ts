@@ -2,7 +2,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
-import * as config from '../../firebaseconfig.js';
+import * as config from '../firebaseconfig.js';
 import 'firebase/compat/auth';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
