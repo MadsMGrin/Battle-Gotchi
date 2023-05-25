@@ -609,7 +609,7 @@ app.post('/simulateBattle', async (req, res) => {
 
       const senderGotchi = senderSnap.data();
       const receiverGotchi = receiverSnap.data();
-      
+
       // calculate score for each gotchi based on attributes and their weights
       const attributeWeights = {
         hunger: 0.2,
@@ -693,7 +693,7 @@ exports.deathTrigger = functions.firestore.document("gotchi/id").onUpdate(async 
   const health = gotchiData.health;
   const user = gotchiData.user;
 
-  if(health >= 0){
+  if(health <= 0){
     await admin.firestore().collection("gotchi").doc(user).delete();
   }
 

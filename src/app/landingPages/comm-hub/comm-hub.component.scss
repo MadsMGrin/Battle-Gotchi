@@ -18,16 +18,22 @@
 
 .online_users{
   grid-area: 2 / 9 / 6 / 10;
+  overflow: auto;
+  word-wrap: break-word
 }
 
 .battleRequests{
   grid-area: 2 / 2 / 4 / 3;
   background-color: #292929;
   border: 5px solid #039be5;
+  overflow: auto;
+  word-wrap: break-word
 }
 
 .tradeRequests{
-  grid-area: 64/ 2 / 6 / 3;
+  grid-area: 4/ 2 / 6 / 3;
   background-color: #292929;
   border: 5px solid #039be5;
+  overflow: auto;
+  word-wrap: break-word
 }

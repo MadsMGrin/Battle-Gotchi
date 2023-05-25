@@ -159,12 +159,16 @@
   background-color: #292929;
   border: 5px solid #039be5;
   grid-area:2/9/4/10;
+  overflow: auto;
+  word-wrap: break-word
 }
 
 .tradeRequests{
   background-color: #292929;
   border: 5px solid #039be5;
   grid-area:4/9/6/10;
+  overflow: auto;
+  word-wrap: break-word
 }
 
 .itemsList{
