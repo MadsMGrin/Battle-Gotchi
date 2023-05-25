@@ -6,7 +6,7 @@ import { Router } from "@angular/router";
 @Component({
   selector: 'app-gotchi-maintainance',
   templateUrl: './gotchi-maintainance.component.html',
-  styleUrls: ['./gotchi-maintainance.component.scss']
+  styleUrls: ['./gotchi-maintainance.component.scss'],
 })
 
 export class GotchiMaintainanceComponent implements OnInit {
@@ -43,7 +43,7 @@ export class GotchiMaintainanceComponent implements OnInit {
       console.error('Failed to retrieve trade messages:', error);
     }
 
-  
+
 
   }
 
