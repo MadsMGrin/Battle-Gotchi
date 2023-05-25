@@ -457,9 +457,8 @@ app.post("/rejectTrade", async (req, res) => {
 
 
 app.post("/acceptTrade", async (req, res) => {
-  const { tradeId } = req.body;
-  const tradeuriId = tradeId.docId;
-  console.log(tradeuriId);
+  const tradeuriId = req.body.tradeId;
+  console.log(tradeuriId) + "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
   try {
     const db = admin.firestore();
     const tradeMessageRef = db.collection("tradeMessage").doc(tradeuriId);
@@ -488,8 +487,8 @@ app.post("/acceptTrade", async (req, res) => {
     const receiverGotchiData = (await receiverGotchiRef.get()).data();
 
     // Find the items to be traded
-    const sellItemIndex = senderGotchiData.items.findIndex(item => item.itemId === sellItemId);
-    const buyItemIndex = receiverGotchiData.items.findIndex(item => item.itemId === buyItemId);
+    const sellItemIndex = senderGotchiData.items.findIndex(item => item.ownerId === sellItemId);
+    const buyItemIndex = receiverGotchiData.items.findIndex(item => item.ownerId === buyItemId);
     if (sellItemIndex === -1 || buyItemIndex === -1) {
       res.status(400).send("Item not found for trade.");
       return;
@@ -610,6 +609,7 @@ app.post('/simulateBattle', async (req, res) => {
 
       const senderGotchi = senderSnap.data();
       const receiverGotchi = receiverSnap.data();
+      
       // calculate score for each gotchi based on attributes and their weights
       const attributeWeights = {
         hunger: 0.2,
