@@ -56,8 +56,9 @@ export class TradeWindowComponent implements OnInit {
   }
 
 
-  async addToTrade(itemId: any) {
+  async addToTrade(itemId) {
     const sellItemId = itemId;
+    console.log(sellItemId + "compo xxxxxxxxxxxxxx")
     const curentUserId = await this.fireservice.getCurrentUserId();
 
 

@@ -260,31 +260,27 @@ export class FireService {
             const newProgress = Math.min(currentProgress + increment, completion);
             console.log("New Progress:", newProgress);
 
-
-          // Check if the quest has been completed
-          if (newProgress >= quest.completion) {
-            const currentItems = gotchiDoc.data()?.['items'] || [];
-            const itemId = itemdoc.id;
-            const updatedItems = currentItems.map(item => ({ ...item, ownerId:itemId}));
-            updatedItems.push({ ...quest.reward, itemId: itemId });
-
             transaction.update(questDoc.ref, {
               [`${questField}.progress`]: newProgress,
-
             });
 
             // Check if the quest has been completed
             if (newProgress >= completion) {
               const currentItems = gotchiDoc.data()?.['items'] || [];
               const rewardItem = quest.reward;
+              const ownerId = itemdoc.id;
 
-              if (!currentItems.includes(rewardItem)) {
-                const updatedItems = [...currentItems, rewardItem];
+              const rewardWithOwner = { ...rewardItem, ownerId };
+
+              if (!currentItems.some(item => item === rewardItem)) {
+                const updatedItems = [...currentItems, rewardWithOwner];
                 transaction.update(gotchiDoc.ref, {
-                  items: updatedItems,
+                  items: updatedItems
                 });
               }
             }
+
+
           }
         }
       }
@@ -466,8 +462,7 @@ export class FireService {
       senderUsername: senderUsername,
       receiverId: receiverId,
     };
-
-    const battleRequestRef = await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
+    await this.firestore.collection('battleRequests').doc(senderId).set(battleRequest);
     // cooldown is set to 1min for now,
     const cooldownPeriod = 600;
     const newCooldownTimestamp = currentTimestamp + cooldownPeriod;
