@@ -1,36 +1,5 @@
 <div class="container" *ngIf="death == false">
 
-  <div class="online_users">
-    <p class="title">Online Users:</p>
-    <div *ngFor="let user of onlineUsers?.slice(0, 10)">
-      <mat-card>
-        <p>{{ user?.username }}</p>
-        <button (click)="requestBattle(user?.uid)">Fight</button>
-        <button (click)="displayItemsForSelectedUser(user?.uid)">View Items</button>
-
-        <div class="items-container" *ngIf="user?.showItems">
-          <p>Items:</p>
-          <ul>
-            <li *ngFor="let item of user?.items">
-          <span class="item-property">
-       <a (click)="item && user && handleItemClick(item.ownerId, user.uid)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
-
-         </span>
-              <br>
-              <span class="item-property">Item Rarity: {{ item?.itemRarity }}</span><br>
-              <span class="item-property">Item Type: {{ item?.itemType }}</span><br>
-              <span class="item-property">Additional DEX: {{ item?.additionalDEX }}</span><br>
-              <span class="item-property">Additional STM: {{ item?.additionalSTM }}</span><br>
-              <span class="item-property">Additional STR: {{ item?.additionalSTR }}</span><br>
-              <span class="item-property">Armor: {{ item?.armor }}</span>
-            </li>
-          </ul>
-        </div>
-
-      </mat-card>
-    </div>
-  </div>
-
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
@@ -73,6 +42,9 @@
   <div class="item questButton">
     <button mat-raised-button (click)="quest()" class="bottomButtons">Quests</button>
   </div>
+  <div class="commButton">
+    <button mat-raised-button (click)="commButton()" class="bottomButtons">Communication Hub</button>
+  </div>
   <div class="itemsList">
     <button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Your Items</button>
   </div>
@@ -108,32 +80,12 @@
   </div>
 
   <div class="battleRequests">
-    <h2>Battle Requests:</h2>
-    <div *ngFor="let request of battleRequests">
-      <p>{{ request?.senderUsername }} wants to battle!</p>
-      <button (click)="acceptBattleRequest(request.senderId)">Accept</button>
-      <button (click)="rejectBattleRequest(request)">Reject</button>
-    </div>
-  </div>
+    <app-battle-request-list></app-battle-request-list>
+  </div> <!-- Move this -->
 
   <div class="tradeRequests">
-    <h2>Trade Requests:</h2>
-    <div *ngFor="let request of tradeRequests">
-      <p>{{ request?.senderUsername }} wants to trade!</p>
-      <button (click)="acceptTradeRequest(request.docId)">Accept</button>
-      <button (click)="rejectTradeRequest(request.docId)">Reject</button>
-    </div>
-  </div>
-
-  <div class="inputContainer">
-    <div class="chatMessages" #chatContainer>
-      <div *ngFor="let chat of chatMessages">
-        <p>{{ chat.username }}: {{ chat.message }}</p>
-      </div>
-    </div>
-    <input type="text" [(ngModel)]="newMessage" placeholder="Type your message">
-    <button (click)="sendMessage()">Send</button>
-  </div>
+    <app-trade-request-list></app-trade-request-list>
+  </div> <!-- Move this -->
 
 </div>
 

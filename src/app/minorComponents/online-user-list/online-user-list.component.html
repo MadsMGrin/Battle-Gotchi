@@ -1,0 +1,28 @@
+<p class="title">Online Users:</p>
+<div *ngFor="let user of onlineUsers?.slice(0, 10)">
+  <mat-card>
+    <p>{{ user?.username }}</p>
+    <button (click)="requestBattle(user?.uid)">Fight</button>
+    <button (click)="displayItemsForSelectedUser(user?.uid)">View Items</button>
+
+    <div class="items-container" *ngIf="user?.showItems">
+      <p>Items:</p>
+      <ul>
+        <li *ngFor="let item of user?.items">
+          <span class="item-property">
+       <a (click)="item && user && handleItemClick(item.ownerId, user.uid)" [class.highlighted]="item?.itemName === selectedItem">{{ item?.itemName }}</a>
+
+         </span>
+          <br>
+          <span class="item-property">Item Rarity: {{ item?.itemRarity }}</span><br>
+          <span class="item-property">Item Type: {{ item?.itemType }}</span><br>
+          <span class="item-property">Additional DEX: {{ item?.additionalDEX }}</span><br>
+          <span class="item-property">Additional STM: {{ item?.additionalSTM }}</span><br>
+          <span class="item-property">Additional STR: {{ item?.additionalSTR }}</span><br>
+          <span class="item-property">Armor: {{ item?.armor }}</span>
+        </li>
+      </ul>
+    </div>
+
+  </mat-card>
+</div>

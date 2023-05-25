@@ -1,0 +1,74 @@
+.buttons{
+  align-self: center;
+  text-align: center;
+}
+
+button{
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.title{
+  align-self: center;
+  text-align: center;
+}
+
+mat-card {
+  display: flex;
+  box-shadow: none !important;
+  font-family: 'Share Tech', sans-serif;
+  font-size: 18px;
+  color: white;
+}
+
+.item-display {
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding: 10px;
+  margin-bottom: 10px;
+  min-width: 600px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.item-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+}
+
+.mat-card-header {
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+.mat-card-subtitle {
+  color: rgba(255, 255, 255, 0.73);
+  margin-left: 10px;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}
+
+
+.mat-card-actions{
+  box-shadow: none !important;
+  font-family: 'Share Tech', sans-serif;
+  font-size: 18px;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+}

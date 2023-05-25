@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FireService } from "../fire.service";
+import { FireService } from "../../fire.service";
 import {ActivatedRoute} from "@angular/router";
 import {Observable} from "rxjs";
 
