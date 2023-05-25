@@ -1,10 +1,10 @@
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
-import { ItemoverviewComponent } from './itemoverview/itemoverview.component';
-import {GotchiMaintainanceComponent} from "./gotchi-maintainance/gotchi-maintainance.component";
+import { LoginComponent } from './landingPages/login/login.component';
+import { ItemoverviewComponent } from './landingPages/itemoverview/itemoverview.component';
+import {GotchiMaintainanceComponent} from "./landingPages/gotchi-maintainance/gotchi-maintainance.component";
 import {AuthGuard} from "./authGuard";
-import {UserQuestListComponent} from "./quest/user-quest-list/user-quest-list.component";
-import {TradeWindowComponent} from "./trade-window/trade-window.component";
+import {UserQuestListComponent} from "./landingPages/user-quest-list/user-quest-list.component";
+import {TradeWindowComponent} from "./landingPages/trade-window/trade-window.component";
 
 
 const  routes: Routes = [
