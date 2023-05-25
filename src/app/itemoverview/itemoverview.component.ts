@@ -27,11 +27,13 @@ export class ItemoverviewComponent implements OnInit {
 
   async equipItem(type, itemName) {
     this.currentItem = await this.fireService.getEquippedItem(type);
-    if(this.currentItem[0])
+    if(this.currentItem[0]) {
+      await this.fireService.removeStats(this.currentItem[0].itemName)
       await this.fireService.unequip(this.currentItem[0].itemName, this.currentItem[0].itemType);
+    }
 
     await this.fireService.equip(itemName, type);
-
+    await this.fireService.addStats(itemName)
     await this.getAllItems();
   }
 
