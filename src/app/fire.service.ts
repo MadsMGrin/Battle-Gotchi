@@ -599,12 +599,9 @@ export class FireService {
 
   // simulate the battle when user accepts the battle
   async simulateBattle(challengerId: string, opponentId: string) {
-    console.log(challengerId)
-    console.log(opponentId)
     const response = await axios.post(
 
-      this.baseurl + "simulateBattle",
-      { challengerId: challengerId, opponentId: opponentId }
+      this.baseurl + "simulateBattle", { challengerId: challengerId, opponentId: opponentId }
     );
     if(response.status === 500){
       throw new Error("There was an error simulating the battle");
@@ -676,6 +673,19 @@ export class FireService {
     }
   }
 
+  async removeStats(itemName){
+    try {
+      const user = this.getCurrentUserId();
+      const response = await axios.post(this.baseurl + "removeStats", {userId: user, itemName: itemName});
+      console.log(response)
+      return response;
+
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to remove stats');
+    }
+  }
+
   async equip(itemName, type) {
     try {
       const user = this.getCurrentUserId();
@@ -688,7 +698,19 @@ export class FireService {
       throw new Error('Failed to equip item');
     }
  }
+  async addStats(itemName){
+    try {
+      const user = this.getCurrentUserId();
+      const response = await axios.post(this.baseurl + "addStats", {userId: user, itemName: itemName});
+      console.log(response)
+      return response;
 
+    } catch (error) {
+      console.error('Error:', error);
+      throw new Error('Failed to add stats');
+    }
+
+  }
   async mock() {
       try {
         const db = firebase.firestore();
