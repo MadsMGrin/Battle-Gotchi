@@ -1,8 +1,13 @@
 .container {
   display: grid;
-  grid-template-rows:  minmax(20px, 40px) repeat(8, 80px);
+  grid-template-rows: repeat(8, 80px);
   grid-template-columns: minmax(10px, 50px) 2fr repeat(6, 1fr) 2fr minmax(10px, 50px);
   grid-gap: 2em;
+}
+
+.mat-raised-button {
+  min-width: 155px;
+  max-width: 155px;
 }
 
 .backBtn{
@@ -10,12 +15,12 @@
   margin-left: 20px;
 }
 .username{
-  grid-area: 1 / 5 / 2 / 7;
-  margin-top: 50px;
+  grid-area: 1 / 5 / 1 / 7;
+  margin-top: 5px;
 }
 
 .healthInfo{ // row-str, column-str, row-end, column-end
-  grid-area: 3 / 4 / 3 / 6;
+  grid-area: 2 / 4 / 2 / 6;
   justify-self: center;
   align-self: center;
   text-align: center;
@@ -24,11 +29,11 @@
   padding-left: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
-
+  margin-top: 40px;
 }
 
 .sleepInfo{ // row-str, column-str, row-end, column-end
-  grid-area: 3 / 6 / 3 / 8;
+  grid-area: 2 / 6 / 2 / 8;
   justify-self: center;
   align-self: center;
   text-align: center;
@@ -37,10 +42,11 @@
   padding-left: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
+  margin-top: 40px;
 }
 
 .hungerInfo{ // row-str, column-str, row-end, column-end
-  grid-area: 5 / 4 / 6 / 6;
+  grid-area: 3 / 4 / 4 / 6;
   justify-self: center;
   align-self: center;
   text-align: center;
@@ -49,10 +55,11 @@
   padding-left: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
+  margin-top: 80px;
 }
 
 .cleanlinessInfo{ // row-str, column-str, row-end, column-end
-  grid-area: 5 / 6 / 6 / 8;
+  grid-area: 3 / 6 / 4 / 8;
   justify-self: center;
   align-self: center;
   align-items: center;
@@ -62,11 +69,12 @@
   padding-left: 10px;
   padding-bottom: 10px;
   padding-right: 10px;
+  margin-top: 80px;
 }
 
 // statlist
 .gotchiStats{ // row-str, column-str, row-end, column-end
-  grid-area: 3 / 2 / 6 / 3;
+  grid-area: 2 / 2 / 5 / 3;
   justify-self: center;
   align-self: center;
   align-items: center;
@@ -80,7 +88,7 @@
 
 // statlist
 .questButton{ // row-str, column-str, row-end, column-end
-  grid-area: 6 / 2 / 6 / 3;
+  grid-area: 5 / 2 / 5 / 3;
   justify-self: center;
   align-self: start;
   align-items: center;
@@ -109,21 +117,21 @@
 }
 
 .showerAction{ // row-str, column-str, row-end, column-end
-  grid-area: 7 / 3 / 9 / 5;
+  grid-area: 5 / 3 / 7 / 5;
   align-items: center;
   justify-self: center;
   text-align: center;
 }
 
 .hungerAction{ // row-str, column-str, row-end, column-end
-  grid-area: 7 / 5 / 9 / 7;
+  grid-area: 5 / 5 / 7 / 7;
   align-items: center;
   justify-self: center;
   text-align: center;
 }
 
 .sleepAction{ // row-str, column-str, row-end, column-end
-  grid-area: 7 / 7 / 9 / 9;
+  grid-area: 5 / 7 / 7 / 9;
 
   align-items: center;
   justify-self: center;
@@ -131,7 +139,7 @@
 }
 
 .online_users{
-  grid-area: 2 / 9 / 9 / 10;
+  grid-area: 1 / 9 / 3 / 10;
 }
 .online_users {
   max-height: 1000px;
@@ -148,21 +156,41 @@
 
 
 .battleRequests{
-grid-area:4/9/9/10;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  grid-area:2/9/4/10;
 }
+
+.tradeRequests{
+  background-color: #292929;
+  border: 5px solid #039be5;
+  grid-area:4/9/6/10;
+}
+
 .itemsList{
-  grid-area: 7 / 2 / 8 / 3;
+  grid-area: 5 / 2 / 7 / 3;
   justify-self: center;
   align-self: center;
   text-align: center;
   background-color: #292929;
   border: 5px solid #039be5;
   padding: 10px;
+  margin-top: 20px;
 }
 
+.commButton{
+  grid-area: 6 / 2 / 7 / 3;
+  justify-self: center;
+  align-self: center;
+  text-align: center;
+  background-color: #292929;
+  border: 5px solid #039be5;
+  padding: 10px;
+  margin-top: 50px;
+}
 
 .inputContainer{
-  grid-area:8/2/9/2 ;
+  grid-area: 7 / 2 / 8 / 2 ;
 }
 .inputContainer input[type="text"] {
   width: 100%;

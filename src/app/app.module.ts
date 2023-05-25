@@ -21,6 +21,7 @@ import { OnlineUserListComponent } from './minorComponents/online-user-list/onli
 import { BattleRequestListComponent } from './minorComponents/battle-request-list/battle-request-list.component';
 import { TradeRequestListComponent } from './minorComponents/trade-request-list/trade-request-list.component';
 import { ChatComponent } from './minorComponents/chat/chat.component';
+import { CommHubComponent } from './landingPages/comm-hub/comm-hub.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ChatComponent } from './minorComponents/chat/chat.component';
     BattleRequestListComponent,
     TradeRequestListComponent,
     ChatComponent,
+    CommHubComponent,
   ],
   imports: [
     BrowserModule,

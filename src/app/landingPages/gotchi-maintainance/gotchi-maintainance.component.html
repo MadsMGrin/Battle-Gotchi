@@ -1,9 +1,5 @@
 <div class="container" *ngIf="death == false">
 
-  <div class="online_users">
-    <app-online-user-list></app-online-user-list>
-  </div> <!-- Move this -->
-
 <div class="backBtn">
   <button mat-raised-button (click)="signOut()" class="bottomButtons">SIGN OUT</button>
 </div>
@@ -46,6 +42,9 @@
   <div class="item questButton">
     <button mat-raised-button (click)="quest()" class="bottomButtons">Quests</button>
   </div>
+  <div class="commButton">
+    <button mat-raised-button (click)="commButton()" class="bottomButtons">Communication Hub</button>
+  </div>
   <div class="itemsList">
     <button mat-raised-button (click)="itemsOverview()" class="bottomButtons">Your Items</button>
   </div>
@@ -86,10 +85,6 @@
 
   <div class="tradeRequests">
     <app-trade-request-list></app-trade-request-list>
-  </div> <!-- Move this -->
-
-  <div class="inputContainer">
-    <app-chat></app-chat>
   </div> <!-- Move this -->
 
 </div>

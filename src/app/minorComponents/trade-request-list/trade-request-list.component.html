@@ -1,4 +1,4 @@
-<h2>Trade Requests:</h2>
+<h2>Trade</h2>
 <div *ngFor="let request of tradeRequests">
   <p>{{ request?.senderUsername }} wants to trade!</p>
   <button (click)="acceptTradeRequest(request.docId)">Accept</button>

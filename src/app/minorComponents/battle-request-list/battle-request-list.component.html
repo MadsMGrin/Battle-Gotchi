@@ -1,5 +1,5 @@
-<h2>Battle Requests:</h2>
-<div *ngFor="let request of battleRequests">
+<h2>Battle</h2>
+<div class="battleRequests" *ngFor="let request of battleRequests">
   <p>{{ request?.senderUsername }} wants to battle!</p>
   <button (click)="acceptBattleRequest(request.senderId)">Accept</button>
   <button (click)="rejectBattleRequest(request)">Reject</button>

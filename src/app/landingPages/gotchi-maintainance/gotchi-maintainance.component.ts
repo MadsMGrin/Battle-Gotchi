@@ -76,18 +76,9 @@ export class GotchiMaintainanceComponent implements OnInit {
     await this.router.navigateByUrl("quest");
   }
 
-
-
-
-  // used so the chat is scrolled down when you refresh page.
-
-
   itemsOverview() {
     this.router.navigateByUrl("itemview")
   }
-
-
-
 
   async restart(){
     try {
@@ -109,5 +100,8 @@ export class GotchiMaintainanceComponent implements OnInit {
   }
 
 
+  async commButton() {
+    await this.router.navigateByUrl("communication");
+  }
 }
 
