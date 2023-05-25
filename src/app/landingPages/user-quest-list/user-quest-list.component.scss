@@ -5,12 +5,15 @@ mat-card {
   color: white;
 }
 
+.mat-card-header{
+  display: inline;
+}
+
 .mat-card-subtitle {
   color: rgba(255, 255, 255, 0.73);
 }
 
 .quest-display {
-  display: flex;
   justify-self: center;
   align-self: center;
   text-align: center;

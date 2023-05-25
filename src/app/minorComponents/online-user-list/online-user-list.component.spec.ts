@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuestComponent } from './quest.component';
+import { OnlineUserListComponent } from './online-user-list.component';
 
-describe('QuestComponent', () => {
-  let component: QuestComponent;
-  let fixture: ComponentFixture<QuestComponent>;
+describe('OnlineUserListComponent', () => {
+  let component: OnlineUserListComponent;
+  let fixture: ComponentFixture<OnlineUserListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QuestComponent ]
+      declarations: [ OnlineUserListComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(QuestComponent);
+    fixture = TestBed.createComponent(OnlineUserListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

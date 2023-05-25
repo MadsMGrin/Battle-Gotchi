@@ -778,7 +778,7 @@ exports.deathTrigger = functions.firestore.document("gotchi/id").onUpdate(async 
   const health = gotchiData.health;
   const user = gotchiData.user;
 
-  if(health >= 0){
+  if(health <= 0){
     await admin.firestore().collection("gotchi").doc(user).delete();
   }
 

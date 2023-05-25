@@ -1,0 +1,34 @@
+<div class="itemsList">
+  <button mat-raised-button (click)="goBack()" class="bottomButtons">Go back</button>
+</div>
+
+<h1 class="title">Your items:</h1>
+
+<div class="buttons">
+  <button mat-raised-button (click)="getAllItems()" class="bottomButtons">All Itmes</button>
+  <button mat-raised-button (click)="getAllItemsOfType('weapon')" class="bottomButtons">Weapons</button>
+  <button mat-raised-button (click)="getAllItemsOfType('chestplate')" class="bottomButtons">Chest plates</button>
+  <button mat-raised-button (click)="getAllItemsOfType('helmet')" class="bottomButtons">Helmets</button>
+</div>
+<br>
+<mat-card class="item-display" *ngFor="let item of items">
+  <div class="item-image">
+    <img src="https://www.aaronfaber.com/wp-content/uploads/2017/03/product-placeholder-wp.jpg" alt="Item placeholder image" width="200" height="200" />
+  </div>
+  <div class="item-info">
+    <mat-card-header>
+      <mat-card-title>Name: {{ item.itemName }}</mat-card-title>
+      <mat-card-subtitle>Type: {{ item.itemType }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>Strength: {{ item.additionalSTR }}</p>
+      <p>Dexterity: {{ item.additionalDEX }}</p>
+      <p>Stamina: {{ item.additionalSTM }}</p>
+    </mat-card-content>
+    <mat-card-actions>
+      <p *ngIf="item.inUse == true" style="color: green;">Equipped</p>
+      <p *ngIf="item.inUse == false && item"><button mat-raised-button (click)="equipItem(item.itemType, item.itemName)" class="bottomButtons">Equip</button></p>
+    </mat-card-actions>
+  </div>
+</mat-card>
+<br>
