@@ -89,8 +89,7 @@ const onlineUserList = async (req, res) => {
         // need to return the id as we need it to send battle request.
         return {username: data.username, uid: doc.id}
       });
-      functions.logger.log(onlineUsers);
-      res.json(onlineUsers);
+      res.json(onlineUsers).send;
     } catch (error) {
       console.error("Error retrieving online users:", error);
       res.status(500).json({error: "Failed to retrieve online users"});

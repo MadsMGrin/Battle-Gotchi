@@ -115,22 +115,9 @@ const restart = async (req, res) => {
   }
 }
 
-const handleDeathTrigger = functions.firestore
-  .document('gotchi/id')
-  .onUpdate(async (snap, context) => {
-    const gotchiData = snap.after.data();
-    const health = gotchiData.health;
-    const user = gotchiData.user;
-
-    if (health <= 0) {
-      await admin.firestore().collection('gotchi').doc(user).delete();
-    }
-  });
-
 module.exports = {
   increaseClean,
   increaseHunger,
   increaseSleep,
   restart,
-  handleDeathTrigger
 }

@@ -149,10 +149,21 @@ exports.onUserRegister = functions.auth
 
 //// GOTCHI METHODS
 app.post("/restart", gotchi.restart);
-exports.deathTrigger = gotchi.handleDeathTrigger;
 app.post("/increaseSleep", gotchi.increaseSleep);
 app.post("/increaseHunger", gotchi.increaseHunger);
 app.post("/increaseCleanliness", gotchi.increaseClean);
+
+exports.deathTrigger = functions.firestore
+  .document('gotchi/id')
+  .onUpdate(async (snap, context) => {
+    const gotchiData = snap.after.data();
+    const health = gotchiData.health;
+    const user = gotchiData.user;
+
+    if (health <= 0) {
+      await admin.firestore().collection('gotchi').doc(user).delete();
+    }
+  });
 //// GOTCHI STATE MANIPULATION - END
 
 
