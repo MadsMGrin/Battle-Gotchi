@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../../fire.service";
+import {BattleService} from "../../services/battle.service";
+import {QuestService} from "../../services/quest.service";
+import {BaseService} from "../../services/baseService";
 
 @Component({
   selector: 'app-battle-request-list',
@@ -9,7 +11,7 @@ import {FireService} from "../../fire.service";
 export class BattleRequestListComponent implements OnInit {
   battleRequests: any[] = [];
 
-  constructor(private fireservice: FireService) { }
+  constructor(private battleService: BattleService, private questService: QuestService, private baseSerive: BaseService) { }
 
   ngOnInit(): void {
     this.getMyBattleRequests();
@@ -17,15 +19,10 @@ export class BattleRequestListComponent implements OnInit {
 
   async acceptBattleRequest(request: any): Promise<void> {
     try {
-      // Accept the battle request and delete it from the Firestore 'battleRequests' collection
-      await this.fireservice.getDocId(request);
-      // Get the current user id
-      const currentUserId = this.fireservice.getCurrentUserId();
-      await this.fireservice.increaseQuestProgress(1, "battle");
-      console.log(currentUserId)
-      // Simulate the battle and get the result
-      await this.fireservice.simulateBattle(currentUserId, request);
-
+      await this.battleService.getDocId(request);
+      const currentUserId = this.baseSerive.getCurrentUserId();
+      await this.questService.increaseQuestProgress(1, "battle");
+      await this.battleService.simulateBattle(currentUserId, request);
     } catch (error) {
       throw error;
     }
@@ -33,8 +30,7 @@ export class BattleRequestListComponent implements OnInit {
 
   async rejectBattleRequest(request: any) {
     try {
-      await this.fireservice.rejectBattleRequest(request);
-      console.log('Battle request rejected successfully!');
+      await this.battleService.rejectBattleRequest(request);
     } catch (error) {
       console.error('Error rejecting battle request:', error);
     }
@@ -42,7 +38,7 @@ export class BattleRequestListComponent implements OnInit {
 
   async getMyBattleRequests() {
     try {
-      this.battleRequests = await this.fireservice.getMyBattleRequests();
+      this.battleRequests = await this.battleService.getMyBattleRequests();
     } catch (error) {
       console.error('Error retrieving battle requests:', error);
     }

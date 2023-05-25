@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../../fire.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -9,7 +8,7 @@ import {Router} from "@angular/router";
 })
 export class CommHubComponent implements OnInit {
 
-  constructor(private fireService: FireService, private router: Router) { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }

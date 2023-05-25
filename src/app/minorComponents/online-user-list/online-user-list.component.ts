@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../../fire.service";
 import {Router} from "@angular/router";
+import {UserService} from "../../services/user.service";
+import {TradeService} from "../../services/trade.service";
+import {BattleService} from "../../services/battle.service";
 
 @Component({
   selector: 'app-online-user-list',
@@ -13,7 +15,7 @@ export class OnlineUserListComponent implements OnInit {
   item: any;
   selectedItem: any;
 
-  constructor(private fireservice: FireService, private router: Router) { }
+  constructor(private userService: UserService, private router: Router, private tradeService: TradeService, private battleService: BattleService) { }
 
   ngOnInit(): void {
     this.getOnlineUsers();
@@ -21,7 +23,7 @@ export class OnlineUserListComponent implements OnInit {
 
   async getOnlineUsers() {
     try {
-      this.onlineUsers = await this.fireservice.getOnlineUsers();
+      this.onlineUsers = await this.userService.getOnlineUsers();
     } catch (error) {
       console.error('Error retrieving online users:', error);
     }
@@ -34,10 +36,9 @@ export class OnlineUserListComponent implements OnInit {
         if (user.showItems) {
           user.showItems = false;
         } else {
-          this.itemsList = await this.fireservice.getItemsForOnlineUsers(userId);
+          this.itemsList = await this.tradeService.getItemsForOnlineUsers(userId);
           user.items = this.itemsList;
           user.showItems = true;
-          console.log(this.itemsList + " hereeeeeeeeeeeeeeeeeeeeeeeee");
 
           // Assign the first item from 'itemsList' to the 'item' property
           this.item = this.itemsList[0];
@@ -50,7 +51,7 @@ export class OnlineUserListComponent implements OnInit {
 
   async requestBattle(userId: string) {
     try {
-      await this.fireservice.sendBattleRequest(userId);
+      await this.battleService.sendBattleRequest(userId);
       alert('Battle request sent!');
     } catch (error) {
       console.error('Error sending battle request:', error);

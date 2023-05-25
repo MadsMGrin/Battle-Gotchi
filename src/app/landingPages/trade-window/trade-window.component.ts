@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FireService } from "../../fire.service";
-import {ActivatedRoute} from "@angular/router";
-import {Observable} from "rxjs";
+import {TradeService} from "../../services/trade.service";
+import {BaseService} from "../../services/baseService";
 
 @Component({
   selector: 'app-trade-window',
@@ -13,7 +12,7 @@ export class TradeWindowComponent implements OnInit {
   itemidurl: string = "";
   urlUserId: string = "";
   tradeRequests: any[] = [];
-  constructor(private fireservice: FireService, private route: ActivatedRoute) {
+  constructor(private tradeService: TradeService, private baseService: BaseService) {
 
 
   }
@@ -26,7 +25,7 @@ export class TradeWindowComponent implements OnInit {
 
   async getItemsForCurrentUser() {
     try {
-      const response = await this.fireservice.getMyGotchiItems();
+      const response = await this.tradeService.getMyGotchiItems();
       if (Array.isArray(response)) {
         this.items = response;
       } else {
@@ -50,21 +49,18 @@ export class TradeWindowComponent implements OnInit {
     this.itemidurl = parts[1];
     this.urlUserId = parts[2];
 
-    console.log("2+sdfsdfsdf"+this.itemidurl); // Output: itemid
-    console.log("2+sdfsdfsdf"+this.urlUserId); // Output: userid
 
   }
 
 
   async addToTrade(itemId) {
     const sellItemId = itemId;
-    console.log(sellItemId + "compo xxxxxxxxxxxxxx")
-    const curentUserId = await this.fireservice.getCurrentUserId();
+
+    const curentUserId = this.baseService.getCurrentUserId();
 
 
     try {
-      const response = await this.fireservice.sendTradeMessage(curentUserId, sellItemId, this.itemidurl, this.urlUserId);
-      console.log(response);
+      const response = await this.tradeService.sendTradeMessage(curentUserId, sellItemId, this.itemidurl, this.urlUserId);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -72,7 +68,7 @@ export class TradeWindowComponent implements OnInit {
 
 
   async getSpecificItemBasedOnId (itemId: string) {
-    await this.fireservice.getSpecificItem(itemId);
+    await this.tradeService.getSpecificItem(itemId);
   }
 
 

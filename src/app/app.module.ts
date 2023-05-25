@@ -22,6 +22,9 @@ import { BattleRequestListComponent } from './minorComponents/battle-request-lis
 import { TradeRequestListComponent } from './minorComponents/trade-request-list/trade-request-list.component';
 import { ChatComponent } from './minorComponents/chat/chat.component';
 import { CommHubComponent } from './landingPages/comm-hub/comm-hub.component';
+import {FirebaseInitService} from "./fire.service";
+import {BaseService} from "./services/baseService";
+import {ConcreteService} from "./services/concreteService";
 
 @NgModule({
   declarations: [
@@ -56,7 +59,10 @@ import { CommHubComponent } from './landingPages/comm-hub/comm-hub.component';
     MatButtonModule,
     MatCardModule
   ],
-  providers: [],
+  providers: [
+    FirebaseInitService,
+    { provide: BaseService, useClass: ConcreteService },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

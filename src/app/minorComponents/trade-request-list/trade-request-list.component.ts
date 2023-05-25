@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {FireService} from "../../fire.service";
+import {TradeService} from "../../services/trade.service";
 
 @Component({
   selector: 'app-trade-request-list',
@@ -9,7 +9,7 @@ import {FireService} from "../../fire.service";
 export class TradeRequestListComponent implements OnInit {
   tradeRequests: any[] = [];
 
-  constructor(private fireservice: FireService) { }
+  constructor(private tradeService: TradeService) { }
 
   ngOnInit(): void {
     this.getMyTradeMessages();
@@ -17,8 +17,7 @@ export class TradeRequestListComponent implements OnInit {
 
   async acceptTradeRequest(sender: any) {
     try {
-      await this.fireservice.acceptTrade(sender);
-      console.log('Trade accepted successfully');
+      await this.tradeService.acceptTrade(sender);
     } catch (error) {
       console.error('Failed to accept trade:', error);
     }
@@ -26,13 +25,12 @@ export class TradeRequestListComponent implements OnInit {
 
 
   rejectTradeRequest(request: any) {
-    this.fireservice.rejectTradeRequest(request);
+    this.tradeService.rejectTradeRequest(request);
   }
 
   async getMyTradeMessages() {
     try {
-      this.tradeRequests = await this.fireservice.getMytradeMessages();
-      console.log(this.tradeRequests + "heereeeeeeeeeeeeee compo")
+      this.tradeRequests = await this.tradeService.getMytradeMessages();
     } catch (error) {
       console.error('Failed to retrieve trade messages:', error);
     }

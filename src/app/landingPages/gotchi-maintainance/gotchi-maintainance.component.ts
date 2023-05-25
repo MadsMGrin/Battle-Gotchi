@@ -1,7 +1,9 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import { FireService } from "../../fire.service";
+import {Component, OnInit} from '@angular/core';
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Router } from "@angular/router";
+import {GotchiFireService} from "../../services/gotchi.service";
+import {QuestService} from "../../services/quest.service";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector: 'app-gotchi-maintainance',
@@ -14,7 +16,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   death: boolean = false;
 
 
-  constructor(private fireservice: FireService, private matSnackbar: MatSnackBar, private router: Router) {
+  constructor(private matSnackbar: MatSnackBar, private router: Router, private gotchiService: GotchiFireService, private questService: QuestService, private userService: UserService) {
   }
 
   ngOnInit(): void {
@@ -25,7 +27,7 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async getGotchi() {
     try {
-      this.gotchiData = await this.fireservice.getGotchiSpecific();
+      this.gotchiData = await this.gotchiService.getGotchiSpecific();
 
     } catch (error) {
       console.error('Error retrieving gotchi:', error);
@@ -34,9 +36,9 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async sleep() {
     try {
-      await this.fireservice.sendReq("increaseSleep");
+      await this.gotchiService.sendReq("increaseSleep");
       await this.getGotchi();
-      await this.fireservice.increaseQuestProgress(1, "sleep");
+      await this.questService.increaseQuestProgress(1, "sleep");
     } catch (error) {
       this.matSnackbar.open("Something went wrong");
     }
@@ -44,9 +46,9 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async eat() {
     try {
-      await this.fireservice.sendReq("increaseHunger");
+      await this.gotchiService.sendReq("increaseHunger");
       await this.getGotchi();
-      await this.fireservice.increaseQuestProgress(1, "eat");
+      await this.questService.increaseQuestProgress(1, "eat");
     } catch (error) {
       this.matSnackbar.open("Something went wrong");
     }
@@ -54,9 +56,9 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async shower() {
     try {
-      await this.fireservice.sendReq("increaseCleanliness");
+      await this.gotchiService.sendReq("increaseCleanliness");
       await this.getGotchi();
-      await this.fireservice.increaseQuestProgress(1, "shower");
+      await this.questService.increaseQuestProgress(1, "shower");
     } catch (error) {
       this.matSnackbar.open("Something went wrong");
     }
@@ -67,7 +69,7 @@ export class GotchiMaintainanceComponent implements OnInit {
   }
 
   async signOut() {
-    await this.fireservice.signOut();
+    await this.userService.signOut();
     this.router.navigateByUrl("login");
   }
 
@@ -82,20 +84,16 @@ export class GotchiMaintainanceComponent implements OnInit {
 
   async restart(){
     try {
-      this.death = await this.fireservice.restart()
-      console.log(this.death)
+      this.death = await this.gotchiService.restart()
       this.ngOnInit();
     }
     catch (error){
-      console.log("cba")
     }
   }
   async checkDeathState(): Promise<void> {
     try {
-      this.death = await this.fireservice.getMyDeath();
-      console.log("Hello, I am death:", this.death);
+      this.death = await this.gotchiService.getMyDeath();
     } catch (error) {
-      console.log('Error checking death state:', error);
     }
   }
 
