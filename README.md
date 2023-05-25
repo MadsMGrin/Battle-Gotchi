@@ -1,27 +1,75 @@
-# BattleGotchi
+# Battle Gotchi's
+ This game is not for the faint of heart. It is brutal and blood-curdling and may lead to nighmare's for many days. If you have any form of heart disease, please be aware.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.7.
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+## Project Overview
 
-## Development server
+The project is a website game with several key features that allow users to interact with their virtual pet, complete quests, trade items with other users, engage in fights, and participate in chat functions.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+### Key Features
 
-## Code scaffolding
+- **Caring for the Gotchi**: Users can feed, clean, and put their virtual pet to sleep to enhance its stats and well-being.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Quest System**: Users have access to daily, weekly, and monthly quests that they can undertake to earn various items and rewards.
 
-## Build
+- **Item Trading**: Users can trade items with other players, enabling them to acquire new items and expand their collection.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Fighting Mechanism**: Users can send fight requests to other players, who can choose to accept or decline the challenge. Engaging in battles allows users to test their skills
 
-## Running unit tests
+- **Death**: The game incorporates a high-stakes element where players face the risk of dying, adding an extra layer of intensity and challenge to the gameplay.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- **Chat Functionality**: The website includes a chat feature that enables users to interact with each other, fostering a sense of community and collaboration.
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Getting Started
 
-## Further help
+To set up and start the project, follow these steps:
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+    1. Clone the repository from GitHub by running the following command in your terminal or command prompt: git clone <https://github.com/MadsMGrin/Battle-Gotchi>
+   
+    2. Navigate to the project's directory:  cd your-repository
+
+    3. Install the project dependencies using npm: npm install 
+    - This command will fetch and install all the required dependencies specified in the project's package.json file.
+
+    4. Set up the Firestore emulator by following these steps:
+
+    - Install the Firebase CLI by running the following command: npm install -g firebase-tools
+
+    - Authenticate the Firebase CLI with your Google account by running: firebase login
+    
+    - Once authenticated, initialize the Firebase project by running: firebase init
+
+    5. Start the Firestore emulator by running the following command:firebase emulators:start
+    
+    6. With the Firestore emulator running, you can now start the project. Use the following command: npm start
+
+## Need to know before use
+- You have to mock item's and quests first before you signup, reason being that its not being hosted so we can't have items and quests inside the database at all times.
+
+
+![Logo](https://th.bing.com/th/id/OIG.wCTMa6K53R5TTk70xjyW?pid=ImgGn)
+
+
+
+    
+                          
+
+
+
+
+   
+
+
+
+
+
+
+
+
+
+## Authors
+- [@MadsMGrin](https://github.com/MadsMGrin)
+- [@Kathurjan](https://github.com/Kathurjan)
+- [@DoncusSpelunkus](https://github.com/DoncusSpelunkus)
+- [@Neshi24](https://github.com/Neshi24)
