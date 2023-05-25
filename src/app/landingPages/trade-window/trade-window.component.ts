@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {TradeService} from "../../services/trade.service";
+import {BaseService} from "../../services/baseService";
 
 @Component({
   selector: 'app-trade-window',
@@ -11,7 +12,7 @@ export class TradeWindowComponent implements OnInit {
   itemidurl: string = "";
   urlUserId: string = "";
   tradeRequests: any[] = [];
-  constructor(private tradeService: TradeService) {
+  constructor(private tradeService: TradeService, private baseService: BaseService) {
 
 
   }
@@ -55,7 +56,7 @@ export class TradeWindowComponent implements OnInit {
   async addToTrade(itemId) {
     const sellItemId = itemId;
 
-    const curentUserId = await this.tradeService.getCurrentUserId();
+    const curentUserId = this.baseService.getCurrentUserId();
 
 
     try {
