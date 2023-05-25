@@ -8,19 +8,24 @@ import * as config from '../../firebaseconfig.js'
   providedIn: 'root'
 })
 export class FireService {
+  static instance: FireService;
   firebaseApplication;
-  firestore: firebase.firestore.Firestore;
-  auth: firebase.auth.Auth;
+  firestore: firebase.firestore.Firestore = firebase.firestore();
+  auth: firebase.auth.Auth = firebase.auth();
   baseurl: string = "http://127.0.0.1:5001/battlegotchi-63c2e/us-central1/api/";
 
   constructor() {
+    if (FireService.instance) {
+      return FireService.instance;
+    }
     this.firebaseApplication = firebase.initializeApp(config.firebaseConfig);
     this.firestore = firebase.firestore();
     this.auth = firebase.auth();
-    this.firestore.useEmulator("localhost",8080);
-    this.auth.useEmulator("http://localhost:9099");
-    // Handle auth state changes
-
+    if (location.hostname === "localhost") {
+      this.firestore.useEmulator("localhost",8080);
+      this.auth.useEmulator("http://localhost:9099");
+    }
+    FireService.instance = this;
   }
   getCurrentUserId(): string {
     const uid = this.auth.currentUser?.uid;
@@ -53,6 +58,5 @@ export class FireService {
     await db.collection('usernames').doc(username).set({ uid: userId });
 
     return credential;
-  } // has to be moved to index
-
+  } // has to be moved to index.
 }

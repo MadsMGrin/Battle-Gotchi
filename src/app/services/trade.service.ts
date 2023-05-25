@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import {FireService} from "../fire.service";
 import axios from "axios";
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TradeService extends FireService{
+export class TradeService{
 
   constructor() {
-    super();
   }
 
   async getMytradeMessages(): Promise<any[]>{
     try {
       const tradeRequestList: any [] = [];
-      await this.firestore.collection("tradeMessage")
-        .where("recieversID", "==", this.auth.currentUser?.uid)
+      await FireService.instance.firestore.collection("tradeMessage")
+        .where("recieversID", "==", FireService.instance.auth.currentUser?.uid)
         .onSnapshot(async (querysnapshopt)=>{
           tradeRequestList.length =0;
           for (const doc of querysnapshopt.docs){
@@ -33,7 +34,7 @@ export class TradeService extends FireService{
   }
   async sendTradeMessage(senderId, sellItemId, buyItemId,recieversID) {
     try {
-      const response = await axios.post(this.baseurl + "tradeMessage", {
+      const response = await axios.post(FireService.instance.baseurl + "tradeMessage", {
         senderiD: senderId,
         sellItemId: sellItemId,
         buyItemId: buyItemId,
@@ -48,7 +49,7 @@ export class TradeService extends FireService{
   }
   async rejectTradeRequest(documentId) {
     try {
-      const response = await axios.post(this.baseurl + "rejectTrade", {docId: documentId});
+      const response = await axios.post(FireService.instance.baseurl + "rejectTrade", {docId: documentId});
       console.log(response)
       return response;
 
@@ -59,7 +60,7 @@ export class TradeService extends FireService{
   }
   async acceptTrade(tradeId: string): Promise<void> {
     try {
-      const response = await axios.post(this.baseurl + "acceptTrade", {
+      const response = await axios.post(FireService.instance.baseurl + "acceptTrade", {
         tradeId: tradeId
       });
       console.log('Trade accepted successfully');
@@ -72,8 +73,8 @@ export class TradeService extends FireService{
   }
 
   async getMyGotchiItems(): Promise<any[]> {
-    const snapshot = await this.firestore.collection('gotchi')
-      .doc(this.auth.currentUser?.uid).get();
+    const snapshot = await FireService.instance.firestore.collection('gotchi')
+      .doc(FireService.instance.auth.currentUser?.uid).get();
     if (snapshot.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
@@ -85,7 +86,7 @@ export class TradeService extends FireService{
     return [];
   }
   async getSpecificItem(itemId) {
-    const snapshot = await this.firestore.collection('item').doc(itemId).get();
+    const snapshot = await FireService.instance.firestore.collection('item').doc(itemId).get();
     return snapshot.data();
   }
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {TradeService} from "../../services/trade.service";
+import {FireService} from "../../fire.service";
 
 @Component({
   selector: 'app-trade-window',
@@ -55,7 +56,7 @@ export class TradeWindowComponent implements OnInit {
   async addToTrade(itemId) {
     const sellItemId = itemId;
 
-    const curentUserId = await this.tradeService.getCurrentUserId();
+    const curentUserId = FireService.instance.getCurrentUserId();
 
 
     try {

@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import {FireService} from "../fire.service";
-import firebase from "firebase/compat";
 import axios from "axios";
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
+import firebase from "firebase/compat/app";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ItemService extends FireService{
+export class ItemService{
 
   constructor() {
-    super();
   }
   async getAllItems() {
-    const snapshot = await this.firestore.collection('gotchi')
-      .doc(this.auth.currentUser?.uid).get();
+    const snapshot = await FireService.instance.firestore.collection('gotchi')
+      .doc(FireService.instance.auth.currentUser?.uid).get();
     if (snapshot.exists) {
       const data = snapshot.data();
       if (data && data['items']) {
@@ -24,8 +25,8 @@ export class ItemService extends FireService{
   }
 
   async getAllItemsOfType(type) {
-    const snapshot = await this.firestore.collection('gotchi')
-      .doc(this.auth.currentUser?.uid)
+    const snapshot = await FireService.instance.firestore.collection('gotchi')
+      .doc(FireService.instance.auth.currentUser?.uid)
       .get();
     if (snapshot.exists) {
       const data = snapshot.data();
@@ -38,8 +39,8 @@ export class ItemService extends FireService{
   }
 
   async getEquippedItem(type) {
-    const snapshot = await this.firestore.collection('gotchi')
-      .doc(this.auth.currentUser?.uid)
+    const snapshot = await FireService.instance.firestore.collection('gotchi')
+      .doc(FireService.instance.auth.currentUser?.uid)
       .get();
     if (snapshot.exists) {
       const data = snapshot.data();
@@ -53,8 +54,8 @@ export class ItemService extends FireService{
 
   async unequip(itemName, type) {
     try {
-      const user = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "unequipItem", {userId: user, itemName: itemName, itemType: type });
+      const user = FireService.instance.auth.currentUser?.uid;
+      const response = await axios.post(FireService.instance.baseurl + "unequipItem", {userId: user, itemName: itemName, itemType: type });
       return response;
     } catch (error) {
       throw new Error('Failed to unequip item');
@@ -63,8 +64,8 @@ export class ItemService extends FireService{
 
   async removeStats(itemName){
     try {
-      const user = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "removeStats", {userId: user, itemName: itemName});
+      const user = FireService.instance.auth.currentUser?.uid;
+      const response = await axios.post(FireService.instance.baseurl + "removeStats", {userId: user, itemName: itemName});
       return response;
 
     } catch (error) {
@@ -75,8 +76,8 @@ export class ItemService extends FireService{
 
   async equip(itemName, type) {
     try {
-      const user = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "equipItem", {userId: user, itemName: itemName, itemType: type });
+      const user = FireService.instance.auth.currentUser?.uid;
+      const response = await axios.post(FireService.instance.baseurl + "equipItem", {userId: user, itemName: itemName, itemType: type });
       return response;
 
     } catch (error) {
@@ -86,8 +87,8 @@ export class ItemService extends FireService{
   }
   async addStats(itemName){
     try {
-      const user = this.auth.currentUser?.uid;
-      const response = await axios.post(this.baseurl + "addStats", {userId: user, itemName: itemName});
+      const user = FireService.instance.auth.currentUser?.uid;
+      const response = await axios.post(FireService.instance.baseurl + "addStats", {userId: user, itemName: itemName});
       console.log(response)
       return response;
 

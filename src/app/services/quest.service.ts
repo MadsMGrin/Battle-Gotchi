@@ -1,28 +1,30 @@
 import { Injectable } from '@angular/core';
-import {FireService} from "../fire.service";
-import {userQuest} from "../../entities/userQuest";
-import firebase from "firebase/compat";
-import {quest} from "../../entities/quest";
-import {item} from "../../entities/item";
+import { FireService } from "../fire.service";
+import { userQuest } from "../../entities/userQuest";
+import firebase from "firebase/compat/app";
+import { quest } from "../../entities/quest";
+import { item } from "../../entities/item";
+import 'firebase/compat/firestore';
+import 'firebase/compat/auth';
+
 
 @Injectable({
   providedIn: 'root'
 })
-export class QuestService extends FireService{
+export class QuestService {
 
   constructor() {
-    super();
-    this.auth.onAuthStateChanged((user) => {
+    FireService.instance.auth.onAuthStateChanged((user) => {
       if (user) {
         // mark user as online on sign in
-        this.firestore.collection('users').doc(user.uid).update({ status: 'online' });
+        FireService.instance.firestore.collection('users').doc(user.uid).update({ status: 'online' });
 
         this.unassignExpiredQuests();
 
       } else {
         // mark user as offline on sign out
-        if (this.auth.currentUser) {
-          this.firestore.collection('users').doc(this.auth.currentUser.uid).update({ status: 'offline' });
+        if (FireService.instance.auth.currentUser) {
+          FireService.instance.firestore.collection('users').doc(FireService.instance.auth.currentUser.uid).update({ status: 'offline' });
         }
       }
     });
@@ -31,7 +33,7 @@ export class QuestService extends FireService{
     const quests: quest[] = [];
 
     try {
-      const querySnapshot = await this.firestore.collection("quests")
+      const querySnapshot = await FireService.instance.firestore.collection("quests")
         .where("category", "==", category)
         .get();
 
@@ -62,7 +64,7 @@ export class QuestService extends FireService{
     let userQuestDTO = new userQuest();
 
     try {
-      const querySnapshot = await this.firestore
+      const querySnapshot = await FireService.instance.firestore
         .collection("users")
         .doc(firebase.auth().currentUser?.uid)
         .get();
@@ -98,19 +100,19 @@ export class QuestService extends FireService{
     // Check and unassign daily quest
     if (userQuests.dailyQuest && userQuests.dailyQuest.duration.end < currentDate) {
       const newDailyQuest = await this.assignNewQuest("daily"); // Assign a new daily quest
-      await this.firestore.collection("users").doc(userId).update({ dailyQuest: newDailyQuest });
+      await FireService.instance.firestore.collection("users").doc(userId).update({ dailyQuest: newDailyQuest });
     }
 
     // Check and unassign weekly quest
     if (userQuests.weeklyQuest && userQuests.weeklyQuest.duration.end < currentDate) {
       const newWeeklyQuest = await this.assignNewQuest("weekly"); // Assign a new weekly quest
-      await this.firestore.collection("users").doc(userId).update({ weeklyQuest: newWeeklyQuest });
+      await FireService.instance.firestore.collection("users").doc(userId).update({ weeklyQuest: newWeeklyQuest });
     }
 
     // Check and unassign monthly quest
     if (userQuests.monthlyQuest && userQuests.monthlyQuest.duration.end < currentDate) {
       const newMonthlyQuest = await this.assignNewQuest("monthly"); // Assign a new monthly quest
-      await this.firestore.collection("users").doc(userId).update({ monthlyQuest: newMonthlyQuest });
+      await FireService.instance.firestore.collection("users").doc(userId).update({ monthlyQuest: newMonthlyQuest });
     }
   }
   async assignNewQuest(category: string): Promise<quest> {
@@ -151,7 +153,7 @@ export class QuestService extends FireService{
     }
 
     const currentDate = new Date();
-    const userQuests = await this.firestore.collection("users").doc(userId).get();
+    const userQuests = await FireService.instance.firestore.collection("users").doc(userId).get();
 
     if (!userQuests.exists) {
       throw new Error("User quests not found");
@@ -159,10 +161,10 @@ export class QuestService extends FireService{
 
     const questFields = ["dailyQuest", "weeklyQuest", "monthlyQuest"];
 
-    await this.firestore.runTransaction(async (transaction) => {
-      const gotchiDoc = await transaction.get(this.firestore.collection("gotchi").doc(userId));
-      const questDoc = await transaction.get(this.firestore.collection("users").doc(userId));
-      const itemdoc = await transaction.get(this.firestore.collection("item").doc());
+    await FireService.instance.firestore.runTransaction(async (transaction) => {
+      const gotchiDoc = await transaction.get(FireService.instance.firestore.collection("gotchi").doc(userId));
+      const questDoc = await transaction.get(FireService.instance.firestore.collection("users").doc(userId));
+      const itemdoc = await transaction.get(FireService.instance.firestore.collection("item").doc());
 
       if (!questDoc.exists) {
         throw new Error("Quest document not found");

@@ -1,5 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ChatService} from "../../services/chat.service";
+import {FireService} from "../../fire.service";
 
 @Component({
   selector: 'app-chat',
@@ -40,7 +41,7 @@ export class ChatComponent implements OnInit {
   }
 
   async sendMessage(): Promise<void> {
-    const currentUserId = this.chatService.getCurrentUserId();
+    const currentUserId = FireService.instance.getCurrentUserId();
     const message = this.newMessage;
     try {
       await this.chatService.sendChatMessage(currentUserId, message);
