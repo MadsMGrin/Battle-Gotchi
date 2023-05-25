@@ -249,7 +249,7 @@ app.post("/increaseHunger", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if (doc.data().foodTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesEatenToday >= 4){
+      if (doc.data().foodTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesEatenToday >= 3){
         throw new error("Failure")
       }
       const newHunger = doc.data().hunger >= 75 ? 100 : doc.data().hunger + 25;
@@ -280,7 +280,7 @@ app.post("/increaseCleanliness", async (req, res) => {
   return db.runTransaction((transaction) => {
     // This code may get re-run multiple times if there are conflicts.
     return transaction.get(docRef).then((doc) => {
-      if (doc.data().showerTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesShoweredToday >= 3){
+      if (doc.data().showerTimeout >= Timestamp.now().toMillis() || !doc.exists || doc.data().timesShoweredToday >= 2){
         throw new error("Failure")
       }
       const newClean = doc.data().cleanliness >= 25 ? 100 : doc.data().cleanliness + 75;
@@ -380,6 +380,49 @@ app.post("/equipItem", async (req, res) => {
     });
 });
 
+
+app.post("/addStats", async (req, res) => {
+  const user = req.body.userId;
+  const db = admin.firestore();
+  let gotchiStats = {dexterity: 0, stamina: 0, strength: 0 };
+
+  const querySnapshot = await db.collection('gotchi')
+    .doc(user)
+    .get();
+
+  if (querySnapshot.exists) {
+    const data = querySnapshot.data();
+    if (data && data['items']) {
+      const items = data['items'];
+
+      items.forEach(item => {
+        if (item.inUse) {
+          gotchiStats.dexterity += item.additionalDEX || 0;
+
+          gotchiStats.stamina += item.additionalSTM || 0;
+
+          gotchiStats.strength += item.additionalSTR || 0;
+        }
+      });
+    }
+  }
+
+  const docRef = querySnapshot.ref;
+
+  return db.runTransaction((transaction) => {
+    return transaction.get(docRef).then((doc) => {
+      transaction.set(docRef, gotchiStats, { merge: true });
+    });
+  })
+    .then(() => {
+      res.status(200).send("Stats updated successfully");
+      console.log("Transaction successfully committed!");
+    })
+    .catch((error) => {
+      res.status(400).send("Error");
+      console.log("Transaction failed: ", error);
+    });
+});
 app.post("/unequipItem", async (req, res) => {
   const user = req.body.userId;
   const itemType = req.body.itemType;
@@ -420,6 +463,48 @@ app.post("/unequipItem", async (req, res) => {
     });
 });
 
+app.post("/removeStats", async (req, res) => {
+  const user = req.body.userId;
+  const db = admin.firestore();
+  let gotchiStats = { cleanliness: 0, dexterity: 0, health: 0, hunger: 0, stamina: 0, strength: 0 };
+
+  const querySnapshot = await db.collection('gotchi')
+    .doc(user)
+    .get();
+
+  if (querySnapshot.exists) {
+    const data = querySnapshot.data();
+    if (data && data['items']) {
+      const items = data['items'];
+
+      items.forEach(item => {
+        if (item.inUse) {
+          gotchiStats.dexterity -= item.additionalDEX || 0;
+
+          gotchiStats.stamina -= item.additionalSTM || 0;
+
+          gotchiStats.strength -= item.additionalSTR || 0;
+        }
+      });
+    }
+  }
+
+  const docRef = querySnapshot.ref;
+
+  return db.runTransaction((transaction) => {
+    return transaction.get(docRef).then((doc) => {
+      transaction.set(docRef, gotchiStats, { merge: true });
+    });
+  })
+    .then(() => {
+      res.status(200).send("Stats removed successfully");
+      console.log("Transaction successfully committed!");
+    })
+    .catch((error) => {
+      res.status(400).send("Error");
+      console.log("Transaction failed: ", error);
+    });
+});
 
 ///ITEM STUFF END
 
@@ -592,8 +677,8 @@ app.get('/chatMessages', async (req, res) => {
 
 // battle simulation stuff.
 app.post('/simulateBattle', async (req, res) => {
-  const senderId = req.body.senderId;
-  const receiverId = req.body.receiverId;
+  const senderId = req.body.challengerId;
+  const receiverId = req.body.opponentId;
   try {
     const db = admin.firestore();
 
@@ -609,7 +694,7 @@ app.post('/simulateBattle', async (req, res) => {
 
       const senderGotchi = senderSnap.data();
       const receiverGotchi = receiverSnap.data();
-      
+
       // calculate score for each gotchi based on attributes and their weights
       const attributeWeights = {
         hunger: 0.2,
@@ -627,7 +712,6 @@ app.post('/simulateBattle', async (req, res) => {
         senderScore += senderGotchi[attribute] * attributeWeights[attribute];
         receiverScore += receiverGotchi[attribute] * attributeWeights[attribute];
       }
-
       // decide the winner and loser
       let winner, loser;
       if (senderScore > receiverScore) {
@@ -637,8 +721,9 @@ app.post('/simulateBattle', async (req, res) => {
         winner = receiverGotchi;
         loser = senderGotchi;
       }
+
       // update the loser's health - reduce it by a random percentage
-      const healthLoss = Math.floor(Math.random() * 10);
+      const healthLoss = Math.floor((Math.random() * 10)+5);
       loser.health = Math.max(0, loser.health - healthLoss);
 
       // update the loser's document in Firestore
@@ -659,9 +744,9 @@ app.post('/simulateBattle', async (req, res) => {
       return { winner: winner.user, loser: loser.user, reward: randomReward };
     });
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 });
 
