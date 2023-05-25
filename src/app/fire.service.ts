@@ -43,37 +43,11 @@ export class FireService {
     }
 
     const userId = credential.user.uid;
-    const questTypes = ['daily', 'weekly', 'monthly'];
-
-    const quests = await Promise.all(questTypes.map(async (type) => {
-      const quest = await this.getRandomQuest(type); // this gets list of quests and then gives 3 random quests to the user
-      if (!quest) {
-        throw new Error('Failed to get quests');
-      }
-      const rewardPromise = this.randomItem();
-      const reward = await rewardPromise;
-      return {
-        name: quest.name,
-        description: quest.description,
-        progress: quest.progress,
-        action: quest.action,
-        duration: quest.duration,
-        completion: quest.completion,
-        category: quest.category,
-        reward: reward,
-      };
-    }));
-
-
-    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
 
     await db.collection('users').doc(userId).set({
       username,
       email,
       status: 'online',
-      dailyQuest,
-      weeklyQuest,
-      monthlyQuest
     });
 
     await db.collection('usernames').doc(username).set({ uid: userId });

@@ -127,7 +127,7 @@ const wackyLastNames = [
   "Fluffernutter",
 ]
 
-const randomQuest = async () => {
+const randomQuest = async (type) => {
   const quests = await admin.firestore().collection("quests").where("category", "==", type).get();
   let randomIndex = Math.floor(Math.random() * quests.size);
   return quests.docs[randomIndex].data();
@@ -218,13 +218,13 @@ exports.onUserRegister = functions.auth
 
     });
     const questTypes = ['daily', 'weekly', 'monthly'];
-    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
 
-    const itemSnapshot = await admin.firestore().collection('item').get();
-    let randomItemIndex = Math.floor(Math.random() * itemSnapshot.size)
-    const randomItem = itemSnapshot.docs[randomItemIndex].data();
-    await Promise.all(questTypes.map(async (type) => {
-      const RandomQuest = randomQuest;
+
+    const snapshot = await admin.firestore().collection('item').get();
+    let randomItemIndex = Math.floor(Math.random() * snapshot.size)
+    const randomItem = snapshot.docs[randomItemIndex].data();
+    const quests = await Promise.all(questTypes.map(async (type) => {
+      const RandomQuest = randomQuest(questTypes);
       if (!RandomQuest) {
         throw new Error('Failed to get quests');
       }
@@ -239,12 +239,19 @@ exports.onUserRegister = functions.auth
         reward: randomItem,
       };
     }));
+
+    const [dailyQuest, weeklyQuest, monthlyQuest] = quests;
+    await admin.firestore().collection("users").doc(user.uid).set({
+      dailyQuest,
+      weeklyQuest,
+      monthlyQuest
+    },
+      {merge: true}
+    )
+
   });
 
 
-exports.triggerOnAuth = functions.auth.user().beforeSignIn((snap, context) => {
-
-}).
 
 
 //// GOTCHI STATE MANIPULATION - START
