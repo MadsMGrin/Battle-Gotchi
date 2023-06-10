@@ -42,7 +42,7 @@ const chatMessage = async (req, res) => {
       .reverse();
 
     res.status(200).json(chatMessages);
-
+    // trying to make it onSnapshot to make it live update chat. but does not seem to work.
     chatRef.onSnapshot((snapshot) => {
       const updatedChatMessages = snapshot.docs
         .map((doc) => ({

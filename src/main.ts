@@ -8,16 +8,16 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import { FirebaseInitService } from './app/fire.service';
 
-firebase.initializeApp(config.firebaseConfig); // Initialize Firebase app
-
+firebase.initializeApp(config.firebaseConfig);
+// we initial the base service
 const firebaseInitService = new FirebaseInitService();
-
+// we start up the emulators, else it will complain that its already running
 if (environment.useEmulators) {
   firebase.auth().useEmulator('http://localhost:9099');
   firebase.firestore().useEmulator('localhost', 8080);
 }
-
-firebaseInitService.firestore.useEmulator('localhost', 8080); // Initialize Firestore emulator
+// we are telling firestore that it need to use the emulator
+firebaseInitService.firestore.useEmulator('localhost', 8080);
 
 if (environment.production) {
   enableProdMode();

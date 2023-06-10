@@ -6,6 +6,7 @@ import 'firebase/compat/auth';
 @Injectable({
   providedIn: 'root'
 })
+// instantiation of the auth and firestore. its being initialized at program start so it is resuable everywhere else, so very close to being a singleton
 export class FirebaseInitService {
   auth: firebase.auth.Auth;
   firestore: firebase.firestore.Firestore;
