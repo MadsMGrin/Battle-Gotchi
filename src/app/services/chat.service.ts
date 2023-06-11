@@ -8,6 +8,7 @@ import {BaseService} from "./baseService";
 @Injectable({
   providedIn: 'root'
 })
+// it needs to extend the base service, it's basically the same class as the base service, but it has its own methods.
 export class ChatService extends BaseService{
 
   constructor(firebaseInitService: FirebaseInitService) {
@@ -16,6 +17,7 @@ export class ChatService extends BaseService{
 
   async sendChatMessage(userId: string, message: string): Promise<void> {
     try {
+      // very not needed to make it const!
       const response = await axios.post(this.baseurl + "chatMessage", {
         userId: userId,
         message: message
